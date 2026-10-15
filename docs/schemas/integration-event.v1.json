@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docs.tavaan.dev/schemas/integration-event.v1.json",
+  "title": "Tavaan Integration Event Contract",
+  "description": "Schema for cross-service/cross-module integration events — see docs/02-architecture/microservice-ready.md §7 and docs/02-architecture/event-driven.md §3",
+  "type": "object",
+  "required": ["event", "version", "producer", "payload_schema", "delivery"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+
+    "event": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$",
+      "description": "Dotted event name, e.g. shop.order.paid"
+    },
+
+    "version": { "type": "integer", "minimum": 1 },
+
+    "producer": {
+      "type": "string",
+      "description": "Module or service id that emits the event, e.g. tavaan.shop"
+    },
+
+    "consumers": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Known consumers (informational; brokers are pub/sub)"
+    },
+
+    "payload_schema": {
+      "type": "object",
+      "description": "Embedded JSON Schema describing the event payload (envelope fields are separate)",
+      "required": ["type", "properties"],
+      "properties": {
+        "type": { "const": "object" },
+        "required": { "type": "array", "items": { "type": "string" } },
+        "properties": { "type": "object" },
+        "additionalProperties": { "type": "boolean" }
+      }
+    },
+
+    "compatibility": {
+      "type": "string",
+      "enum": ["backward", "forward", "full", "none"],
+      "default": "backward",
+      "description": "Schema evolution policy — see microservice-ready.md §7.1"
+    },
+
+    "delivery": {
+      "type": "string",
+      "enum": ["at-most-once", "at-least-once", "exactly-once"],
+      "default": "at-least-once"
+    },
+
+    "ordering": {
+      "type": "string",
+      "enum": ["none", "per-aggregate", "global"],
+      "default": "per-aggregate"
+    },
+
+    "retention_days": { "type": "integer", "minimum": 0, "default": 7 },
+
+    "envelope": {
+      "type": "object",
+      "description": "Fixed CloudEvents-style envelope every event carries (DOC-023 §3)",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": { "type": "string", "format": "ulid" },
+        "occurredAt": { "type": "string", "format": "date-time" },
+        "aggregateType": { "type": "string" },
+        "aggregateId": { "type": "string" },
+        "version": { "type": "integer" },
+        "producer": { "type": "string" },
+        "traceId": { "type": "string" },
+        "causationId": { "type": "string" },
+        "correlationId": { "type": "string" },
+        "sequence": { "type": "integer" },
+        "idempotencyKey": { "type": "string" }
+      },
+      "required": ["eventId", "occurredAt", "version", "producer", "idempotencyKey"]
+    }
+  }
+}

@@ -1,0 +1,1588 @@
+{
+  "$schema": "https://docs.tavaan.dev/schemas/docs-manifest.v1.json",
+  "framework": {
+    "name": "Tavaan",
+    "name_fa": "تَوان",
+    "version": "1.0.0",
+    "php_min": "8.2.0",
+    "dependency_policy": "zero-external",
+    "architectures": [
+      "layered",
+      "hmvc",
+      "modular-monolith",
+      "event-driven",
+      "hexagonal"
+    ]
+  },
+  "generated_note": "فهرست ماشین‌خوان همهٔ مستندات — برای پیمایش خودکار ایجنت‌ها",
+  "totals": {
+    "documents": 121,
+    "engines": 53,
+    "schemas": 4,
+    "adrs": 16
+  },
+  "entry_points": {
+    "human_dashboard": "INDEX.html",
+    "index": "docs/README.md",
+    "readme": "README.md",
+    "quickstart": "docs/00-overview/quickstart.md",
+    "engine_registry": "docs/03-engines/README.md",
+    "agent_backlog": "docs/08-roadmap/agent-backlog.md",
+    "adr_index": "docs/adr/README.md"
+  },
+  "reading_paths": {
+    "engine_builder": [
+      "DOC-010",
+      "DOC-011",
+      "DOC-012",
+      "DOC-013",
+      "DOC-014",
+      "DOC-030",
+      "DOC-110",
+      "DOC-113"
+    ],
+    "architect": [
+      "DOC-001",
+      "DOC-002",
+      "DOC-020",
+      "DOC-021",
+      "DOC-022",
+      "DOC-023",
+      "DOC-024",
+      "DOC-025"
+    ],
+    "app_builder": [
+      "DOC-021",
+      "DOC-022",
+      "DOC-080",
+      "DOC-090",
+      "DOC-100",
+      "DOC-101"
+    ],
+    "qa_reviewer": [
+      "DOC-010",
+      "DOC-016",
+      "DOC-110",
+      "DOC-111",
+      "DOC-112",
+      "DOC-113"
+    ]
+  },
+  "engines": [
+    {
+      "engine_id": "tavaan.engine.admin",
+      "slug": "admin",
+      "namespace": "Tavaan\\Engine\\Admin",
+      "priority": "P2",
+      "phase": "M8",
+      "doc": "docs/03-engines/admin.md"
+    },
+    {
+      "engine_id": "tavaan.engine.api",
+      "slug": "api",
+      "namespace": "Tavaan\\Engine\\Api",
+      "priority": "P1",
+      "phase": "M6",
+      "doc": "docs/03-engines/api.md"
+    },
+    {
+      "engine_id": "tavaan.engine.audit",
+      "slug": "audit",
+      "namespace": "Tavaan\\Engine\\Audit",
+      "priority": "P1",
+      "phase": "M4",
+      "doc": "docs/03-engines/audit.md"
+    },
+    {
+      "engine_id": "tavaan.engine.auth",
+      "slug": "auth",
+      "namespace": "Tavaan\\Engine\\Auth",
+      "priority": "P0",
+      "phase": "M4",
+      "doc": "docs/03-engines/auth.md"
+    },
+    {
+      "engine_id": "tavaan.engine.backup",
+      "slug": "backup",
+      "namespace": "Tavaan\\Engine\\Backup",
+      "priority": "P2",
+      "phase": "M5",
+      "doc": "docs/03-engines/backup.md"
+    },
+    {
+      "engine_id": "tavaan.engine.cache",
+      "slug": "cache",
+      "namespace": "Tavaan\\Engine\\Cache",
+      "priority": "P0",
+      "phase": "M4",
+      "doc": "docs/03-engines/cache.md"
+    },
+    {
+      "engine_id": "tavaan.engine.compat",
+      "slug": "compat",
+      "namespace": "Tavaan\\Engine\\Compat",
+      "priority": "P0",
+      "phase": "M1",
+      "doc": "docs/03-engines/compat.md"
+    },
+    {
+      "engine_id": "tavaan.engine.config",
+      "slug": "config",
+      "namespace": "Tavaan\\Engine\\Config",
+      "priority": "P0",
+      "phase": "M1",
+      "doc": "docs/03-engines/config.md"
+    },
+    {
+      "engine_id": "tavaan.engine.console",
+      "slug": "console",
+      "namespace": "Tavaan\\Engine\\Console",
+      "priority": "P1",
+      "phase": "M5",
+      "doc": "docs/03-engines/console.md"
+    },
+    {
+      "engine_id": "tavaan.engine.container",
+      "slug": "container",
+      "namespace": "Tavaan\\Engine\\Container",
+      "priority": "P0",
+      "phase": "M1",
+      "doc": "docs/03-engines/container.md"
+    },
+    {
+      "engine_id": "tavaan.engine.cookie",
+      "slug": "cookie",
+      "namespace": "Tavaan\\Engine\\Http\\Cookie",
+      "priority": "P0",
+      "phase": "M2",
+      "doc": "docs/03-engines/cookie.md"
+    },
+    {
+      "engine_id": "tavaan.engine.cors",
+      "slug": "cors",
+      "namespace": "Tavaan\\Engine\\Http\\Cors",
+      "priority": "P0",
+      "phase": "M2",
+      "doc": "docs/03-engines/cors.md"
+    },
+    {
+      "engine_id": "tavaan.engine.crypt",
+      "slug": "crypt",
+      "namespace": "Tavaan\\Engine\\Crypt",
+      "priority": "P0",
+      "phase": "M4",
+      "doc": "docs/03-engines/crypt.md"
+    },
+    {
+      "engine_id": "tavaan.engine.database",
+      "slug": "database",
+      "namespace": "Tavaan\\Engine\\Database",
+      "priority": "P0",
+      "phase": "M3",
+      "doc": "docs/03-engines/database.md"
+    },
+    {
+      "engine_id": "tavaan.engine.error",
+      "slug": "error",
+      "namespace": "Tavaan\\Engine\\Error",
+      "priority": "P0",
+      "phase": "M1",
+      "doc": "docs/03-engines/error.md"
+    },
+    {
+      "engine_id": "tavaan.engine.event",
+      "slug": "event",
+      "namespace": "Tavaan\\Engine\\Event",
+      "priority": "100);",
+      "phase": "M1",
+      "doc": "docs/03-engines/event.md"
+    },
+    {
+      "engine_id": "tavaan.engine.feature-flag",
+      "slug": "feature-flag",
+      "namespace": "Tavaan\\Engine\\FeatureFlag",
+      "priority": "P2",
+      "phase": "M6",
+      "doc": "docs/03-engines/feature-flag.md"
+    },
+    {
+      "engine_id": "tavaan.engine.filesystem",
+      "slug": "filesystem",
+      "namespace": "Tavaan\\Engine\\Filesystem",
+      "priority": "P1",
+      "phase": "M5",
+      "doc": "docs/03-engines/filesystem.md"
+    },
+    {
+      "engine_id": "tavaan.engine.hash",
+      "slug": "hash",
+      "namespace": "Tavaan\\Engine\\Hash",
+      "priority": "P0",
+      "phase": "M4",
+      "doc": "docs/03-engines/hash.md"
+    },
+    {
+      "engine_id": "tavaan.engine.http-client",
+      "slug": "http-client",
+      "namespace": "Tavaan\\Engine\\HttpClient",
+      "priority": "P1",
+      "phase": "M5",
+      "doc": "docs/03-engines/http-client.md"
+    },
+    {
+      "engine_id": "tavaan.engine.http",
+      "slug": "http",
+      "namespace": "Tavaan\\Engine\\Http",
+      "priority": "P0",
+      "phase": "M2",
+      "doc": "docs/03-engines/http.md"
+    },
+    {
+      "engine_id": "tavaan.engine.i18n",
+      "slug": "i18n",
+      "namespace": "Tavaan\\Engine\\I18n",
+      "priority": "P0",
+      "phase": "M2",
+      "doc": "docs/03-engines/i18n.md"
+    },
+    {
+      "engine_id": "tavaan.engine.jalali",
+      "slug": "jalali",
+      "namespace": "Tavaan\\Engine\\I18n\\Jalali",
+      "priority": "P0",
+      "phase": "M2",
+      "doc": "docs/03-engines/jalali.md"
+    },
+    {
+      "engine_id": "tavaan.engine.log",
+      "slug": "log",
+      "namespace": "Tavaan\\Engine\\Log",
+      "priority": "P0",
+      "phase": "M1",
+      "doc": "docs/03-engines/log.md"
+    },
+    {
+      "engine_id": "tavaan.engine.mail",
+      "slug": "mail",
+      "namespace": "Tavaan\\Engine\\Mail",
+      "priority": "P1",
+      "phase": "M5",
+      "doc": "docs/03-engines/mail.md"
+    },
+    {
+      "engine_id": "tavaan.engine.media",
+      "slug": "media",
+      "namespace": "Tavaan\\Engine\\Media",
+      "priority": "P1",
+      "phase": "M5",
+      "doc": "docs/03-engines/media.md"
+    },
+    {
+      "engine_id": "tavaan.engine.migration",
+      "slug": "migration",
+      "namespace": "Tavaan\\Engine\\Database\\Migration",
+      "priority": "P0",
+      "phase": "M3",
+      "doc": "docs/03-engines/migration.md"
+    },
+    {
+      "engine_id": "tavaan.engine.module",
+      "slug": "module",
+      "namespace": "Tavaan\\Engine\\Module",
+      "priority": "P0",
+      "phase": "M1",
+      "doc": "docs/03-engines/module.md"
+    },
+    {
+      "engine_id": "tavaan.engine.notification",
+      "slug": "notification",
+      "namespace": "Tavaan\\Engine\\Notification",
+      "priority": "P1",
+      "phase": "M5",
+      "doc": "docs/03-engines/notification.md"
+    },
+    {
+      "engine_id": "tavaan.engine.observability",
+      "slug": "observability",
+      "namespace": "Tavaan\\Engine\\Observability",
+      "priority": "P1",
+      "phase": "M6",
+      "doc": "docs/03-engines/observability.md"
+    },
+    {
+      "engine_id": "tavaan.engine.optimizer",
+      "slug": "optimizer",
+      "namespace": "Tavaan\\Engine\\Optimizer",
+      "priority": "P1",
+      "phase": "M1",
+      "doc": "docs/03-engines/optimizer.md"
+    },
+    {
+      "engine_id": "tavaan.engine.orm",
+      "slug": "orm",
+      "namespace": "Tavaan\\Engine\\Database\\ORM",
+      "priority": "P0",
+      "phase": "M3",
+      "doc": "docs/03-engines/orm.md"
+    },
+    {
+      "engine_id": "tavaan.engine.pagination",
+      "slug": "pagination",
+      "namespace": "Tavaan\\Engine\\Database\\Pagination",
+      "priority": "P0",
+      "phase": "M3",
+      "doc": "docs/03-engines/pagination.md"
+    },
+    {
+      "engine_id": "tavaan.engine.payment",
+      "slug": "payment",
+      "namespace": "Tavaan\\Engine\\Payment",
+      "priority": "P2",
+      "phase": "M7",
+      "doc": "docs/03-engines/payment.md"
+    },
+    {
+      "engine_id": "tavaan.engine.pipeline",
+      "slug": "pipeline",
+      "namespace": "Tavaan\\Engine\\Pipeline",
+      "priority": "P0",
+      "phase": "M1",
+      "doc": "docs/03-engines/pipeline.md"
+    },
+    {
+      "engine_id": "tavaan.engine.plugin",
+      "slug": "plugin",
+      "namespace": "Tavaan\\Engine\\Plugin",
+      "priority": "P1",
+      "phase": "M8",
+      "doc": "docs/03-engines/plugin.md"
+    },
+    {
+      "engine_id": "tavaan.engine.queue",
+      "slug": "queue",
+      "namespace": "Tavaan\\Engine\\Queue",
+      "priority": "P1",
+      "phase": "M5",
+      "doc": "docs/03-engines/queue.md"
+    },
+    {
+      "engine_id": "tavaan.engine.rbac",
+      "slug": "rbac",
+      "namespace": "Tavaan\\Engine\\Rbac",
+      "priority": "P0",
+      "phase": "M4",
+      "doc": "docs/03-engines/rbac.md"
+    },
+    {
+      "engine_id": "tavaan.engine.realtime",
+      "slug": "realtime",
+      "namespace": "Tavaan\\Engine\\Realtime",
+      "priority": "P2",
+      "phase": "M6",
+      "doc": "docs/03-engines/realtime.md"
+    },
+    {
+      "engine_id": "tavaan.engine.report",
+      "slug": "report",
+      "namespace": "Tavaan\\Engine\\Report",
+      "priority": "P2",
+      "phase": "M7",
+      "doc": "docs/03-engines/report.md"
+    },
+    {
+      "engine_id": "tavaan.engine.router",
+      "slug": "router",
+      "namespace": "Tavaan\\Engine\\Http\\Routing",
+      "priority": "P0",
+      "phase": "M2",
+      "doc": "docs/03-engines/router.md"
+    },
+    {
+      "engine_id": "tavaan.engine.scaffold",
+      "slug": "scaffold",
+      "namespace": "Tavaan\\Engine\\Scaffold",
+      "priority": "P1",
+      "phase": "M8",
+      "doc": "docs/03-engines/scaffold.md"
+    },
+    {
+      "engine_id": "tavaan.engine.schedule",
+      "slug": "schedule",
+      "namespace": "Tavaan\\Engine\\Schedule",
+      "priority": "P1",
+      "phase": "M5",
+      "doc": "docs/03-engines/schedule.md"
+    },
+    {
+      "engine_id": "tavaan.engine.schema",
+      "slug": "schema",
+      "namespace": "Tavaan\\Engine\\Database\\Schema",
+      "priority": "P0",
+      "phase": "M3",
+      "doc": "docs/03-engines/schema.md"
+    },
+    {
+      "engine_id": "tavaan.engine.search",
+      "slug": "search",
+      "namespace": "Tavaan\\Engine\\Search",
+      "priority": "P1",
+      "phase": "M6",
+      "doc": "docs/03-engines/search.md"
+    },
+    {
+      "engine_id": "tavaan.engine.security",
+      "slug": "security",
+      "namespace": "Tavaan\\Engine\\Security",
+      "priority": "P0",
+      "phase": "M4",
+      "doc": "docs/03-engines/security.md"
+    },
+    {
+      "engine_id": "tavaan.engine.session",
+      "slug": "session",
+      "namespace": "Tavaan\\Engine\\Session",
+      "priority": "P0",
+      "phase": "M2",
+      "doc": "docs/03-engines/session.md"
+    },
+    {
+      "engine_id": "tavaan.engine.tenancy",
+      "slug": "tenancy",
+      "namespace": "Tavaan\\Engine\\Tenancy",
+      "priority": "P1",
+      "phase": "M6",
+      "doc": "docs/03-engines/tenancy.md"
+    },
+    {
+      "engine_id": "tavaan.engine.test",
+      "slug": "test",
+      "namespace": "Tavaan\\Testing",
+      "priority": "P0",
+      "phase": "M8",
+      "doc": "docs/03-engines/test.md"
+    },
+    {
+      "engine_id": "tavaan.engine.upgrade",
+      "slug": "upgrade",
+      "namespace": "Tavaan\\Engine\\Upgrade",
+      "priority": "P2",
+      "phase": "M8",
+      "doc": "docs/03-engines/upgrade.md"
+    },
+    {
+      "engine_id": "tavaan.engine.validation",
+      "slug": "validation",
+      "namespace": "Tavaan\\Engine\\Validation",
+      "priority": "P0",
+      "phase": "M3",
+      "doc": "docs/03-engines/validation.md"
+    },
+    {
+      "engine_id": "tavaan.engine.view",
+      "slug": "view",
+      "namespace": "path`",
+      "priority": "P0",
+      "phase": "M2",
+      "doc": "docs/03-engines/view.md"
+    },
+    {
+      "engine_id": "tavaan.engine.workflow",
+      "slug": "workflow",
+      "namespace": "Tavaan\\Engine\\Workflow",
+      "priority": "P2",
+      "phase": "M7",
+      "doc": "docs/03-engines/workflow.md"
+    }
+  ],
+  "catalog": [
+    {
+      "section": "index",
+      "section_label": "شاخص",
+      "doc_id": "DOC-000",
+      "title": "شاخص مستندات تَوان (Tavaan Docs Index)",
+      "path": "docs/README.md",
+      "machine_readable": false,
+      "sha256": "b95e79cbdbae779d"
+    },
+    {
+      "section": "00-overview",
+      "section_label": "نمای کلی و اهداف",
+      "doc_id": "DOC-001",
+      "title": "اهداف کلان و چشم‌انداز تَوان",
+      "path": "docs/00-overview/goals-vision.md",
+      "machine_readable": true,
+      "sha256": "2c4c275ef5ac183d"
+    },
+    {
+      "section": "00-overview",
+      "section_label": "نمای کلی و اهداف",
+      "doc_id": "DOC-002",
+      "title": "اصول بنیادین تَوان (First Principles)",
+      "path": "docs/00-overview/principles.md",
+      "machine_readable": false,
+      "sha256": "c04a9fde8be0dc34"
+    },
+    {
+      "section": "00-overview",
+      "section_label": "نمای کلی و اهداف",
+      "doc_id": "DOC-004",
+      "title": "راهنمای شروع سریع (Quick Start) 🚀",
+      "path": "docs/00-overview/quickstart.md",
+      "machine_readable": false,
+      "sha256": "de49253c362fd689"
+    },
+    {
+      "section": "00-overview",
+      "section_label": "نمای کلی و اهداف",
+      "doc_id": "DOC-003",
+      "title": "الزامات تَوان (Requirements Specification)",
+      "path": "docs/00-overview/requirements.md",
+      "machine_readable": false,
+      "sha256": "1e009c3671808a1a"
+    },
+    {
+      "section": "01-standards",
+      "section_label": "استانداردها و قواعد",
+      "doc_id": "DOC-011",
+      "title": "سبک کد تَوان (Coding Style) 🔒",
+      "path": "docs/01-standards/coding-style.md",
+      "machine_readable": false,
+      "sha256": "bc41bafedee5b72f"
+    },
+    {
+      "section": "01-standards",
+      "section_label": "استانداردها و قواعد",
+      "doc_id": "DOC-014",
+      "title": "کاتالوگ قراردادها (Contracts / Interfaces Catalog) 🔒",
+      "path": "docs/01-standards/contracts-interfaces.md",
+      "machine_readable": false,
+      "sha256": "3e969514f7cd7941"
+    },
+    {
+      "section": "01-standards",
+      "section_label": "استانداردها و قواعد",
+      "doc_id": "DOC-015",
+      "title": "استاندارد مستندسازی تَوان (Documentation Standard)",
+      "path": "docs/01-standards/documentation-standard.md",
+      "machine_readable": true,
+      "sha256": "850d4b17067d08c4"
+    },
+    {
+      "section": "01-standards",
+      "section_label": "استانداردها و قواعد",
+      "doc_id": "DOC-013",
+      "title": "مدیریت خطا و استثناها (Error Handling) 🔒",
+      "path": "docs/01-standards/error-handling.md",
+      "machine_readable": false,
+      "sha256": "1fb5afa86bdde3ce"
+    },
+    {
+      "section": "01-standards",
+      "section_label": "استانداردها و قواعد",
+      "doc_id": "DOC-012",
+      "title": "قواعد نام‌گذاری تَوان (Naming Conventions) 🔒",
+      "path": "docs/01-standards/naming-conventions.md",
+      "machine_readable": false,
+      "sha256": "0b3e2896f4bcd4bc"
+    },
+    {
+      "section": "01-standards",
+      "section_label": "استانداردها و قواعد",
+      "doc_id": "DOC-010",
+      "title": "قواعد اجباری PHP 8.2+ و پیشگیری از Deprecated 🔒",
+      "path": "docs/01-standards/php82-strict.md",
+      "machine_readable": true,
+      "sha256": "3d121d8cd16761fd"
+    },
+    {
+      "section": "01-standards",
+      "section_label": "استانداردها و قواعد",
+      "doc_id": "DOC-016",
+      "title": "سیاست امنیتی تَوان (Security Policy) 🔒",
+      "path": "docs/01-standards/security-policy.md",
+      "machine_readable": false,
+      "sha256": "f631d898df94a231"
+    },
+    {
+      "section": "02-architecture",
+      "section_label": "معماری",
+      "doc_id": "DOC-027",
+      "title": "راه‌اندازی و بارگذاری خودکار (Bootstrapping & Autoloading) 🔒",
+      "path": "docs/02-architecture/bootstrapping.md",
+      "machine_readable": false,
+      "sha256": "cbbc9c423baffdaf"
+    },
+    {
+      "section": "02-architecture",
+      "section_label": "معماری",
+      "doc_id": "DOC-026",
+      "title": "کانتینر و تزریق وابستگی (Container & DI) 🔒",
+      "path": "docs/02-architecture/container-di.md",
+      "machine_readable": false,
+      "sha256": "996b73566c3e5a0f"
+    },
+    {
+      "section": "02-architecture",
+      "section_label": "معماری",
+      "doc_id": "DOC-023",
+      "title": "معماری رویداد‌محور (Event-Driven Architecture) 🔒",
+      "path": "docs/02-architecture/event-driven.md",
+      "machine_readable": false,
+      "sha256": "e6717f88a7a8d0f7"
+    },
+    {
+      "section": "02-architecture",
+      "section_label": "معماری",
+      "doc_id": "DOC-021",
+      "title": "معماری لایه‌ای + HMVC (Layered & Hierarchical MVC) 🔒",
+      "path": "docs/02-architecture/layered-hmvc.md",
+      "machine_readable": false,
+      "sha256": "390c8d9a3ff125ab"
+    },
+    {
+      "section": "02-architecture",
+      "section_label": "معماری",
+      "doc_id": "DOC-024",
+      "title": "آمادگی مایکروسرویس (Microservice-Ready Architecture)",
+      "path": "docs/02-architecture/microservice-ready.md",
+      "machine_readable": false,
+      "sha256": "3bbe4577102786eb"
+    },
+    {
+      "section": "02-architecture",
+      "section_label": "معماری",
+      "doc_id": "DOC-022",
+      "title": "معماری ماژولار مونولیت (Modular Monolith) 🔒",
+      "path": "docs/02-architecture/modular-monolith.md",
+      "machine_readable": false,
+      "sha256": "a75cd147f888800d"
+    },
+    {
+      "section": "02-architecture",
+      "section_label": "معماری",
+      "doc_id": "DOC-028",
+      "title": "معماری چنداجاره‌ای (Multi-Tenancy)",
+      "path": "docs/02-architecture/multi-tenancy.md",
+      "machine_readable": false,
+      "sha256": "610147470921fa79"
+    },
+    {
+      "section": "02-architecture",
+      "section_label": "معماری",
+      "doc_id": "DOC-020",
+      "title": "نمای کلان معماری تَوان (Architecture Overview)",
+      "path": "docs/02-architecture/overview.md",
+      "machine_readable": false,
+      "sha256": "28ab7f3739c1ace7"
+    },
+    {
+      "section": "02-architecture",
+      "section_label": "معماری",
+      "doc_id": "DOC-025",
+      "title": "چرخهٔ عمر درخواست (Request Lifecycle) 🔒",
+      "path": "docs/02-architecture/request-lifecycle.md",
+      "machine_readable": false,
+      "sha256": "7a2d92eb952a892a"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-030",
+      "title": "رجیستری موتورها (Engine Registry) 🔒🧠",
+      "path": "docs/03-engines/README.md",
+      "machine_readable": true,
+      "sha256": "fbe8cdd9f32fdaf4"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-078",
+      "title": "موتور Admin | پیشخان و CRUD Generator",
+      "path": "docs/03-engines/admin.md",
+      "machine_readable": true,
+      "sha256": "c899d44f79902269"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-044",
+      "title": "موتور API | Resource، Versioning و OpenAPI",
+      "path": "docs/03-engines/api.md",
+      "machine_readable": true,
+      "sha256": "89f6c97edf39d195"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-058",
+      "title": "موتور Audit | ممیزی ضدتقلب",
+      "path": "docs/03-engines/audit.md",
+      "machine_readable": true,
+      "sha256": "61f878096e8702de"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-056",
+      "title": "موتور Auth | احراز هویت",
+      "path": "docs/03-engines/auth.md",
+      "machine_readable": true,
+      "sha256": "f09eab1689eacc5a"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-068",
+      "title": "موتور Backup | پشتیبان‌گیری",
+      "path": "docs/03-engines/backup.md",
+      "machine_readable": true,
+      "sha256": "1302e69bdb21c6f8"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-060",
+      "title": "موتور Cache | حافظهٔ نهان",
+      "path": "docs/03-engines/cache.md",
+      "machine_readable": true,
+      "sha256": "8dbf5c8763b9690e"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-083E",
+      "title": "موتور Compat | سازگاری و Polyfill",
+      "path": "docs/03-engines/compat.md",
+      "machine_readable": true,
+      "sha256": "8a6218dcaae97223"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-032",
+      "title": "موتور Config | پیکربندی و محیط",
+      "path": "docs/03-engines/config.md",
+      "machine_readable": true,
+      "sha256": "14bec620576ff0a7"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-076",
+      "title": "موتور Console | چارچوب CLI",
+      "path": "docs/03-engines/console.md",
+      "machine_readable": true,
+      "sha256": "51fb6781cd0f9075"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-031",
+      "title": "موتور Container | ظرف سرویس",
+      "path": "docs/03-engines/container.md",
+      "machine_readable": true,
+      "sha256": "6d412a15450fe941"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-042",
+      "title": "موتور Cookie | کوکی",
+      "path": "docs/03-engines/cookie.md",
+      "machine_readable": true,
+      "sha256": "9c4450dd9e9f86ba"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-046",
+      "title": "موتور CORS",
+      "path": "docs/03-engines/cors.md",
+      "machine_readable": true,
+      "sha256": "19545cfb44235163"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-054",
+      "title": "موتور Crypt | رمزنگاری",
+      "path": "docs/03-engines/crypt.md",
+      "machine_readable": true,
+      "sha256": "88077e2c35325cc4"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-047",
+      "title": "موتور Database | اتصال، Query Builder و Grammar",
+      "path": "docs/03-engines/database.md",
+      "machine_readable": true,
+      "sha256": "109f6e808566d944"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-035",
+      "title": "موتور Error | مدیریت خطا",
+      "path": "docs/03-engines/error.md",
+      "machine_readable": true,
+      "sha256": "e8e1906ab5731ee4"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-033",
+      "title": "موتور Event | رویداد و Outbox",
+      "path": "docs/03-engines/event.md",
+      "machine_readable": true,
+      "sha256": "303cb6fcd8238d27"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-075",
+      "title": "موتور FeatureFlag | پرچم قابلیت",
+      "path": "docs/03-engines/feature-flag.md",
+      "machine_readable": true,
+      "sha256": "9a9338a7b39dcc33"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-063",
+      "title": "موتور Filesystem | سامانهٔ فایل",
+      "path": "docs/03-engines/filesystem.md",
+      "machine_readable": true,
+      "sha256": "35952e6613557b94"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-055",
+      "title": "موتور Hash | درهم‌سازی رمز",
+      "path": "docs/03-engines/hash.md",
+      "machine_readable": true,
+      "sha256": "a336d2c9c8c49dab"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-064",
+      "title": "موتور HttpClient | کلاینت HTTP",
+      "path": "docs/03-engines/http-client.md",
+      "machine_readable": true,
+      "sha256": "39ebaab5819768c6"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-039",
+      "title": "موتور HTTP | درخواست، پاسخ و کرنل وب",
+      "path": "docs/03-engines/http.md",
+      "machine_readable": true,
+      "sha256": "4133af05865857e9"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-069",
+      "title": "موتور I18n | بین‌المللی‌سازی",
+      "path": "docs/03-engines/i18n.md",
+      "machine_readable": true,
+      "sha256": "62cabf2e07b06009"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-070",
+      "title": "موتور Jalali | تقویم جلالی",
+      "path": "docs/03-engines/jalali.md",
+      "machine_readable": true,
+      "sha256": "e9485f786865daee"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-036",
+      "title": "موتور Log | گزارش ساختاریافته",
+      "path": "docs/03-engines/log.md",
+      "machine_readable": true,
+      "sha256": "614d2c2529d8d844"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-065",
+      "title": "موتور Mail | پست الکترونیک",
+      "path": "docs/03-engines/mail.md",
+      "machine_readable": true,
+      "sha256": "2a01b6fad56401ef"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-074",
+      "title": "موتور Media | آپلود و پردازش رسانه",
+      "path": "docs/03-engines/media.md",
+      "machine_readable": true,
+      "sha256": "28dff75294284687"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-049",
+      "title": "موتور Migration | مهاجرت دیتابیس",
+      "path": "docs/03-engines/migration.md",
+      "machine_readable": true,
+      "sha256": "ae7d6c5e7e560f44"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-038",
+      "title": "موتور Module | کشف و مدیریت ماژول",
+      "path": "docs/03-engines/module.md",
+      "machine_readable": true,
+      "sha256": "ef2bcc44dcac9516"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-066",
+      "title": "موتور Notification | آگاه‌سازی چندکاناله",
+      "path": "docs/03-engines/notification.md",
+      "machine_readable": true,
+      "sha256": "c6112c466d0f48b5"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-067",
+      "title": "موتور Observability | Metrics، Trace و Health",
+      "path": "docs/03-engines/observability.md",
+      "machine_readable": true,
+      "sha256": "aa600e839b966d96"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-037",
+      "title": "موتور Optimizer | بهینه‌سازی و کش",
+      "path": "docs/03-engines/optimizer.md",
+      "machine_readable": true,
+      "sha256": "7edecd81150be959"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-050",
+      "title": "موتور ORM | نگاشت شیء-رابطه",
+      "path": "docs/03-engines/orm.md",
+      "machine_readable": true,
+      "sha256": "dcf0c72b3ab25139"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-053",
+      "title": "موتور Pagination | صفحه‌بندی",
+      "path": "docs/03-engines/pagination.md",
+      "machine_readable": true,
+      "sha256": "fdd81b437e08a07c"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-073",
+      "title": "موتور Payment | درگاه پرداخت",
+      "path": "docs/03-engines/payment.md",
+      "machine_readable": true,
+      "sha256": "35073239b0eef03f"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-034",
+      "title": "موتور Pipeline | خط لوله",
+      "path": "docs/03-engines/pipeline.md",
+      "machine_readable": true,
+      "sha256": "9dc9c5b2035d6c2c"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-079",
+      "title": "موتور Plugin | افزونهٔ ثالث",
+      "path": "docs/03-engines/plugin.md",
+      "machine_readable": true,
+      "sha256": "7ae268ed6fd78efb"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-061",
+      "title": "موتور Queue | صف و Worker",
+      "path": "docs/03-engines/queue.md",
+      "machine_readable": true,
+      "sha256": "7939701c450ae6f7"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-057",
+      "title": "موتور RBAC | نقش و کنترل دسترسی",
+      "path": "docs/03-engines/rbac.md",
+      "machine_readable": true,
+      "sha256": "dce5353897aada19"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-045",
+      "title": "موتور Realtime | بلادرنگ (SSE + WebSocket)",
+      "path": "docs/03-engines/realtime.md",
+      "machine_readable": true,
+      "sha256": "180d135315823ce5"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-072",
+      "title": "موتور Report | گزارش‌ساز",
+      "path": "docs/03-engines/report.md",
+      "machine_readable": true,
+      "sha256": "83a9a607b4058c65"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-040",
+      "title": "موتور Router | مسیریاب با Compiled Trie",
+      "path": "docs/03-engines/router.md",
+      "machine_readable": true,
+      "sha256": "a3fd9801f025b8e3"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-077",
+      "title": "موتور Scaffold | تولید کد (make:*)",
+      "path": "docs/03-engines/scaffold.md",
+      "machine_readable": true,
+      "sha256": "a8dc881b3b9a2b29"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-062",
+      "title": "موتور Schedule | زمان‌بندی",
+      "path": "docs/03-engines/schedule.md",
+      "machine_readable": true,
+      "sha256": "6b159c4318ccb914"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-048",
+      "title": "موتور Schema | Blueprint و DDL",
+      "path": "docs/03-engines/schema.md",
+      "machine_readable": true,
+      "sha256": "99547563a6130d87"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-052",
+      "title": "موتور Search | جست‌وجو",
+      "path": "docs/03-engines/search.md",
+      "machine_readable": true,
+      "sha256": "fe89f2872a02ca6d"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-059",
+      "title": "موتور Security | CSRF، RateLimit، Header، Sanitizer، SSRF",
+      "path": "docs/03-engines/security.md",
+      "machine_readable": true,
+      "sha256": "a7a671c103ff27b6"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-041",
+      "title": "موتور Session | نشست",
+      "path": "docs/03-engines/session.md",
+      "machine_readable": true,
+      "sha256": "6bffb25c301d82c9"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-082E",
+      "title": "موتور Tenancy | چنداجاره‌ای",
+      "path": "docs/03-engines/tenancy.md",
+      "machine_readable": true,
+      "sha256": "9a0a33d9d6cd632e"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-084E",
+      "title": "موتور Test | چارچوب تست خودنوشته",
+      "path": "docs/03-engines/test.md",
+      "machine_readable": true,
+      "sha256": "22d6fda185173151"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-081E",
+      "title": "موتور Upgrade | ارتقای نسخه",
+      "path": "docs/03-engines/upgrade.md",
+      "machine_readable": true,
+      "sha256": "102bf3771cb60594"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-051",
+      "title": "موتور Validation | اعتبارسنجی",
+      "path": "docs/03-engines/validation.md",
+      "machine_readable": true,
+      "sha256": "dddd8648e3c90653"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-043",
+      "title": "موتور View | قالب‌ساز `.tv.php`",
+      "path": "docs/03-engines/view.md",
+      "machine_readable": true,
+      "sha256": "7881584721e52db0"
+    },
+    {
+      "section": "03-engines",
+      "section_label": "موتورها",
+      "doc_id": "DOC-071",
+      "title": "موتور Workflow | گردش‌کار و BPM",
+      "path": "docs/03-engines/workflow.md",
+      "machine_readable": true,
+      "sha256": "4158acd03306327d"
+    },
+    {
+      "section": "04-structure",
+      "section_label": "ساختار پوشه و فایل",
+      "doc_id": "DOC-083",
+      "title": "مرجع کامل CLI (دستورات `tvn`) 🔒",
+      "path": "docs/04-structure/cli-reference.md",
+      "machine_readable": false,
+      "sha256": "583d2de4cb04f83d"
+    },
+    {
+      "section": "04-structure",
+      "section_label": "ساختار پوشه و فایل",
+      "doc_id": "DOC-082",
+      "title": "نگاشت Autoloader ↔ composer.json ↔ PSR-4 🔒",
+      "path": "docs/04-structure/composer-mapping.md",
+      "machine_readable": false,
+      "sha256": "903c916786c87d66"
+    },
+    {
+      "section": "04-structure",
+      "section_label": "ساختار پوشه و فایل",
+      "doc_id": "DOC-085",
+      "title": "مرجع کامل پیکربندی (Config & ENV Reference) 🔒",
+      "path": "docs/04-structure/config-reference.md",
+      "machine_readable": false,
+      "sha256": "e0ff76a0fc268b4c"
+    },
+    {
+      "section": "04-structure",
+      "section_label": "ساختار پوشه و فایل",
+      "doc_id": "DOC-086",
+      "title": "کاتالوگ طرح پایگاه داده (Database Schema Catalog) 🔒",
+      "path": "docs/04-structure/database-schema-catalog.md",
+      "machine_readable": true,
+      "sha256": "6ddf9f008ed1c650"
+    },
+    {
+      "section": "04-structure",
+      "section_label": "ساختار پوشه و فایل",
+      "doc_id": "DOC-081",
+      "title": "قرارداد محتوای فایل‌ها (File Conventions) 🔒",
+      "path": "docs/04-structure/file-conventions.md",
+      "machine_readable": false,
+      "sha256": "51e4bfe9d2bc2699"
+    },
+    {
+      "section": "04-structure",
+      "section_label": "ساختار پوشه و فایل",
+      "doc_id": "DOC-080",
+      "title": "ساختار پوشه و فایل تَوان (Folder & File Structure) 🔒",
+      "path": "docs/04-structure/folder-structure.md",
+      "machine_readable": false,
+      "sha256": "b96468f5b7ca8587"
+    },
+    {
+      "section": "05-applications",
+      "section_label": "کاربردها (Kits)",
+      "doc_id": "DOC-090",
+      "title": "الگوی ساخت اپلیکیشن (Application Blueprint)",
+      "path": "docs/05-applications/README.md",
+      "machine_readable": false,
+      "sha256": "4ebcd6987fe975ad"
+    },
+    {
+      "section": "05-applications",
+      "section_label": "کاربردها (Kits)",
+      "doc_id": "DOC-091",
+      "title": "کاربرد وبلاگ (Blog) ✍️",
+      "path": "docs/05-applications/blog.md",
+      "machine_readable": false,
+      "sha256": "4a8b2580d22df5c8"
+    },
+    {
+      "section": "05-applications",
+      "section_label": "کاربردها (Kits)",
+      "doc_id": "DOC-098",
+      "title": "کاربرد BPMS (مدیریت فرایندهای کسب‌وکار) 🔄",
+      "path": "docs/05-applications/bpms.md",
+      "machine_readable": false,
+      "sha256": "c6873afe1f71ff02"
+    },
+    {
+      "section": "05-applications",
+      "section_label": "کاربردها (Kits)",
+      "doc_id": "DOC-096",
+      "title": "کاربرد CRM (مدیریت ارتباط با مشتری) 🤝",
+      "path": "docs/05-applications/crm.md",
+      "machine_readable": false,
+      "sha256": "23bb16181086abf6"
+    },
+    {
+      "section": "05-applications",
+      "section_label": "کاربردها (Kits)",
+      "doc_id": "DOC-097",
+      "title": "کاربرد ERP (برنامه‌ریزی منابع سازمانی) 🏭",
+      "path": "docs/05-applications/erp.md",
+      "machine_readable": false,
+      "sha256": "4a3c2630dfe7de07"
+    },
+    {
+      "section": "05-applications",
+      "section_label": "کاربردها (Kits)",
+      "doc_id": "DOC-094",
+      "title": "کاربرد فروم (Forum / انجمن) 💬",
+      "path": "docs/05-applications/forum.md",
+      "machine_readable": false,
+      "sha256": "e7dc1dd1208f0228"
+    },
+    {
+      "section": "05-applications",
+      "section_label": "کاربردها (Kits)",
+      "doc_id": "DOC-095",
+      "title": "کاربرد LMS (سامانهٔ مدیریت آموزش) 🎓",
+      "path": "docs/05-applications/lms.md",
+      "machine_readable": false,
+      "sha256": "15a09d8cbac04009"
+    },
+    {
+      "section": "05-applications",
+      "section_label": "کاربردها (Kits)",
+      "doc_id": "DOC-092",
+      "title": "کاربرد پرتال خبری (News Portal) 📰",
+      "path": "docs/05-applications/news-portal.md",
+      "machine_readable": false,
+      "sha256": "34dee7b7b38ac57f"
+    },
+    {
+      "section": "05-applications",
+      "section_label": "کاربردها (Kits)",
+      "doc_id": "DOC-093",
+      "title": "کاربرد فروشگاه (E-Commerce / Shop) 🛒",
+      "path": "docs/05-applications/shop.md",
+      "machine_readable": false,
+      "sha256": "8f67fdd7b5f75af5"
+    },
+    {
+      "section": "06-roles-access",
+      "section_label": "نقش‌ها و دسترسی",
+      "doc_id": "DOC-102",
+      "title": "وظایف و گردش‌کار نقش‌ها (Duties & Workflow)",
+      "path": "docs/06-roles-access/duties-workflow.md",
+      "machine_readable": false,
+      "sha256": "f5152f2b28f6bdd2"
+    },
+    {
+      "section": "06-roles-access",
+      "section_label": "نقش‌ها و دسترسی",
+      "doc_id": "DOC-101",
+      "title": "کاتالوگ مجوزها (Permission Catalog) 🔒🧠",
+      "path": "docs/06-roles-access/permission-catalog.md",
+      "machine_readable": true,
+      "sha256": "fa151b431a19b8c5"
+    },
+    {
+      "section": "06-roles-access",
+      "section_label": "نقش‌ها و دسترسی",
+      "doc_id": "DOC-100",
+      "title": "ماتریس نقش‌ها و سطوح دسترسی (Roles & Access Matrix) 🔒",
+      "path": "docs/06-roles-access/roles-matrix.md",
+      "machine_readable": false,
+      "sha256": "8079c8d135929a37"
+    },
+    {
+      "section": "07-quality",
+      "section_label": "کیفیت",
+      "doc_id": "DOC-112",
+      "title": "اهداف بنچمارک و کارایی (Benchmark Targets) 🧪",
+      "path": "docs/07-quality/benchmark-targets.md",
+      "machine_readable": false,
+      "sha256": "60ea5b42ca2f990a"
+    },
+    {
+      "section": "07-quality",
+      "section_label": "کیفیت",
+      "doc_id": "DOC-113",
+      "title": "تعریف «انجام‌شده» (Definition of Done) 🔒",
+      "path": "docs/07-quality/definition-of-done.md",
+      "machine_readable": false,
+      "sha256": "7c83030deac94774"
+    },
+    {
+      "section": "07-quality",
+      "section_label": "کیفیت",
+      "doc_id": "DOC-111",
+      "title": "تحلیل ایستا و CI/CD (Static Analysis & Pipeline) 🔒",
+      "path": "docs/07-quality/static-analysis-ci.md",
+      "machine_readable": true,
+      "sha256": "b1f2a92326630e63"
+    },
+    {
+      "section": "07-quality",
+      "section_label": "کیفیت",
+      "doc_id": "DOC-110",
+      "title": "استراتژی تست (Testing Strategy) 🔒",
+      "path": "docs/07-quality/testing-strategy.md",
+      "machine_readable": false,
+      "sha256": "5b05422596a1b6ed"
+    },
+    {
+      "section": "08-roadmap",
+      "section_label": "نقشهٔ راه",
+      "doc_id": "DOC-121",
+      "title": "بک‌لاگ ایجنت (Agent Backlog) 🧠",
+      "path": "docs/08-roadmap/agent-backlog.md",
+      "machine_readable": false,
+      "sha256": "d785310c9e0a83ea"
+    },
+    {
+      "section": "08-roadmap",
+      "section_label": "نقشهٔ راه",
+      "doc_id": "DOC-120",
+      "title": "نقشهٔ راه و فازها (Roadmap & Milestones)",
+      "path": "docs/08-roadmap/milestones.md",
+      "machine_readable": false,
+      "sha256": "ff34ded46327600e"
+    },
+    {
+      "section": "09-references",
+      "section_label": "مراجیع و واژه‌نامه",
+      "doc_id": "DOC-130",
+      "title": "مراجع و بنچمارک‌ها (References & Benchmarks)",
+      "path": "docs/09-references/benchmarks.md",
+      "machine_readable": false,
+      "sha256": "4f3bf84d9e98cc9a"
+    },
+    {
+      "section": "09-references",
+      "section_label": "مراجیع و واژه‌نامه",
+      "doc_id": "DOC-131",
+      "title": "واژه‌نامه (Glossary) 📖",
+      "path": "docs/09-references/glossary.md",
+      "machine_readable": false,
+      "sha256": "e768c3ef668f65df"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
+      "doc_id": null,
+      "title": "ADR-0001 — معماری ترکیبی (Combined Architecture)",
+      "path": "docs/adr/ADR-0001-combined-architecture.md",
+      "machine_readable": false,
+      "sha256": "10ce1147726903ce"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
+      "doc_id": null,
+      "title": "ADR-0002 — مدل مجوزدهی (Licensing)",
+      "path": "docs/adr/ADR-0002-licensing.md",
+      "machine_readable": false,
+      "sha256": "e9ae669fcf8e2795"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
+      "doc_id": null,
+      "title": "ADR-0003 — حداقل نسخهٔ PHP = 8.2",
+      "path": "docs/adr/ADR-0003-php-min-version.md",
+      "machine_readable": false,
+      "sha256": "aa5b2df1b841049d"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
+      "doc_id": null,
+      "title": "ADR-0004 — صفر وابستگی Composer در هسته (Zero Dependency)",
+      "path": "docs/adr/ADR-0004-zero-dependency.md",
+      "machine_readable": false,
+      "sha256": "7589d9aa48127aff"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
+      "doc_id": null,
+      "title": "ADR-0005 — Autoloader خودنوشته با ClassMap Cache",
+      "path": "docs/adr/ADR-0005-custom-autoloader.md",
+      "machine_readable": false,
+      "sha256": "27ad2f94bad077a8"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
+      "doc_id": null,
+      "title": "ADR-0006 — شناسهٔ اصلی: ULID",
+      "path": "docs/adr/ADR-0006-primary-key-ulid.md",
+      "machine_readable": false,
+      "sha256": "ff94319d0b4372b3"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
+      "doc_id": null,
+      "title": "ADR-0007 — ORM دوگانه (Active Record + Repository)",
+      "path": "docs/adr/ADR-0007-dual-orm.md",
+      "machine_readable": false,
+      "sha256": "0366714067a4bbf2"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
+      "doc_id": null,
+      "title": "ADR-0008 — پسوند فایل View: `.tv.php`",
+      "path": "docs/adr/ADR-0008-view-extension.md",
+      "machine_readable": false,
+      "sha256": "91cfeba3d679b996"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
+      "doc_id": null,
+      "title": "ADR-0009 — Outbox به‌عنوان الگوی پیش‌فرض رویداد ناهمزمان",
+      "path": "docs/adr/ADR-0009-outbox-pattern.md",
+      "machine_readable": false,
+      "sha256": "508bfce65c940495"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
+      "doc_id": null,
+      "title": "ADR-0010 — Multi-Tenancy با Strategy Pattern",
+      "path": "docs/adr/ADR-0010-multi-tenancy.md",
+      "machine_readable": false,
+      "sha256": "e503eafe6e56ab55"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
+      "doc_id": null,
+      "title": "ADR-0011 — Context با Fiber-Aware Storage",
+      "path": "docs/adr/ADR-0011-fiber-context.md",
+      "machine_readable": false,
+      "sha256": "3114fc8f0b40ccaf"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
+      "doc_id": null,
+      "title": "ADR-0012 — تقویم جلالی در موتور i18n (نه پکیج خارجی)",
+      "path": "docs/adr/ADR-0012-jalali-calendar.md",
+      "machine_readable": false,
+      "sha256": "ebbd4ad72ac8f88d"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
+      "doc_id": null,
+      "title": "ADR-0013 — بازنمایی پول: int minor-unit + Money Value Object",
+      "path": "docs/adr/ADR-0013-money-representation.md",
+      "machine_readable": false,
+      "sha256": "c378b28650146045"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
+      "doc_id": null,
+      "title": "ADR-0014 — صفر vendor در زمان اجرا",
+      "path": "docs/adr/ADR-0014-no-vendor-runtime.md",
+      "machine_readable": false,
+      "sha256": "d0b6642804db20a7"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
+      "doc_id": null,
+      "title": "ADR-0015 — نسخه‌گذاری API با /api/v1 + Header",
+      "path": "docs/adr/ADR-0015-api-versioning.md",
+      "machine_readable": false,
+      "sha256": "7a261943049759bd"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
+      "doc_id": null,
+      "title": "ADR-0016 — Lazy Proxy بدون eval",
+      "path": "docs/adr/ADR-0016-lazy-proxy-no-eval.md",
+      "machine_readable": false,
+      "sha256": "6ff46a5b05083caf"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
+      "doc_id": "DOC-140",
+      "title": "شاخص تصمیم‌های معماری (ADR Index)",
+      "path": "docs/adr/README.md",
+      "machine_readable": false,
+      "sha256": "2de73b3d854d10c8"
+    },
+    {
+      "section": "templates",
+      "section_label": "قالب‌ها",
+      "doc_id": "DOC-152",
+      "title": "قالب ADR (Architecture Decision Record)",
+      "path": "docs/templates/adr-template.md",
+      "machine_readable": false,
+      "sha256": "bc4795a5e43df4ed"
+    },
+    {
+      "section": "templates",
+      "section_label": "قالب‌ها",
+      "doc_id": "DOC-150",
+      "title": "قالب مستند موتور (Engine Specification Template)",
+      "path": "docs/templates/engine-spec-template.md",
+      "machine_readable": true,
+      "sha256": "b7e408cb350d240a"
+    },
+    {
+      "section": "templates",
+      "section_label": "قالب‌ها",
+      "doc_id": "DOC-151",
+      "title": "قالب ماژول (Module Template)",
+      "path": "docs/templates/module-template.md",
+      "machine_readable": false,
+      "sha256": "4d36871157bc7993"
+    }
+  ]
+}

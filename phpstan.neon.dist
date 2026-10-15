@@ -1,0 +1,11 @@
+# dev-only — PHPStan level max بدون baseline (AC-CON-05)
+parameters:
+    level: max
+    paths:
+        - core
+        - engines
+    excludePaths:
+        analyse:
+            - engines/*/tests
+            - engines/*/benchmarks
+    treatPhpDocTypesAsCertain: false

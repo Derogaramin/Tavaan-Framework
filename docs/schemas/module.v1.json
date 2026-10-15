@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docs.tavaan.dev/schemas/module.v1.json",
+  "title": "Tavaan Module Manifest",
+  "description": "Schema for modules/<name>/module.json — see docs/02-architecture/modular-monolith.md (DOC-022 §3)",
+  "type": "object",
+  "required": ["id", "name", "version", "autoload", "providers"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+\\.[a-z0-9-]+$",
+      "description": "Unique id in <vendor>.<name> form, e.g. tavaan.shop"
+    },
+    "name": { "type": "string", "minLength": 1 },
+    "title_fa": { "type": "string" },
+    "title_en": { "type": "string" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.-]+)?$" },
+    "type": { "type": "string", "enum": ["module", "engine", "kit", "plugin"] },
+    "description": { "type": "string" },
+    "orm_style": { "type": "string", "enum": ["active-record", "repository"] },
+    "authors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "url": { "type": "string", "format": "uri" }
+        }
+      }
+    },
+    "license": { "type": "string" },
+    "homepage": { "type": "string", "format": "uri" },
+
+    "requires": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tavaan": { "type": "string" },
+        "php": { "type": "string", "default": ">=8.2.0" },
+        "engines": { "type": "array", "items": { "type": "string" } },
+        "extensions": { "type": "object", "additionalProperties": { "type": "string" } },
+        "modules": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "conflicts": { "type": "object" },
+    "replaces": { "type": "object" },
+
+    "autoload": {
+      "type": "object",
+      "required": ["psr-4"],
+      "properties": {
+        "psr-4": { "type": "object", "additionalProperties": { "type": "string" } },
+        "files": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "providers": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "deferred": { "type": "boolean", "default": false },
+    "priority": { "type": "integer", "default": 100 },
+
+    "routes": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "views": {
+      "type": "object",
+      "properties": {
+        "namespace": { "type": "string" },
+        "path": { "type": "string" }
+      }
+    },
+    "lang": { "type": "object" },
+    "migrations": { "type": "object" },
+    "seeds": { "type": "object" },
+    "config": { "type": "object" },
+    "assets": { "type": "object" },
+
+    "widgets": { "type": "object", "additionalProperties": { "type": "string" } },
+    "commands": { "type": "array", "items": { "type": "string" } },
+    "jobs": { "type": "array", "items": { "type": "string" } },
+
+    "events": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "published": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "class", "version"],
+            "properties": {
+              "name": { "type": "string", "pattern": "^[a-z0-9_.]+$" },
+              "class": { "type": "string" },
+              "version": { "type": "integer", "minimum": 1 }
+            }
+          }
+        },
+        "subscribed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "listener"],
+            "properties": {
+              "name": { "type": "string" },
+              "listener": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+
+    "permissions": {
+      "type": "object",
+      "properties": {
+        "group": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "title_fa": { "type": "string" }
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["key"],
+            "properties": {
+              "key": { "type": "string", "pattern": "^[a-z0-9_]+\\.[a-z0-9_.*]+$" },
+              "title_fa": { "type": "string" },
+              "title_en": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+
+    "roles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["key"],
+        "properties": {
+          "key": { "type": "string" },
+          "title_fa": { "type": "string" },
+          "permissions": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+
+    "navigation": { "type": "array" },
+    "settings": { "type": "object" },
+
+    "database": {
+      "type": "object",
+      "properties": {
+        "table_prefix": { "type": "string" },
+        "tables": { "type": "array", "items": { "type": "string" } },
+        "seed_on_install": { "type": "boolean" }
+      }
+    },
+
+    "health": {
+      "type": "object",
+      "properties": {
+        "endpoint": { "type": "string" },
+        "checks": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "extractable": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "service_name": { "type": "string" },
+        "api_prefix": { "type": "string" },
+        "events_transport": { "type": "string", "enum": ["outbox", "http", "broker"] }
+      }
+    },
+
+    "install": {
+      "type": "object",
+      "properties": {
+        "steps": { "type": "array", "items": { "type": "string" } },
+        "post_install_command": { "type": "string" }
+      }
+    }
+  }
+}

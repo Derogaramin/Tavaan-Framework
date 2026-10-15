@@ -1,0 +1,17 @@
+# تَوان | Tavaan — Apache
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# 🔒 هیچ فایل PHP دیگری جز index.php اجرا نشود
+<FilesMatch "^(?!index\.php$).*\.php$">
+    Require all denied
+</FilesMatch>
+
+# 🔒 فایل‌های حساس
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>

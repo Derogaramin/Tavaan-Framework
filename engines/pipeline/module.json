@@ -1,0 +1,15 @@
+{
+  "id": "tavaan.engine.pipeline",
+  "type": "engine",
+  "name": "Pipeline",
+  "title_fa": "خط لوله",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Pipeline\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Pipeline\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Pipeline\\PipelineServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["container"]},
+  "config": {"file": "config/pipeline.php", "key": "pipeline"},
+  "tables": [],
+  "commands": [],
+  "docs": "docs/03-engines/pipeline.md"
+}

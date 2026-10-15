@@ -1,0 +1,16 @@
+{
+  "id": "tavaan.engine.container",
+  "type": "engine",
+  "name": "Container",
+  "title_fa": "ظرف سرویس",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Container\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Container\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Container\\ContainerServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": []},
+  "config": {"file": "config/container.php", "key": "container"},
+  "tables": [],
+  "commands": ["container:graph"],
+  "facade": {"name": "App", "accessor": "Tavaan\\Core\\Contracts\\Container\\ContainerInterface"},
+  "docs": "docs/03-engines/container.md"
+}

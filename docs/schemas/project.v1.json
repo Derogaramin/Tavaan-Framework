@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docs.tavaan.dev/schemas/project.v1.json",
+  "title": "Tavaan Project Manifest",
+  "description": "Schema for tavaan.json (project root) — see docs/04-structure/folder-structure.md (DOC-080 §3)",
+  "type": "object",
+  "required": ["name", "version", "tavaan", "php"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "name": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "title_fa": { "type": "string" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.-]+)?$" },
+    "tavaan": { "type": "string", "description": "SemVer constraint of the framework, e.g. ^1.0" },
+    "php": { "type": "string", "default": ">=8.2.0" },
+
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "default": { "type": "string", "enum": ["local", "development", "testing", "staging", "production"] },
+        "debug": { "type": "boolean" },
+        "timezone": { "type": "string" },
+        "locale": { "type": "string" },
+        "fallback_locale": { "type": "string" }
+      }
+    },
+
+    "architecture": {
+      "type": "string",
+      "enum": ["mvc", "hmvc", "modular", "hexagonal"],
+      "description": "See docs/02-architecture/layered-hmvc.md §5"
+    },
+
+    "paths": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+
+    "engines": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required": { "type": "array", "items": { "type": "string" } },
+        "optional": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "modules": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "array", "items": { "type": "string" } },
+        "disabled": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "kits": { "type": "array", "items": { "type": "string" } },
+    "providers": { "type": "string" },
+
+    "scripts": {
+      "type": "object",
+      "additionalProperties": { "type": "array", "items": { "type": "string" } }
+    },
+
+    "build": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "assets": {
+          "type": "object",
+          "properties": {
+            "input": { "type": "string" },
+            "output": { "type": "string" },
+            "hash": { "type": "boolean" }
+          }
+        },
+        "optimizer": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "security": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "plugins_signature_required": { "type": "boolean" },
+        "allowed_plugin_vendors": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

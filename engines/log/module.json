@@ -1,0 +1,17 @@
+{
+  "id": "tavaan.engine.log",
+  "type": "engine",
+  "name": "Log",
+  "title_fa": "گزارش ساختاریافته",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Log\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Log\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Log\\LogServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config"]},
+  "soft_requires": {"engines": ["event", "queue", "database"]},
+  "config": {"file": "config/log.php", "key": "log"},
+  "tables": [],
+  "commands": ["log:tail", "log:clear", "log:stats"],
+  "facade": {"name": "Log", "accessor": "log"},
+  "docs": "docs/03-engines/log.md"
+}

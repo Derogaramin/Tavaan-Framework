@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docs.tavaan.dev/schemas/docs-manifest.v1.json",
+  "title": "Tavaan Docs Manifest",
+  "description": "Machine-readable index of the whole documentation set — see docs/manifest.json",
+  "type": "object",
+  "required": ["framework", "totals", "entry_points", "engines", "catalog"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+
+    "framework": {
+      "type": "object",
+      "required": ["name", "version", "php_min", "dependency_policy"],
+      "properties": {
+        "name": { "const": "Tavaan" },
+        "name_fa": { "type": "string" },
+        "version": { "type": "string" },
+        "php_min": { "type": "string" },
+        "dependency_policy": { "type": "string", "enum": ["zero-external"] },
+        "architectures": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["layered","hmvc","modular-monolith","event-driven","hexagonal"] }
+        }
+      }
+    },
+
+    "generated_note": { "type": "string" },
+
+    "totals": {
+      "type": "object",
+      "required": ["documents", "engines", "schemas", "adrs"],
+      "properties": {
+        "documents": { "type": "integer", "minimum": 1 },
+        "engines": { "type": "integer", "minimum": 1 },
+        "schemas": { "type": "integer", "minimum": 0 },
+        "adrs": { "type": "integer", "minimum": 0 }
+      }
+    },
+
+    "entry_points": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+
+    "reading_paths": {
+      "type": "object",
+      "additionalProperties": { "type": "array", "items": { "type": "string" } }
+    },
+
+    "engines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["engine_id", "slug", "doc"],
+        "additionalProperties": false,
+        "properties": {
+          "engine_id": { "type": "string", "pattern": "^tavaan\\.engine\\.[a-z0-9-]+$" },
+          "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "namespace": { "type": ["string", "null"] },
+          "priority": { "type": ["string", "null"], "enum": ["P0","P1","P2", null] },
+          "phase": { "type": ["string", "null"], "pattern": "^M[0-9]$" },
+          "doc": { "type": "string" }
+        }
+      }
+    },
+
+    "catalog": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["section", "path", "machine_readable", "sha256"],
+        "additionalProperties": false,
+        "properties": {
+          "section": { "type": "string" },
+          "section_label": { "type": "string" },
+          "doc_id": { "type": ["string", "null"] },
+          "title": { "type": "string" },
+          "path": { "type": "string" },
+          "machine_readable": { "type": "boolean" },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{16}$" }
+        }
+      }
+    }
+  }
+}

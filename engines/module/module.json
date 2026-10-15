@@ -1,0 +1,15 @@
+{
+  "id": "tavaan.engine.module",
+  "type": "engine",
+  "name": "Module",
+  "title_fa": "کشف و مدیریت ماژول",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Module\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Module\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Module\\ModuleServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["container", "config"]},
+  "tables": [],
+  "commands": ["module:list", "module:enable", "module:disable", "module:validate"],
+  "facade": {"name": "Module", "accessor": "modules"},
+  "docs": "docs/03-engines/module.md"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "tavaan.engine.test",
+  "type": "engine",
+  "name": "Test",
+  "title_fa": "چارچوب تست خودنوشته",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Testing\\",
+  "autoload": {"psr-4": {"Tavaan\\Testing\\": "src/"}},
+  "providers": [],
+  "requires": {"php": ">=8.2", "engines": []},
+  "tables": [],
+  "commands": ["test"],
+  "docs": "docs/03-engines/test.md",
+  "notes": "حداقل M1: TestCase + Assertion + Native Runner (TVN-0084 در M8 کامل می‌شود)."
+}

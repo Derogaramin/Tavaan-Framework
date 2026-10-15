@@ -1,0 +1,41 @@
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+!.env.testing
+
+# Runtime
+/storage/*
+!/storage/.gitignore
+/storage/cache/*
+/storage/logs/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/app/private/*
+/storage/backups/*
+/storage/temp/*
+!storage/**/.gitignore
+
+# Public uploads
+/public/uploads/*
+!/public/uploads/.gitignore
+
+# Build
+/public/assets/*
+!/public/assets/.gitignore
+/node_modules/
+
+# Tools & dev
+/vendor/
+/tools/vendor/
+.phpunit.result.cache
+.php-cs-fixer.cache
+composer.lock
+
+# IDE/OS
+/.idea/
+/.vscode/
+*.swp
+.DS_Store
+Thumbs.db

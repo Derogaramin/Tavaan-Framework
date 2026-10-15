@@ -1,0 +1,20 @@
+{
+    "name": "tavaan/tavaan",
+    "description": "تَوان | Tavaan — فریمورک PHP 8.2+ صفر‌وابستگی (Zero-Dependency Persian-First Framework)",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.2.0"
+    },
+    "autoload": {},
+    "autoload-dev": {},
+    "scripts": {
+        "lint": "find core engines tests -name '*.php' -print0 | xargs -0 -n1 php -l",
+        "test": "php bin/tvn test"
+    },
+    "config": {
+        "optimize-autoloader": false,
+        "preferred-install": "dist"
+    },
+    "minimum-stability": "stable"
+}

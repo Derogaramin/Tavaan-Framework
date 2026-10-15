@@ -1,0 +1,15 @@
+{
+  "id": "tavaan.engine.compat",
+  "type": "engine",
+  "name": "Compat",
+  "title_fa": "سازگاری و Polyfill",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Compat\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Compat\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Compat\\CompatServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": []},
+  "config": {"file": "config/compat.php", "key": "compat"},
+  "tables": [],
+  "commands": ["doctor"],
+  "docs": "docs/03-engines/compat.md"
+}
