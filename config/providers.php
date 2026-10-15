@@ -17,4 +17,9 @@ return [
     \Tavaan\Engine\Module\ModuleServiceProvider::class,
     \Tavaan\Engine\Optimizer\OptimizerServiceProvider::class,
     \Tavaan\Engine\Console\ConsoleServiceProvider::class,
+    \Tavaan\Engine\Crypt\CryptServiceProvider::class,
+    \Tavaan\Engine\Http\HttpServiceProvider::class,
+    \Tavaan\Engine\I18n\I18nServiceProvider::class,
+    \Tavaan\Engine\Session\SessionServiceProvider::class,
+    \Tavaan\Engine\View\ViewServiceProvider::class,
 ];

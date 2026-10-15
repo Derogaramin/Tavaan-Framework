@@ -161,13 +161,18 @@ interface ResponseInterface
 {
     public function statusCode(): int;
     public function withStatus(int $code, string $reason = ''): static;
-    public function header(string $key, string $value, bool $replace = true): static;
+    // اصلاحیهٔ پیاده‌سازی (M2): getter/setter تفکیک شد — `header()` خواندن و
+    // `withHeader()` تغییر immutable است (ابهام امضای قبلی در عمل غیرقابل پیاده‌سازی بود).
+    public function header(string $key, ?string $default = null): ?string;
+    public function withHeader(string $key, string $value, bool $replace = true): static;
     public function withHeaders(array $headers): static;
     public function body(): string;
     public function withBody(string|StreamInterface $body): static;
     public function withJson(mixed $data, int $status = 200, int $flags = 0): static;
     public function cookie(CookieInterface $cookie): static;
-    public function send(): never;
+    // اصلاحیهٔ پیاده‌سازی (M2): بدون exit — Kernel الگوی sendAndTerminate را
+    // اجرا می‌کند تا terminate() همیشه فرصت اجرا داشته باشد (DOC-039 §4.2).
+    public function send(): void;
     public function isSuccessful(): bool;
     public function isRedirect(): bool;
 }

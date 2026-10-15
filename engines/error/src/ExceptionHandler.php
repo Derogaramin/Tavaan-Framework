@@ -217,12 +217,19 @@ final class ExceptionHandler
         $status = $this->mapper->statusFor($e);
         $renderer = $mode === 'auto' ? $this->negotiate($e) : $mode;
 
-        return match ($renderer) {
-            'cli'   => (new CliRenderer($this->debug))->render($e),
+        $result = match ($renderer) {
+            'cli'   => (new CliRenderer($this->debug))->render($e, $status),
             'json'  => (new JsonRenderer($this->debug, $this->jsonFormat === 'rfc9457'))->render($e, $status),
             'debug' => (new DebugRenderer())->render($e, $status),
             default => (new HtmlRenderer($this->showRefCode, $this->supportUrl))->render($e, $status),
         };
+
+        // هدرهای HttpException (مانند Allow در 405) روی پاسخ منتشر شود
+        if ($e instanceof HttpException && $e->headers !== []) {
+            $result = new RenderResult($result->status, $result->body, $result->contentType, [...$result->headers, ...$e->headers]);
+        }
+
+        return $result;
     }
 
     /** گزارش + رندر با هم (میان‌بر Kernel). */

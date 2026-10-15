@@ -1,0 +1,17 @@
+{
+  "id": "tavaan.engine.view",
+  "type": "engine",
+  "name": "View",
+  "title_fa": "قالب‌ساز tv.php",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\View\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\View\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\View\\ViewServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["event", "i18n", "config"]},
+  "soft_requires": {"engines": ["rbac", "http", "session"]},
+  "config": {"file": "config/view.php", "key": "view"},
+  "tables": [],
+  "commands": ["view:cache", "view:clear", "view:directives"],
+  "facade": {"name": "View", "accessor": "view"},
+  "docs": "docs/03-engines/view.md"
+}

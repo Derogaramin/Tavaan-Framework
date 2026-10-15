@@ -1,0 +1,17 @@
+{
+  "id": "tavaan.engine.session",
+  "type": "engine",
+  "name": "Session",
+  "title_fa": "نشست",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Session\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Session\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Session\\SessionServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["http", "crypt", "config"]},
+  "config": {"file": "config/session.php", "key": "session"},
+  "tables": ["sessions"],
+  "commands": ["session:clear"],
+  "facade": {"name": "Session", "accessor": "session"},
+  "docs": "docs/03-engines/session.md",
+  "notes": "درایورهای database/redis در M3/M4. درایورهای فعلی: file/cookie/array."
+}

@@ -1,0 +1,16 @@
+{
+  "id": "tavaan.engine.cookie",
+  "type": "engine",
+  "name": "Cookie",
+  "title_fa": "کوکی رمزنگاری‌شده",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Http\\Cookie\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Http\\Cookie\\": "../http/src/Cookie/"}},
+  "providers": [],
+  "requires": {"php": ">=8.2", "engines": ["http", "crypt"]},
+  "tables": [],
+  "commands": [],
+  "facade": {"name": "Cookie", "accessor": "cookie"},
+  "docs": "docs/03-engines/cookie.md",
+  "notes": "کد در engines/http/src/Cookie (namespace مطابق DOC-042)."
+}

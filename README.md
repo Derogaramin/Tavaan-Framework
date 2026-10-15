@@ -3,7 +3,7 @@
 فریمورک PHP 8.2+ **صفر‌وابستگی**، فارسی‌اول و ماژولار — بدون یک پکیج خارجی در زمان اجرا.
 
 > پیاده‌سازی بر اساس مستندات رسمی: [Tavaan-Doc](https://github.com/Derogaramin/Tavaan-Doc)
-> وضعیت فعلی: **فاز M1 (هستهٔ صفر‌وابستگی) — تکمیل و سبز** ✅
+> وضعیت فعلی: **فاز M1 (هسته) + M2 (وب) — تکمیل و سبز** ✅ — «سلام دنیا»ی وب با View/Session/Router بالا آمده است
 
 ---
 
@@ -26,7 +26,9 @@ php bin/tvn about          # اطلاعات محیط
 php bin/tvn doctor         # سلامت افزونه‌ها/مجوزها
 php bin/tvn test           # اجرای همهٔ تست‌ها
 php bin/tvn optimize       # تولید کش‌ها (config + classmap)
-php -S 127.0.0.1:8000 -t public   # (تا M2: صفحهٔ خوش‌آمد)
+php bin/tvn route:list     # فهرست روت‌ها
+php bin/tvn serve          # سرور توسعه
+php bin/tvn serve                 # سرور توسعه → http://127.0.0.1:8000 (صفحهٔ خوش‌آمد فارسی)
 ```
 
 **نیازمندی‌ها:** PHP ≥ 8.2 با حداقل افزونه‌های `pdo`, `openssl`, `json`, `hash`, `mbstring` — بقیه fallback خالص PHP دارد (موتور `compat`).
@@ -36,10 +38,27 @@ php -S 127.0.0.1:8000 -t public   # (تا M2: صفحهٔ خوش‌آمد)
 | فاز | نام | وضعیت |
 |---|---|---|
 | **M1** | هستهٔ صفر‌وابستگی (container, config, event, pipeline, error, log, compat, optimizer, module, console) | ✅ **انجام شد** |
-| M2 | وب (http, router, session, cookie, view, i18n, jalali, cors) | ⏳ بعدی |
+| **M2** | وب (http, router, session, cookie, view, i18n, jalali, cors) + crypt (پیش‌نیاز زودهنگام) | ✅ **انجام شد** |
 | M3 | داده (database, schema, migration, orm, pagination, validation) | — |
 | M4 | امنیت/هویت (crypt, hash, auth, rbac, security, cache, audit) | — |
 | M5..M9 | صف/سرویس‌ها/دامنه/ابزار/اپلیکیشن‌ها | — |
+
+### معیارهای پذیرش M2 (نتایج اندازه‌گیری‌شده)
+
+| معیار | هدف | نتیجه |
+|---|---|---|
+| Hello World وب (سربار هر درخواست) | ≤ ۳ms | ✅ **۰٫۱ms** (~۹۶۰۰ RPS تئوری تک‌فرایند) |
+| Route match با ۱۰۰۰ روت | ≤ ۵µs | ✅ ۲٫۴µs (parametric: ۳٫۰µs) |
+| ساخت Trie از ۱۰۰۰ روت | ≤ ۱۵ms | ✅ ۸٫۰ms |
+| Session secure + CSRF-ready | ✅ | ✅ HttpOnly/SameSite/Fingerprint/Regeneration + ۴۱۹ |
+| View با auto-escape | ۰ XSS | ✅ (XSS fuzz + escape در attribute/JSON) |
+| تقویم جلالی | ۱۰۰٪ دقیق | ✅ ۸۰۰۰ نمونه intl parity + ۱۰۰۰۰ roundtrip |
+| کامپایل قالب ۱۰۰ خطی | ≤ ۳ms | ✅ ۰٫۴۳ms |
+| رندر قالب کامپایل‌شده | ≤ ۰٫۵ms | ✅ ۰٫۲۰ms |
+| ETag/304 + gzip | ✅ | ✅ |
+| CORS preflight + origin allowlist | ✅ | ✅ (origin متخلف → بدون هدر) |
+
+> ⚠️ درایورهای session روی database/redis در M3/M4 کامل می‌شوند (اکنون: file/cookie/array).
 
 ### معیارهای پذیرش M1 (نتایج اندازه‌گیری‌شده)
 
@@ -53,7 +72,7 @@ php -S 127.0.0.1:8000 -t public   # (تا M2: صفحهٔ خوش‌آمد)
 | ۱۰۰۰ make متوالی | ≤ ۱ms | ✅ ۰٫۱۶ms |
 | ClassMap cache | ≥ ۷۰٪ سریع‌تر | ✅ ۹۰٫۶٪ |
 | Event dispatch + priority/wildcard قطعی | ✅ | ✅ |
-| تست‌های M1 | سبز | ✅ ۱۵۵ تست / ۳۶۲ assertion |
+| تست‌های M1 | سبز | ✅ (مجموع فعلی: ۳۰۲ تست / ۷۷۹ assertion) |
 | صفر `eval`/`putenv` | ✅ | ✅ (gate خودکار) |
 
 > ⚠️ Outbox/Inbox موتور Event به موتور database (M3) وابسته است و در M3 فعال می‌شود.
@@ -72,9 +91,9 @@ tools/scripts/     ← lint، check-forbidden، bench
 docs/              ← مستندات (کپی SSOT از Tavaan-Doc)
 ```
 
-## دستورات CLI موجود (M1)
+## دستورات CLI موجود (M1+M2)
 
-`list` `about` `version` `env` `doctor` `optimize` `optimize:clear` `config:cache` `config:clear` `autoload:cache` `module:list` `event:list` `test`
+`list` `about` `version` `env` `doctor` `optimize` `optimize:clear` `config:cache` `config:clear` `autoload:cache` `module:list` `event:list` `test` `serve` `route:list` `route:cache` `route:clear` `route:match` `view:cache` `view:clear` `key:generate`
 
 ## توسعه
 
@@ -84,10 +103,13 @@ php tools/scripts/check-forbidden.php   # gate موارد ممنوعه (DOC-010)
 php bin/tvn test                        # Native Test Runner
 php engines/container/benchmarks/container.bench.php
 php tools/scripts/bench-autoload.php
+php engines/http/benchmarks/router.bench.php
+php engines/http/benchmarks/kernel.bench.php
+php engines/view/benchmarks/render.bench.php
 ```
 
 قواعد کد: `docs/01-standards/` — هر فایل با `declare(strict_types=1)`، یک کلاس در هر فایل، استثنا با `messageId` (نه متن خام)، پول = int minor-unit.
 
 ## پروانه
 
-MIT — نگارش 0.1.0 (پیش از 1.0؛ API ممکن است بر اساس ADRها تکامل یابد)
+MIT — نگارش 0.2.0 (پیش از 1.0؛ API ممکن است بر اساس ADRها تکامل یابد)

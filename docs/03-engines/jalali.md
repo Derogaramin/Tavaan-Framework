@@ -86,11 +86,16 @@ public static function jalaliToGregorian(int $jy, int $jm, int $jd): array
 
 ### ۲٫۲ سال کبیسهٔ جلالی
 ```php
+/**
+ * ⚠️ اصلاحیهٔ پیاده‌سازی (۱۴۰۵/۰۷): فرمول محاسبهٔ ۲۸۲۰‌سالهٔ ساده برای برخی
+ * سال‌ها از جمله ۱۴۰۳ خطا می‌دهد (۱۴۰۳ کبیسه است ولی فرمول زیر false می‌دهد).
+ * پیاده‌سازی مرجع تَوان از الگوریتم breaks-based کتابخانهٔ jalaali-js
+ * (ارجاع §11) استفاده می‌کند که ۱۰۰٪ با تقویم رسمی و intl مطابقت دارد:
+ * jalCal(jy) با جدول شکست‌های ۳۳‌ساله؛ isLeap ⟺ jalCal(jy).leap === 0.
+ */
 public static function isLeapJalali(int $jy): bool
 {
-    // الگوریتم ۳۳‌ساله (دقیق‌تر از ۴‌ساله)
-    $mod = (($jy - ($jy > 0 ? 474 : 473)) % 2820) + 474 + 38;
-    return ((($mod * 682) % 2816) < 682);
+    return self::jalCal($jy)['leap'] === 0;   // breaks-based (jalaali-js)
 }
 public static function jalaliMonthLength(int $jy, int $jm): int
 {
@@ -210,7 +215,7 @@ final class Clock
 public const array VECTORS = [
     // [gregorian, jalali]
     [[2026,10,15], [1405,7,23]],
-    [[2025,3,20], [1404,1,1]],      // نوروز
+    [[2025,3,21], [1404,1,1]],      // نوروز ۱۴۰۴ (اعتدال ۲۰۲۵-۰۳-۲۰ پس از ظهر → نوروز جمعه ۲۱ مارس؛ ۱۴۰۳ کبیسه و اسفند ۳۰ روزه)
     [[2024,3,20], [1403,1,1]],
     [[2021,3,21], [1400,1,1]],
     [[2020,3,20], [1399,1,1]],      // ۱۳۹۹ کبیسه

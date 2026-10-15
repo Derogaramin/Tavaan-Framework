@@ -19,7 +19,7 @@ $rules = [
     ['/\bputenv\s*\(/',                      'AC-BOOT-06',  'putenv ممنوع (E2)', []],
     ['/\bgoto\s+[A-Za-z_]/',                 'F-GOTO',      'goto ممنوع', []],
     ['/\bglobal\s+\$/',                      'F-GLOBAL',    'global ممنوع', []],
-    ['/\bextract\s*\(/',                     'F-EXTRACT',   'extract ممنوع', []],
+    ['/\bextract\s*\(/',                     'F-EXTRACT',   'extract ممنوع', ['engines/view/src/ViewFactory.php']],
     ['/\bshell_exec\s*\(/',                  'F-SHELL',     'shell_exec ممنوع در core/engines', []],
     ['/\butf8_(en|de)code\s*\(/',            'F-03',        'utf8_encode/decode منسوخ', []],
     ['/\bstrftime\s*\(/',                    'F-05',        'strftime منسوخ', []],

@@ -1,0 +1,15 @@
+{
+  "id": "tavaan.engine.jalali",
+  "type": "engine",
+  "name": "Jalali",
+  "title_fa": "تقویم جلالی",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\I18n\\Jalali\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\I18n\\Jalali\\": "../i18n/src/Jalali/"}},
+  "providers": [],
+  "requires": {"php": ">=8.2", "engines": ["i18n"]},
+  "tables": [],
+  "commands": [],
+  "docs": "docs/03-engines/jalali.md",
+  "notes": "کد در engines/i18n/src/Jalali (namespace مطابق DOC-070). الگوریتم breaks-based jalaali-js — تطبیق ۱۰۰٪ با intl."
+}

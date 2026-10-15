@@ -191,6 +191,8 @@ final class ConsoleKernel implements KernelInterface
         $patterns = [
             $base . '/app/src/Console/Commands/*Command.php',
             $base . '/modules/*/src/Console/Commands/*Command.php',
+            $base . '/engines/*/src/Console/*Command.php',
+            $base . '/engines/*/src/Console/Commands/*Command.php',
         ];
 
         foreach ($patterns as $pattern) {

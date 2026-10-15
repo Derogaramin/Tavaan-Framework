@@ -1,0 +1,16 @@
+{
+  "id": "tavaan.engine.i18n",
+  "type": "engine",
+  "name": "I18n",
+  "title_fa": "بین‌المللی‌سازی",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\I18n\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\I18n\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\I18n\\I18nServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config"]},
+  "config": {"file": "config/i18n.php", "key": "i18n"},
+  "tables": [],
+  "commands": ["lang:check"],
+  "facade": {"name": "Lang", "accessor": "translator"},
+  "docs": "docs/03-engines/i18n.md"
+}

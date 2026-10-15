@@ -25,6 +25,8 @@ return [
     'files' => [
         'core/Support/helpers.php',
         'engines/config/src/helpers.php',
+        'engines/i18n/src/helpers.php',
+        'engines/http/src/helpers.php',
     ],
     'exclude' => [
         'tests/*', 'Tests/*', 'docs/*', 'examples/*', 'benchmarks/*',

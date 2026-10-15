@@ -1,0 +1,17 @@
+{
+  "id": "tavaan.engine.router",
+  "type": "engine",
+  "name": "Router",
+  "title_fa": "مسیریاب Compiled Trie",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Http\\Routing\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Http\\Routing\\": "../http/src/Routing/"}},
+  "providers": [],
+  "requires": {"php": ">=8.2", "engines": ["http", "container", "config"]},
+  "config": {"file": "config/router.php", "key": "router"},
+  "tables": [],
+  "commands": ["route:list", "route:cache", "route:clear", "route:match"],
+  "facade": {"name": "Route", "accessor": "router"},
+  "docs": "docs/03-engines/router.md",
+  "notes": "کد در engines/http/src/Routing (namespace مطابق DOC-040 machine block)."
+}

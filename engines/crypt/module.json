@@ -1,0 +1,17 @@
+{
+  "id": "tavaan.engine.crypt",
+  "type": "engine",
+  "name": "Crypt",
+  "title_fa": "رمزنگاری",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Crypt\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Crypt\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Crypt\\CryptServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config"], "extensions": ["openssl"]},
+  "config": {"file": "config/crypt.php", "key": "crypt"},
+  "tables": [],
+  "commands": ["key:generate", "key:rotate"],
+  "facade": {"name": "Crypt", "accessor": "encrypter"},
+  "docs": "docs/03-engines/crypt.md",
+  "notes": "زودتر از فاز M4 ساخته شد (پیش‌نیاز cookie/session در M2)."
+}

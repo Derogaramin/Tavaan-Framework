@@ -65,6 +65,11 @@ final class DebugRenderer
                 . $this->esc($p->getMessage()) . ' <span class="dim">@ ' . $this->esc($p->getFile()) . ':' . $p->getLine() . '</span></p></div>';
         }
 
+        $phpVersion = PHP_VERSION . ' (' . PHP_SAPI . ')';
+        $tavaanVersion = \defined('TVN_VERSION') ? (string) \TVN_VERSION : '?';
+        $memoryMb = \round(\memory_get_peak_usage(true) / 1048576, 1) . ' MB';
+        $currentTime = \date('c');
+
         $html = <<<HTML
 <!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -102,10 +107,10 @@ td.f{color:#38bdf8;direction:ltr;text-align:left}
 {$contextSection}
 {$previous}
 <div class="section"><h2>Environment</h2><table class="kv">
-<tr><td>PHP</td><td>" . PHP_VERSION . ' (' . PHP_SAPI . ")</td></tr>
-<tr><td>Tavaan</td><td>" . (\defined('TVN_VERSION') ? (string) \TVN_VERSION : '?') . "</td></tr>
-<tr><td>Memory</td><td>" . \round(\memory_get_peak_usage(true) / 1048576, 1) . " MB</td></tr>
-<tr><td>Time</td><td>" . \date('c') . "</td></tr>
+<tr><td>PHP</td><td>{$phpVersion}</td></tr>
+<tr><td>Tavaan</td><td>{$tavaanVersion}</td></tr>
+<tr><td>Memory</td><td>{$memoryMb}</td></tr>
+<tr><td>Time</td><td>{$currentTime}</td></tr>
 </table></div>
 </main></body></html>
 HTML;

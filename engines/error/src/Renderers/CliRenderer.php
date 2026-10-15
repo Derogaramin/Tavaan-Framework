@@ -21,7 +21,7 @@ final class CliRenderer
     {
     }
 
-    public function render(\Throwable $e): RenderResult
+    public function render(\Throwable $e, int $status = 500): RenderResult
     {
         $red = "\033[31m";
         $yellow = "\033[33m";
@@ -64,6 +64,6 @@ final class CliRenderer
                 . ' at ' . $previous->getFile() . ':' . $previous->getLine() . $reset . PHP_EOL;
         }
 
-        return new RenderResult(status: 1, body: $out, contentType: 'text/plain');
+        return new RenderResult(status: $status, body: $out, contentType: 'text/plain');
     }
 }
