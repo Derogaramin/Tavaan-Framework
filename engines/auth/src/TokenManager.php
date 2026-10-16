@@ -205,6 +205,22 @@ final class TokenManager
         return $record === null || (int) $record['revoked'] === 1;
     }
 
+    /**
+     * فقط توکن‌های «ثبت‌شده و revoked» → برای revocation hook در JwtEncoder.
+     * توکن stateless بدون رکورد (encode مستقیم) با ساختار معتبر پذیرفته می‌شود
+     * (رفتار استاندارد JWT)؛ ابطال فقط برای توکن‌های manager-issued معنا دارد.
+     */
+    public function isKnownRevoked(string $jti): bool
+    {
+        if ($jti === '') {
+            return false;
+        }
+
+        $record = $this->db->table($this->table)->where('jti', $jti)->first();
+
+        return $record !== null && (int) $record['revoked'] === 1;
+    }
+
     /** پاک‌سازی توکن‌های منقضی (GC). */
     public function prune(): int
     {

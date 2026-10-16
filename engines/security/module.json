@@ -1,0 +1,18 @@
+{
+  "id": "tavaan.engine.security",
+  "type": "engine",
+  "name": "Security",
+  "title_fa": "امنیت عرضی (CSRF/RateLimit/Sanitizer/SSRF)",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Security\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Security\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Security\\SecurityServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["http", "crypt", "cache", "config"]},
+  "soft_requires": {"engines": ["session", "router"]},
+  "config": {"file": "config/security.php", "key": "security"},
+  "tables": [],
+  "commands": [],
+  "facade": {"name": "Security", "accessor": "security"},
+  "docs": "docs/03-engines/security.md",
+  "notes": "M4 — CSRF (double-submit)، RateLimit (sliding/fixed/token-bucket)، Security Headers، HTML Sanitizer خالص (allowlist)، SSRF Guard با DNS pinning، Input Normalizer، Signature."
+}

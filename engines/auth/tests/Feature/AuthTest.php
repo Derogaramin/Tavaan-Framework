@@ -54,6 +54,9 @@ final class AuthTest extends TestCase
         ]);
         $config->set('auth.otp', ['length' => 6, 'ttl' => 120, 'channel' => 'array']);
         $config->set('auth.throttle.login', ['max' => 3, 'decay' => 60, 'lock' => 300]);
+        // پارامتر سبک argon2 برای سرعت تست (در prod: 64MB/t=4)
+        $config->set('hash.argon2id', ['memory_cost' => 1024, 'time_cost' => 2, 'threads' => 1]);
+        $config->set('hash.driver', 'argon2id');
 
         $db = $this->app->make('db')->connection();
         $schema = $this->app->make('schema');
@@ -405,7 +408,7 @@ final class AuthTest extends TestCase
         $this->assertSame('07081804', $totp->generate($secret, 1111111109));
         $this->assertSame('14050471', $totp->generate($secret, 1111111111));
         $this->assertSame('89005924', $totp->generate($secret, 1234567890));
-        $this->assertSame('69279032', $totp->generate($secret, 2000000000));
+        $this->assertSame('69279037', $totp->generate($secret, 2000000000));   // RFC 6238 Appendix B
 
         // verify در همان زمان
         $this->assertTrue($totp->verify($secret, '94287082', 59));
@@ -466,7 +469,7 @@ final class AuthTest extends TestCase
     public function testSameFailureForMissingUserAndWrongPassword(): void
     {
         $events = [];
-        $this->app->make(DispatcherInterface::class)->listen('auth.login.failed', function (array $payload) use (&$events): void {
+        $this->app->make(DispatcherInterface::class)->listen('auth.login.failed', function (string $event, array $payload) use (&$events): void {
             $events[] = $payload['reason'] ?? '';
         });
 
@@ -528,9 +531,8 @@ final class AuthTest extends TestCase
         });
 
         // linkSender تست: token را ضبط کن
-        $reflection = new \ReflectionProperty(AuthManager::class, 'passwordBroker');
         $broker = new \Tavaan\Engine\Auth\Passwords\PasswordBroker(
-            $this->app->make('db'),
+            $this->app->make('db')->connection(),
             $this->auth->provider('users'),
             $this->app->make('hash'),
             'password_resets',
@@ -563,7 +565,6 @@ final class AuthTest extends TestCase
 
         // ایمیل ناموجود → همان «sent» (ضد enumeration)
         $this->assertSame('auth.reset.sent', $broker->sendResetLink('ghost@test.io'));
-        unset($reflection);
     }
 
     public function testLogoutOtherDevicesRequiresPassword(): void
@@ -578,7 +579,7 @@ final class AuthTest extends TestCase
     public function testLoginEventsDispatched(): void
     {
         $events = [];
-        $this->app->make(DispatcherInterface::class)->listen('auth.login.succeeded', function (array $p) use (&$events): void {
+        $this->app->make(DispatcherInterface::class)->listen('auth.login.succeeded', function (string $event, array $payload) use (&$events): void {
             $events[] = 'succeeded';
         });
         $this->app->make(DispatcherInterface::class)->listen('auth.logout', function () use (&$events): void {

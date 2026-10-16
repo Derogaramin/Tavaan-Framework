@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tavaan\Core\Facade\Facades;
 
-use Tavaan\Core\Facades\Facade;
+use Tavaan\Core\Facade\Facade;
 
 /**
  * Facade حافظهٔ نهان (Cache).

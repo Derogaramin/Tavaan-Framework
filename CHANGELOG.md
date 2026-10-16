@@ -2,6 +2,28 @@
 
 فرمت: Keep a Changelog — نسخه‌گذاری: SemVer.
 
+## [0.4.0] - 2026-10-16 — فاز M4: امنیت و هویت
+
+### افزوده شد
+- **TVN-0055 Hash**: `HashManager` با **Argon2id** (64MB/t=4/threads=1) پیش‌فرض + bcrypt fallback (cost≥10 اجباری)، `needsRehash` برای ارتقای تدریجی پارامترها، `info`، Facade `Hash`
+- **TVN-0060 Cache**: **۶ درایور** (array/file با flock+atomic-rename/database با UNIQUE-atomic/redis/apcu/memcached) با **fallback خودکار به file بدون crash** وقتی extension نیست، `CacheRepository` با **Stampede Protection** (lock+double-check+serve-stale+retry محدود)، **Tagging** با الگوریتم namespace (flush تگ = identifier جدید)، `CacheLock` اتمیک owner-based (release فقط توسط مالک)، TTL با Clock (تست‌پذیر)، 🔒 payload فقط JSON (ضد Object Injection — حتی فایل tamper شده = miss)، سقف max_key_length/max_value_size، `cache:clear`
+- **TVN-0056 Auth**: `AuthManager` چند-Guard (web/api/admin)، `SessionGuard` با **Session Hardening** (regenerate ضد fixation، fingerprint UA+Accept-Language، چرخش توکن CSRF در login، throttle+lockout، پیام یکسان ضد User-Enumeration)، `TokenGuard` (Bearer JWT)، **`JwtEncoder` خودنوشته** با **Algorithm Pinning** (رد `alg=none` و confusion RS256→HS256؛ exp/nbf/iss/aud/jti + leeway)، `TokenManager` با **Refresh Rotation + Reuse Detection** (استفادهٔ مجدد → revoke کل family + رویداد `auth.token.reuse_detected`)، **OTP** یک‌بارمصرف (کد CSPRNG، فقط هش در cache، TTL، rate limit، masked target)، **TOTP RFC 6238** (همهٔ test vectors سبز) + `TwoFactorManager` (secret رمزنگاری‌شده، confirm، کدهای بازیابی هش‌شدهٔ یک‌بارمصرف)، `DeviceManager` (record/list/revoke با fingerprint)، `PasswordBroker` (توکن یک‌بارمصرف هش‌شده، انقضا، ضد enumeration)، `register` با هش خودکار، `logoutOtherDevices` با تأیید رمز، `DatabaseUserProvider` (model ORM یا GenericUser + 🔒 dummy-verify ضد timing leak + **rehash خودکار**)، `AuthenticateMiddleware` (JSON→401 / وب→redirect login)، جداول password_resets/personal_access_tokens/user_devices/two_factor_secrets + migration
+- **TVN-0057 RBAC**: `Gate` (define/policy/before/after/allows/denies/check/any/authorize→403/forUser + نگاشت متدهای Policy)، `PermissionResolver` با **الگوریتم مؤثر** (نقش‌ها + سلسله‌مراتب با max_depth و محافظ چرخه + **wildcard** `shop.*` + **delegation** موقت) و کش (invalidate در تغییر)، `RoleManager` (create/assign/remove با انقضا و سقف مدت، grant/revoke permission، delegate/revokeDelegation)، **super-admin bypass** پیکربندی‌پذیر، `PermissionSync` از manifest ماژول‌ها (`rbac:sync`)، `HasRoles` trait (hasRole/hasAnyRole/hasPermission/permissions/can/cannot/assignRole/isSuperAdmin)، **`OwnershipScope`** (Row-Level — ناشناس → `0=1` deny-by-default؛ نشت = ۰)، ۵ جدول tvn_* + migration
+- **TVN-0059 Security**: `CsrfManager` (token/field/rotate/verify با hash_equals + **Double-Submit Cookie** رمزنگاری‌شده)، `CsrfVerifyMiddleware` config-driven (except با wildcard + متدهای safe)، `RateLimiter` با **۳ الگوریتم** (Sliding-Log دقیق/Fixed Window/Token Bucket) روی cache + `ThrottleMiddleware` (**۴۲۹ با Retry-After و X-RateLimit-\***), `SecurityHeadersMiddleware` (CSP/HSTS فقط-HTTPS/nosniff/DENY/Referrer/Permissions/COOP/CORP + حذف X-Powered-By و Server)، **`HtmlSanitizer` خالص** (allowlist تگ/attribute/پروتکل، حذف on\* و javascript: حتی entity-encoded، حذف script/iframe/svg با محتوا، escape متن stray، strict escape_all)، **`SsrfGuard`** (۱۲+ CIDR مسدود شامل cloud metadata 169.254.169.254، hostnameهای محلی، IPv6 براکت‌دار، userinfo trick، بررسی **همهٔ** IPهای resolve شده ضد DNS rebinding، allowlist دامنه، **resolvePinned** برای اتصال مستقیم)، `InputNormalizer` (NFKC + حذف bidi/Trojan-Source/zero-width با **حفظ ZWNJ فارسی** + ارقام عربی/فارسی→لاتین + ی/ک + null byte)، `Security::sign/validateSignature` (سازگار با signed-URL روتر، expires)، Facade `Security`
+- **TVN-0058 Audit**: `Auditor` با **زنجیرهٔ هش HMAC** (`hash[i] = HMAC(key, hash[i-1] | payload)` — payload کانونیکال)، GENESIS hash، `verify()` با cursor (حافظهٔ ثابت — ۱۰۰۰۰ رکورد سریع)، تشخیص دستکاری **و حذف** رکورد، کلید audit جدا از APP_KEY (config یا HKDF fallback)، `exclude_fields` → `[REDACTED]` پیش از hash (PII نشت نمی‌کند)، `AuditObserver` خودکار مدل‌ها (created/updated/deleted با diff دقیق از `previousOriginal`)، Attribute `#[Observed(fields:…)]`، export (خودش ممیزی می‌شود)/prune/find، CLI `audit:verify` `audit:export` `audit:prune` `audit:show`، جدول tvn_audit_logs + migration
+- **Outbox (وعدهٔ M1 — ADR-0009)**: `DatabaseOutbox` روی `tvn_outbox`/`tvn_inbox` — store درون تراکنش کسب‌وکار (**rollback → ۰ رویداد**، AC-EVT-05)، claim اتمیک با owner token (**دو worker → هر رویداد یک‌بار**، AC-EVT-07)، backoff نمایی + max_attempts + failed، `releaseStale` (crash recovery)، `event:outbox-relay`
+- **TVN-0022 (تکمیل نهایی)**: درایور `redis` نشست روی موتور cache (`CacheHandler` — JSON-only + TTL)
+- **Facades**: `Hash` `Cache` `Auth` `Gate` `Security` `Audit` • **مثال**: `examples/auth/login-rbac.php` (خروجی کلیدی M4 — register→login→RBAC→Gate→JWT→reuse-detection→TOTP→audit tamper-detect)
+
+### تغییر یافت
+- `Crypt` اکنون رسماً `EncrypterInterface` را پیاده می‌کند (contract-first)
+- `GenericUser` غیرfinal (گسترش با trait HasRoles)
+- `Model`: `changes`/`previousOriginal` برای diff دقیق Observer/Audit (پس از syncOriginal هم معتبر)
+- `Request`: accessor محافظت‌شدهٔ `postBag()` (برای FormRequest::merge)
+
+### نتایج
+- ۵۴۴ تست / ۲۷۳۶ assertion سبز • TOTP ۱۰۰٪ RFC 6238 • JWT alg-confusion/none رد • reuse detection + family revoke • hash-chain tamper/delete تشخیص • SSRF metadata/rebinding رد • ۶۷۶ فایل lint پاک • gate ممنوعه‌ها سبز • ۳۱/۳۱ موتور فعال
+
 ## [0.3.0] - 2026-10-16 — فاز M3: داده
 
 ### افزوده شد

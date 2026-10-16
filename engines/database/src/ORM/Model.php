@@ -103,6 +103,12 @@ abstract class Model implements ModelInterface
     /** @var array<string, mixed> آخرین وضعیت همگام‌شده با DB */
     protected array $original = [];
 
+    /** @var array<string, mixed> تغییرات آخرین save (برای Observerها/audit) */
+    protected array $changes = [];
+
+    /** @var array<string, mixed> مقادیر پیشین فیلدهای تغییرکرده (پیش از syncOriginal) */
+    protected array $previousOriginal = [];
+
     /** @var array<string, mixed> کش رابطه‌ها */
     protected array $relations = [];
 
@@ -566,6 +572,7 @@ abstract class Model implements ModelInterface
         }
 
         $this->exists = true;
+        $this->changes = $this->castChanges($this->attributes);
         $this->syncOriginal();
         $this->fireModelEvent('created');
 
@@ -594,6 +601,9 @@ abstract class Model implements ModelInterface
         foreach ($dirty as $key => $value) {
             $this->attributes[$key] = $value;
         }
+        // 🔒 changes و مقادیر پیشین پیش از syncOriginal ثبت شوند (Observer/Audit به diff نیاز دارند)
+        $this->changes = $this->castChanges($dirty);
+        $this->previousOriginal = \array_intersect_key($this->original, $dirty);
         $this->syncOriginal();
         $this->fireModelEvent('updated');
 
@@ -814,9 +824,18 @@ abstract class Model implements ModelInterface
         return !$this->isDirty($attribute);
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * تغییرات آخرین save (پس از syncOriginal هم معتبر است — برای Observer/Audit).
+     *
+     * @return array<string, mixed>
+     */
     public function getChanges(): array
     {
+        if ($this->changes !== []) {
+            return $this->changes;
+        }
+
+        // هنوز save نشده → diff زنده
         $changes = [];
         foreach ($this->attributes as $key => $value) {
             if (!\array_key_exists($key, $this->original) || $this->original[$key] !== $value) {
@@ -825,6 +844,31 @@ abstract class Model implements ModelInterface
         }
 
         return $changes;
+    }
+
+    /**
+     * مقادیر «پیشین» فیلدهای تغییرکرده در آخرین update (برای diff ممیزی).
+     *
+     * @return array<string, mixed>
+     */
+    public function getPreviousOriginal(): array
+    {
+        return $this->previousOriginal;
+    }
+
+    /**
+     * @param array<string, mixed> $values
+     *
+     * @return array<string, mixed>
+     */
+    private function castChanges(array $values): array
+    {
+        $out = [];
+        foreach ($values as $key => $value) {
+            $out[$key] = $this->castAttribute((string) $key, $value);
+        }
+
+        return $out;
     }
 
     /** @return array<string, mixed> */

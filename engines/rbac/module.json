@@ -1,0 +1,17 @@
+{
+  "id": "tavaan.engine.rbac",
+  "type": "engine",
+  "name": "RBAC",
+  "title_fa": "نقش و کنترل دسترسی",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Rbac\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Rbac\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Rbac\\RbacServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["auth", "database", "cache", "event", "config"]},
+  "config": {"file": "config/rbac.php", "key": "rbac"},
+  "tables": ["tvn_permissions", "tvn_roles", "tvn_role_user", "tvn_permission_role", "tvn_delegations"],
+  "commands": ["rbac:sync"],
+  "facade": {"name": "Gate", "accessor": "gate"},
+  "docs": "docs/03-engines/rbac.md",
+  "notes": "M4 — RBAC+ABAC با Gate/Policy، سلسله‌مراتب نقش، wildcard، delegation موقت، Row-Level Scope، sync از manifest ماژول‌ها."
+}

@@ -90,7 +90,12 @@ final class PasswordBroker
             return self::INVALID_TOKEN;
         }
 
-        $createdAt = \strtotime((string) $record['created_at']) ?: 0;
+        // 🔒 created_at به UTC ذخیره می‌شود → پارس در UTC (نه timezone محلی)
+        try {
+            $createdAt = (new \DateTimeImmutable((string) $record['created_at'], new \DateTimeZone('UTC')))->getTimestamp();
+        } catch (\Exception) {
+            $createdAt = 0;
+        }
         if (Clock::timestamp() - $createdAt > $this->expireSeconds) {
             $this->db->table($this->table)->where('email', $email)->delete();
 

@@ -187,7 +187,7 @@ final class AuthManager
         return $this->jwtEncoder ??= new JwtEncoder(
             (string) ($this->config?->get('app.key', '') ?? ''),
             (array) ($this->config?->get('auth.jwt', []) ?? []),
-            fn (string $jti): bool => $this->token()->isRevoked($jti),
+            fn (string $jti): bool => $this->token()->isKnownRevoked($jti),
         );
     }
 

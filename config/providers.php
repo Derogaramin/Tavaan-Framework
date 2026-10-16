@@ -30,4 +30,7 @@ return [
     \Tavaan\Engine\Hash\HashServiceProvider::class,
     \Tavaan\Engine\Cache\CacheServiceProvider::class,
     \Tavaan\Engine\Auth\AuthServiceProvider::class,
+    \Tavaan\Engine\Rbac\RbacServiceProvider::class,
+    \Tavaan\Engine\Security\SecurityServiceProvider::class,
+    \Tavaan\Engine\Audit\AuditServiceProvider::class,
 ];

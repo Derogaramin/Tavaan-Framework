@@ -3,7 +3,7 @@
 فریمورک PHP 8.2+ **صفر‌وابستگی**، فارسی‌اول و ماژولار — بدون یک پکیج خارجی در زمان اجرا.
 
 > پیاده‌سازی بر اساس مستندات رسمی: [Tavaan-Doc](https://github.com/Derogaramin/Tavaan-Doc)
-> وضعیت فعلی: **فاز M1 (هسته) + M2 (وب) + M3 (داده) — تکمیل و سبز** ✅ — CRUD کامل با DB (Schema/Migration/ORM/Validation/Pagination) بالا آمده است
+> وضعیت فعلی: **فاز M1 (هسته) + M2 (وب) + M3 (داده) + M4 (امنیت/هویت) — تکمیل و سبز** ✅ — CRUD کامل با DB + ورود/نقش/JWT/2FA/ممیزی ضدتقلب بالا آمده است
 
 ---
 
@@ -40,8 +40,26 @@ php bin/tvn serve                 # سرور توسعه → http://127.0.0.1:800
 | **M1** | هستهٔ صفر‌وابستگی (container, config, event, pipeline, error, log, compat, optimizer, module, console) | ✅ **انجام شد** |
 | **M2** | وب (http, router, session, cookie, view, i18n, jalali, cors) + crypt (پیش‌نیاز زودهنگام) | ✅ **انجام شد** |
 | **M3** | داده (database, schema, migration, orm, pagination, validation) | ✅ **انجام شد** |
-| M4 | امنیت/هویت (crypt, hash, auth, rbac, security, cache, audit) | — |
+| **M4** | امنیت/هویت (crypt, hash, auth, rbac, security, cache, audit) | ✅ **انجام شد** |
 | M5..M9 | صف/سرویس‌ها/دامنه/ابزار/اپلیکیشن‌ها | — |
+
+### معیارهای پذیرش M4 (نتایج اندازه‌گیری‌شده)
+
+| معیار | هدف | نتیجه |
+|---|---|---|
+| ورود/خروج امن با session hardening | ✅ | ✅ regenerate ضد fixation + fingerprint + throttle/lockout + remember cookie HttpOnly |
+| JWT با algorithm pinning | ✅ | ✅ `alg=none` و confusion (RS256→HS256) رد + exp/nbf/iss/aud/jti |
+| Refresh rotation + reuse detection | ✅ | ✅ استفادهٔ مجدد → revoke کل family + رویداد |
+| OTP/2FA | ✅ | ✅ OTP یک‌بارمصرف هش‌شده + TOTP با **RFC 6238 vectors** (۱۰۰٪) + کد بازیابی یک‌بارمصرف |
+| RBAC با row-level scope | ✅ | ✅ سلسله‌مراتب/wildcard/delegation موقت + OwnershipScope (نشت = ۰) + deny-by-default ناشناس |
+| CSRF/RateLimit/Security Headers | ✅ | ✅ ۴۱۹ + double-submit / sliding+fixed+token-bucket با ۴۲۹+Retry-After / CSP+HSTS+… |
+| HTML Sanitizer (0 XSS) | ✅ | ✅ allowlist خالص + حذف on*/javascript:/entity-encoded + script با محتوا |
+| SSRF Guard | ✅ | ✅ ۱۲+ CIDR مسدود + metadata cloud + DNS rebinding + userinfo + pinning |
+| Audit با hash chain | ✅ | ✅ HMAC زنجیره‌ای؛ دستکاری/حذف رکورد → `audit:verify` تشخیص می‌دهد؛ ۱۰۰۰۰ رکورد ≤ ۲s |
+| Cache ۶ درایور + fallback | ✅ | ✅ array/file/database/redis/apcu/memcached — بدون ext → file (بدون crash) |
+| Hash Argon2id + rehash | ✅ | ✅ 64MB/t=4/threads=1 + rehash خودکار در login |
+| Session driverها (TVN-0022) | کامل | ✅ database (M3) + redis روی cache (M4) |
+| Outbox (وعدهٔ M1) | ✅ | ✅ tvn_outbox/tvn_inbox + claim اتمیک + backoff + `event:outbox-relay` (AC-EVT-05/07) |
 
 ### معیارهای پذیرش M3 (نتایج اندازه‌گیری‌شده)
 
@@ -72,7 +90,7 @@ php bin/tvn serve                 # سرور توسعه → http://127.0.0.1:800
 | ETag/304 + gzip | ✅ | ✅ |
 | CORS preflight + origin allowlist | ✅ | ✅ (origin متخلف → بدون هدر) |
 
-> ✅ درایور session روی database در M3 فعال شد؛ redis در M4 (موتور cache).
+> ✅ هر ۵ درایور session فعال: file/cookie/array/database/redis.
 
 ### معیارهای پذیرش M1 (نتایج اندازه‌گیری‌شده)
 
@@ -86,10 +104,10 @@ php bin/tvn serve                 # سرور توسعه → http://127.0.0.1:800
 | ۱۰۰۰ make متوالی | ≤ ۱ms | ✅ ۰٫۱۶ms |
 | ClassMap cache | ≥ ۷۰٪ سریع‌تر | ✅ ۹۰٫۶٪ |
 | Event dispatch + priority/wildcard قطعی | ✅ | ✅ |
-| تست‌های M1 | سبز | ✅ (مجموع فعلی: ۴۴۵ تست / ۲۱۸۹ assertion) |
+| تست‌های M1 | سبز | ✅ (مجموع فعلی: ۵۴۴ تست / ۲۷۳۶ assertion) |
 | صفر `eval`/`putenv` | ✅ | ✅ (gate خودکار) |
 
-> ⚠️ Outbox/Inbox موتور Event به موتور database (M3) وابسته است و در M3 فعال می‌شود.
+> ✅ Outbox/Inbox موتور Event در M3/M4 فعال شد (ADR-0009 — `event:outbox-relay`).
 
 ## ساختار
 
@@ -107,7 +125,7 @@ docs/              ← مستندات (کپی SSOT از Tavaan-Doc)
 
 ## دستورات CLI موجود (M1+M2)
 
-`list` `about` `version` `env` `doctor` `optimize` `optimize:clear` `config:cache` `config:clear` `autoload:cache` `module:list` `event:list` `test` `serve` `route:list` `route:cache` `route:clear` `route:match` `view:cache` `view:clear` `key:generate` `migrate` `migrate:rollback` `migrate:status` `migrate:fresh` `migrate:refresh` `migrate:install`
+`list` `about` `version` `env` `doctor` `optimize` `optimize:clear` `config:cache` `config:clear` `autoload:cache` `module:list` `event:list` `test` `serve` `route:list` `route:cache` `route:clear` `route:match` `view:cache` `view:clear` `key:generate` `migrate` `migrate:rollback` `migrate:status` `migrate:fresh` `migrate:refresh` `migrate:install` `cache:clear` `rbac:sync` `audit:verify` `audit:export` `audit:prune` `audit:show` `event:outbox-relay`
 
 ## توسعه
 
@@ -127,4 +145,4 @@ php engines/orm/benchmarks/hydrate.bench.php
 
 ## پروانه
 
-MIT — نگارش 0.3.0 (پیش از 1.0؛ API ممکن است بر اساس ADRها تکامل یابد)
+MIT — نگارش 0.4.0 (پیش از 1.0؛ API ممکن است بر اساس ADRها تکامل یابد)

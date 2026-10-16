@@ -5,14 +5,44 @@
   "title_fa": "رویداد و Outbox",
   "version": "0.1.0",
   "namespace": "Tavaan\\Engine\\Event\\",
-  "autoload": {"psr-4": {"Tavaan\\Engine\\Event\\": "src/"}},
-  "providers": ["Tavaan\\Engine\\Event\\EventServiceProvider"],
-  "requires": {"php": ">=8.2", "engines": ["container", "config"]},
-  "soft_requires": {"engines": ["queue", "database", "realtime"]},
-  "config": {"file": "config/event.php", "key": "event"},
-  "tables": ["tvn_outbox", "tvn_inbox"],
-  "commands": ["event:list"],
-  "facade": {"name": "Event", "accessor": "events"},
+  "autoload": {
+    "psr-4": {
+      "Tavaan\\Engine\\Event\\": "src/"
+    }
+  },
+  "providers": [
+    "Tavaan\\Engine\\Event\\EventServiceProvider"
+  ],
+  "requires": {
+    "php": ">=8.2",
+    "engines": [
+      "container",
+      "config"
+    ]
+  },
+  "soft_requires": {
+    "engines": [
+      "queue",
+      "database",
+      "realtime"
+    ]
+  },
+  "config": {
+    "file": "config/event.php",
+    "key": "event"
+  },
+  "tables": [
+    "tvn_outbox",
+    "tvn_inbox"
+  ],
+  "commands": [
+    "event:list",
+    "event:outbox-relay"
+  ],
+  "facade": {
+    "name": "Event",
+    "accessor": "events"
+  },
   "docs": "docs/03-engines/event.md",
-  "notes": "Outbox/Inbox در M3 با موتور database فعال می‌شود."
+  "notes": "Outbox/Inbox با موتور database فعال شد (M3/M4 — ADR-0009): tvn_outbox با claim اتمیک + backoff + releaseStale و event:outbox-relay."
 }

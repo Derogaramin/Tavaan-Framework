@@ -13,10 +13,12 @@ use Tavaan\Core\Contracts\Auth\Authenticatable;
  * وقتی provider.model تنظیم نشده باشد، سطرها به GenericUser نگاشت می‌شوند.
  * مدل‌های ORM نیز می‌توانند Authenticatable را پیاده کنند (مانند TSecureUser).
  *
+ * ⚠️ غیرfinal: برای گسترش طراحی شده (مثل trait HasRoles در RBAC).
+ *
  * @api 1.0
  * @see docs/03-engines/auth.md
  */
-final class GenericUser implements Authenticatable
+class GenericUser implements Authenticatable
 {
     /** @param array<string, mixed> $attributes */
     public function __construct(private array $attributes)
