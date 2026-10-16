@@ -7,6 +7,7 @@ namespace Tavaan\Engine\Queue\Tests\Feature;
 require_once __DIR__ . '/../Fixtures/BatchCountJob.php';
 require_once __DIR__ . '/../Fixtures/BatchFinally.php';
 require_once __DIR__ . '/../Fixtures/ChainStepJob.php';
+require_once __DIR__ . '/../Fixtures/CycleJob.php';
 require_once __DIR__ . '/../Fixtures/FailingJob.php';
 require_once __DIR__ . '/../Fixtures/FakeRedisClient.php';
 require_once __DIR__ . '/../Fixtures/ModelRefJob.php';
@@ -19,6 +20,7 @@ use Tavaan\Core\Application\Application;
 use Tavaan\Core\Contracts\Cache\RepositoryInterface as CacheRepository;
 use Tavaan\Engine\Database\ORM\Model;
 use Tavaan\Engine\Queue\Events\JobProcessed;
+use Tavaan\Engine\Queue\Exceptions\QueueException;
 use Tavaan\Engine\Queue\Exceptions\UnsafeJobException;
 use Tavaan\Engine\Queue\Jobs\CallQueuedHandler;
 use Tavaan\Engine\Queue\QueueManager;
@@ -26,6 +28,7 @@ use Tavaan\Engine\Queue\Queues\RedisQueue;
 use Tavaan\Engine\Queue\Tests\Fixtures\BatchCountJob;
 use Tavaan\Engine\Queue\Tests\Fixtures\BatchFinally;
 use Tavaan\Engine\Queue\Tests\Fixtures\ChainStepJob;
+use Tavaan\Engine\Queue\Tests\Fixtures\CycleJob;
 use Tavaan\Engine\Queue\Tests\Fixtures\FailingJob;
 use Tavaan\Engine\Queue\Tests\Fixtures\FakeRedisClient;
 use Tavaan\Engine\Queue\Tests\Fixtures\ModelRefJob;
@@ -672,6 +675,132 @@ final class QueueTest extends TestCase
         $worker->runNextJob($this->options());
         $this->assertSame(['rl'], RecordJob::$trace);            // دومی release شد (نه اجرا)
         $this->assertSame(1, $queue->size('default'));           // برگشت به صف
+    }
+
+    // ─── محافظ بازگشت (جلوگیری از stack overflow / OOM) ──────────────────
+
+    public function testCircularObjectReferenceRejected(): void
+    {
+        $job = new CycleJob();
+        $job->ref = $job;   // 🔴 ارجاع دوری به خود
+
+        try {
+            $this->queue()->push($job);
+            $this->fail('ارجاع دوری باید QueueException تمیز بدهد (نه stack overflow)');
+        } catch (QueueException $e) {
+            $this->assertSame('queue.unserializable', $e->messageId);
+        }
+    }
+
+    public function testCircularArrayReferenceRejected(): void
+    {
+        $arr = ['x' => 1];
+        $arr['self'] = &$arr;   // 🔴 دور آرایه‌ای با ارجاع
+
+        try {
+            $this->queue()->serializer()->prepare($arr);
+            $this->fail('آرایهٔ دوری باید QueueException تمیز بدهد');
+        } catch (QueueException $e) {
+            $this->assertSame('queue.unserializable', $e->messageId);
+        }
+    }
+
+    public function testDeepNestingRejectedOnPrepare(): void
+    {
+        $deep = ['leaf'];
+        for ($i = 0; $i < 100; $i++) {
+            $deep = ['n' => $deep];   // 🔴 عمیق‌تر از MAX_DEPTH (۶۴)
+        }
+
+        try {
+            $this->queue()->serializer()->prepare($deep);
+            $this->fail('تودرتویی ۱۰۰ سطحی باید QueueException تمیز بدهد');
+        } catch (QueueException $e) {
+            $this->assertSame('queue.unserializable', $e->messageId);
+        }
+
+        // عمق مجاز (۶۰ سطح) رد نمی‌شود — تشخیص اشتباه مثبت ندارد
+        $ok = ['leaf'];
+        for ($i = 0; $i < 60; $i++) {
+            $ok = ['n' => $ok];
+        }
+        $this->assertTrue(\is_array($this->queue()->serializer()->prepare($ok)));
+    }
+
+    public function testSharedObjectGraphIsNotFalsePositive(): void
+    {
+        // گراف لوزی: یک شیء در دو شاخه (بدون دور) — باید موفق سریال شود
+        $shared = new CycleJob('shared-dto');
+        $job = new CycleJob();
+        $job->ref = ['a' => $shared, 'b' => $shared];
+
+        $this->queue()->push($job);
+        $row = $this->jobsRow();
+        $this->assertNotNull($row);
+
+        $json = (string) ($row['payload'] ?? '');
+        $this->assertSame(2, \substr_count($json, 'shared-dto'));
+    }
+
+    public function testSelfChainRejected(): void
+    {
+        $job = new CycleJob();
+        $job->chain([$job]);   // 🔴 زنجیره به خود
+
+        try {
+            $this->queue()->push($job);
+            $this->fail('زنجیره به خود باید QueueException تمیز بدهد');
+        } catch (QueueException $e) {
+            $this->assertSame('queue.unserializable', $e->messageId);
+        }
+    }
+
+    public function testMutualChainCycleRejected(): void
+    {
+        $a = new CycleJob('a');
+        $b = new CycleJob('b');
+        $a->chain([$b]);
+        $b->chain([$a]);   // 🔴 a → b → a
+
+        try {
+            $this->queue()->push($a);
+            $this->fail('دور زنجیرهٔ متقابل باید QueueException تمیز بدهد');
+        } catch (QueueException $e) {
+            $this->assertSame('queue.unserializable', $e->messageId);
+        }
+    }
+
+    public function testRestoreRejectsDeepTamperedPayload(): void
+    {
+        $deep = ['leaf'];
+        for ($i = 0; $i < 100; $i++) {
+            $deep = ['n' => $deep];
+        }
+
+        $tampered = (string) \json_encode([
+            'uuid' => 'X',
+            'job' => CallQueuedHandler::class,
+            'data' => ['commandName' => CycleJob::class, 'command' => $deep],
+        ]);
+
+        $decoded = $this->queue()->serializer()->decodePayload($tampered);
+
+        try {
+            $this->queue()->serializer()->restoreCommand($decoded['data']);
+            $this->fail('payload دستکاری‌شدهٔ عمیق باید QueueException تمیز بدهد');
+        } catch (QueueException $e) {
+            $this->assertSame('queue.invalid_payload', $e->messageId);
+        }
+    }
+
+    public function testDecodePayloadRejectsMalformedJson(): void
+    {
+        try {
+            $this->queue()->serializer()->decodePayload('{not-json');
+            $this->fail('JSON خراب باید QueueException تمیز بدهد (نه JsonException خام)');
+        } catch (QueueException $e) {
+            $this->assertSame('queue.invalid_payload', $e->messageId);
+        }
     }
 
     // ─── ابزار ───────────────────────────────────────────────────────────

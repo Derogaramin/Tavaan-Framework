@@ -26,6 +26,15 @@
 ### نتایج
 - ۵۴۶ تست / ۲۷۴۶ assertion سبز • ۶۷۹ فایل lint پاک • gate ممنوعه‌ها سبز • حافظهٔ ۱۰۰۰ روت ~۱٫۷MB ✅ • boot warm ~۷٫۵–۷٫۸ms ✅ / cold ~۱۸–۲۰ms ✅ • PHPStan level max: همهٔ خطاهای کلاس fatal صفر (باقی: بدهی مستندسازی نوعِ الگوی DI)
 
+## [0.5.1] - 2026-10-16 — M5 Hotfix: محافظ بازگشت (رفع «Maximum call stack size exceeded»)
+
+### اصلاح شد
+- **🔴 Queue/Serializer — بازگشت بدون محافظ**: ارجاع دوری شیء (`$job->ref = $job`)، دور آرایه‌ای با ارجاع (`$arr['self'] = &$arr`)، تودرتویی عمیق‌تر از ۶۴ سطح، و زنجیرهٔ دوری (`$job->chain([$job])` یا متقابل a→b→a) باعث خطای **کشنده و غیرقابل‌گیری** (OOM / «Maximum call stack size exceeded») در worker و مسیر dispatch می‌شد. اکنون: تشخیص دور مسیر-محور با `SplObjectStorage` (گراف لوزیِ مجاز دچار مثبت کاذب نمی‌شود)، سقف عمق `MAX_DEPTH=64` در هر دو سمت `prepare`/`restore` (payload دستکاری‌شده نیز stack را نمی‌شکند)، ردیابی اعضای زنجیره با `spl_object_id`، و `JsonException` خامِ encode/decode در `QueueException` کنترل‌شده پیچیده می‌شود (`queue.unserializable` / `queue.invalid_payload`)
+- **🔴 Schedule — خودبازگشتی `schedule:run`**: زمان‌بندی‌کردن خودِ `schedule:run` (مثلاً در `routes/console.php`) در حالت درون‌فرآیندی → بازگشت بی‌پایان («Maximum call stack size exceeded») و در حالت background → انفجار فرآیند (هر اجرا زایش `schedule:run` جدید) می‌داد؛ اکنون رویداد با پیام واضح `failed` می‌شود و هرگز اجرا نمی‌گردد
+
+### افزوده شد
+- ۹ تست رگرسیون (۸ Queue + ۱ Schedule) + fixture `CycleJob` — مجموعهٔ کامل: **۷۰۴ تست / ۳۴۲۰ assertion سبز**
+
 ## [0.5.0] - 2026-10-16 — فاز M5: ارتباطی و زیرساخت
 
 ### افزوده شد

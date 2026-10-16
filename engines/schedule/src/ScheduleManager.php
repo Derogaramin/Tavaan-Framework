@@ -210,6 +210,13 @@ final class ScheduleManager
     {
         $command = (string) $event->task();
 
+        // 🔒 schedule:run زمان‌بندی‌شدنی نیست:
+        // - درون‌فرآیندی → بازگشت بی‌پایان («Maximum call stack size exceeded»)
+        // - background   → هر اجرا یک schedule:run جدید زایش می‌دهد (انفجار فرآیند)
+        if ($command === 'schedule:run') {
+            return ['failed', 1, 'schedule:run cannot be scheduled (infinite recursion guard)'];
+        }
+
         if ($event->wantsBackground()) {
             // subprocess: php bin/tvn {command} — خروجی به فایل/nohup
             $script = $this->entryScript();

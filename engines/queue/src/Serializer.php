@@ -19,6 +19,8 @@ use Tavaan\Support\Ulid;
  * - بازسازی کلاس فقط پس از بررسی allowlist (پیشوند/کلاس صریح).
  * - مدل‌های ORM فقط با «کلاس + کلید» ذخیره می‌شوند (نه کل آبجکت).
  * - Closure/Resource → استثنا (قابل صف‌رفتن نیستند).
+ * - 🔁 ارجاع دوری (circular reference)، زنجیرهٔ دوری و عمق بیش از
+ *   {@see self::MAX_DEPTH} → QueueException تمیز (نه OOM / stack overflow).
  *
  * قالب payload:
  * ```json
@@ -42,6 +44,16 @@ final class Serializer
     private const M_DATETIME = '@datetime';
 
     private const M_TZ = '@tz';
+
+    /**
+     * 🔒 حداکثر عمق بازگشت prepare/restore.
+     *
+     * بدون این سقف، آرایه/شیء با عمق زیاد (یا ارجاع دوری آرایه‌ای) باعث
+     * «Maximum call stack size exceeded» یا OOM می‌شد — خطای کشندهٔ
+     * غیرقابل‌گیری که worker را mid-job می‌کُشد. ۶۴ سطح برای payloadهای
+     * واقعی job بسیار سخاوتمندانه است.
+     */
+    private const MAX_DEPTH = 64;
 
     /** @var list<string> پیشوندهای مجاز (مثل `App\`) */
     private array $prefixes;
@@ -80,6 +92,19 @@ final class Serializer
      * @param array<string, mixed> $data آرگومان‌های سازنده (وقتی $job رشته است)
      */
     public function createJobPayload(object|string $job, array $data = [], string $queue = 'default'): string
+    {
+        // 🔒 شناسهٔ خود job در «مسیر زنجیره» ثبت می‌شود تا chain دوری
+        // (مثل `$job->chain([$job])`) به‌جای بازگشت بی‌پایان، استثنا دهد.
+        return $this->buildJobPayload($job, $data, $queue, \is_object($job) ? [\spl_object_id($job)] : []);
+    }
+
+    /**
+     * همان createJobPayload با ردیابی اعضای زنجیره.
+     *
+     * @param array<string, mixed> $data
+     * @param list<int>            $chainSeen شناسهٔ jobهای روی مسیر زنجیرهٔ جاری
+     */
+    private function buildJobPayload(object|string $job, array $data, string $queue, array $chainSeen): string
     {
         if (\is_string($job)) {
             $this->assertAllowed($job);
@@ -121,7 +146,7 @@ final class Serializer
             'retryUntil' => $retryUntil,
             'rateLimit' => $this->rateLimitProp($job),
             'batchId' => null,
-            'chain' => $this->chainProp($job, $queue),
+            'chain' => $this->chainProp($job, $queue, $chainSeen),
             'createdAt' => Clock::timestamp(),
             'data' => ['commandName' => $class, 'command' => $this->serializeCommand($job)],
         ]);
@@ -161,7 +186,12 @@ final class Serializer
      */
     public function decodePayload(string $payload): array
     {
-        $data = \json_decode($payload, true, flags: \JSON_THROW_ON_ERROR);
+        try {
+            // عمق صریح ۵۱۲ (سقف json_decode) — ساختار عمیق‌تر هرگز به restore نمی‌رسد
+            $data = \json_decode($payload, true, 512, \JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw QueueException::for('queue.invalid_payload', [], 'JSON نامعتبر: ' . $e->getMessage());
+        }
         if (!\is_array($data)) {
             throw QueueException::for('queue.invalid_payload', [], 'payload باید یک JSON object باشد.');
         }
@@ -202,10 +232,28 @@ final class Serializer
     /**
      * تبدیل مقدار به شکل JSON-امن (بازگشتی).
      *
+     * 🔒 محافظ بازگشت: ارجاع دوری اشیا و عمق بیش از {@see self::MAX_DEPTH}
+     * با QueueException تمیز رد می‌شوند — پیش‌تر این موارد به
+     * «Maximum call stack size exceeded»/OOM می‌رسید (خطای کشندهٔ worker).
+     *
      * @return mixed
      */
     public function prepare(mixed $value): mixed
     {
+        return $this->prepareInner($value, new \SplObjectStorage(), 0);
+    }
+
+    /**
+     * @param \SplObjectStorage<object, true> $seen اشیا روی مسیر بازگشت جاری (نه کل بازدیدها — گراف لوزی مجاز است)
+     *
+     * @return mixed
+     */
+    private function prepareInner(mixed $value, \SplObjectStorage $seen, int $depth): mixed
+    {
+        if ($depth > self::MAX_DEPTH) {
+            throw QueueException::unserializable(\sprintf('nesting deeper than %d levels', self::MAX_DEPTH));
+        }
+
         if (\is_scalar($value) || $value === null) {
             return $value;
         }
@@ -221,7 +269,7 @@ final class Serializer
         if (\is_array($value)) {
             $out = [];
             foreach ($value as $k => $v) {
-                $out[$k] = $this->prepare($v);
+                $out[$k] = $this->prepareInner($v, $seen, $depth + 1);
             }
 
             return $out;
@@ -248,20 +296,31 @@ final class Serializer
             $class = $value::class;
             $this->assertAllowed($class);
 
-            // SerializesModels trait → __serialize
-            if (\method_exists($value, '__serialize')) {
-                return [self::M_CLASS => $class, 'props' => $this->prepare($value->__serialize())];
+            // 🔴 ارجاع دوری: شیء روی مسیر بازگشت جاری تکرار شده است
+            if ($seen->contains($value)) {
+                throw QueueException::unserializable('circular reference to ' . $class);
             }
 
-            $props = [];
-            foreach ((new \ReflectionObject($value))->getProperties(\ReflectionProperty::IS_PUBLIC) as $prop) {
-                if ($prop->isStatic() || !$prop->isInitialized($value)) {
-                    continue;
+            $seen->attach($value);
+
+            try {
+                // SerializesModels trait → __serialize
+                if (\method_exists($value, '__serialize')) {
+                    return [self::M_CLASS => $class, 'props' => $this->prepareInner($value->__serialize(), $seen, $depth + 1)];
                 }
-                $props[$prop->getName()] = $this->prepare($prop->getValue($value));
-            }
 
-            return [self::M_CLASS => $class, 'props' => $props];
+                $props = [];
+                foreach ((new \ReflectionObject($value))->getProperties(\ReflectionProperty::IS_PUBLIC) as $prop) {
+                    if ($prop->isStatic() || !$prop->isInitialized($value)) {
+                        continue;
+                    }
+                    $props[$prop->getName()] = $this->prepareInner($prop->getValue($value), $seen, $depth + 1);
+                }
+
+                return [self::M_CLASS => $class, 'props' => $props];
+            } finally {
+                $seen->detach($value);
+            }
         }
 
         throw QueueException::unserializable(\get_debug_type($value));
@@ -270,12 +329,29 @@ final class Serializer
     /**
      * بازگردانی مقدار prepare‌شده.
      *
+     * 🔒 با سقف عمق: payload دستکاری‌شده با هزاران سطح تو‌در‌تو نمی‌تواند
+     * stack worker را بشکند.
+     *
      * @return mixed
      */
     public function restore(mixed $value): mixed
     {
+        return $this->restoreInner($value, 0);
+    }
+
+    /** @return mixed */
+    private function restoreInner(mixed $value, int $depth): mixed
+    {
         if (!\is_array($value)) {
             return $value;
+        }
+
+        if ($depth > self::MAX_DEPTH) {
+            throw QueueException::for(
+                'queue.invalid_payload',
+                [],
+                \sprintf('nesting deeper than %d levels', self::MAX_DEPTH),
+            );
         }
 
         if (isset($value[self::M_DATETIME])) {
@@ -297,14 +373,14 @@ final class Serializer
                 return \constant($class . '::' . (string) ($value['name'] ?? ''));
             }
 
-            $props = $this->restore($value['props'] ?? []);
+            $props = $this->restoreInner($value['props'] ?? [], $depth + 1);
 
             return $this->reconstruct($class, \is_array($props) ? $props : []);
         }
 
         $out = [];
         foreach ($value as $k => $v) {
-            $out[$k] = $this->restore($v);
+            $out[$k] = $this->restoreInner($v, $depth + 1);
         }
 
         return $out;
@@ -336,9 +412,11 @@ final class Serializer
     /**
      * زنجیرهٔ declare‌شده روی job (trait Queueable::chain) → payloadهای آماده.
      *
+     * @param list<int> $chainSeen شناسهٔ jobهای روی مسیر زنجیرهٔ جاری
+     *
      * @return list<string>|null
      */
-    private function chainProp(object $job, string $queue): ?array
+    private function chainProp(object $job, string $queue, array $chainSeen = []): ?array
     {
         if (!\property_exists($job, 'chained')) {
             return null;
@@ -354,7 +432,20 @@ final class Serializer
             if ($member instanceof \Closure) {
                 throw QueueException::unserializable('Closure در chain');
             }
-            $payloads[] = $this->createJobPayload($member, [], $queue);
+
+            if (\is_object($member)) {
+                $id = \spl_object_id($member);
+                if (\in_array($id, $chainSeen, true)) {
+                    // 🔴 زنجیره به عضوی از مسیر جاری بازمی‌گردد → بازگشت بی‌پایان
+                    throw QueueException::unserializable('circular chain: ' . $member::class);
+                }
+
+                $payloads[] = $this->buildJobPayload($member, [], $queue, [...$chainSeen, $id]);
+
+                continue;
+            }
+
+            $payloads[] = $this->buildJobPayload($member, [], $queue, $chainSeen);
         }
 
         return $payloads;
@@ -495,6 +586,10 @@ final class Serializer
     /** @param array<string, mixed> $payload */
     private function encode(array $payload): string
     {
-        return \json_encode($payload, \JSON_THROW_ON_ERROR | \JSON_UNESCAPED_UNICODE | \JSON_UNESCAPED_SLASHES);
+        try {
+            return \json_encode($payload, \JSON_THROW_ON_ERROR | \JSON_UNESCAPED_UNICODE | \JSON_UNESCAPED_SLASHES);
+        } catch (\JsonException $e) {
+            throw QueueException::unserializable('json encoding failed: ' . $e->getMessage());
+        }
     }
 }

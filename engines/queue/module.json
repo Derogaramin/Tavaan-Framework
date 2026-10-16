@@ -23,5 +23,5 @@
   ],
   "facade": {"name": "Queue", "accessor": "queue"},
   "docs": "docs/03-engines/queue.md",
-  "notes": "M5 — ۵ درایور (sync/database/redis/file/null). Worker مقاوم با Retry/Backoff نمایی، Batch/Chain، Rate Limiting، Failed Jobs + DLQ. 🔒 سریال‌سازی فقط JSON + Allowlist؛ Pop اتمیک با SKIP LOCKED."
+  "notes": "M5 — ۵ درایور (sync/database/redis/file/null). Worker مقاوم با Retry/Backoff نمایی، Batch/Chain، Rate Limiting، Failed Jobs + DLQ. 🔒 سریال‌سازی فقط JSON + Allowlist؛ Pop اتمیک با SKIP LOCKED. ♻️ محافظ بازگشت (0.5.1): تشخیص ارجاع دوری + سقف عمق ۶۴ + رد زنجیرهٔ دوری با QueueException تمیز."
 }

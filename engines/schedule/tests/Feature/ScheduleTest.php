@@ -232,6 +232,21 @@ final class ScheduleTest extends TestCase
         $this->assertSame(0, $results[0]['exit']);
     }
 
+    public function testScheduleRunCannotBeScheduled(): void
+    {
+        // 🔒 محافظ بازگشت: زمان‌بندیِ schedule:run پیش‌تر باعث بازگشت بی‌پایان
+        // («Maximum call stack size exceeded») یا انفجار فرآیند (background) می‌شد.
+        $manager = $this->manager();
+        $manager->command('schedule:run')->everyMinute();
+
+        $results = $manager->run($this->at('2026-06-01 12:00'));
+
+        $this->assertCount(1, $results);
+        $this->assertSame('failed', $results[0]['status']);
+        $this->assertSame(1, $results[0]['exit']);
+        $this->assertStringContainsString('recursion', (string) $results[0]['output']);
+    }
+
     public function testExecEventCapturesOutput(): void
     {
         $manager = $this->manager();
