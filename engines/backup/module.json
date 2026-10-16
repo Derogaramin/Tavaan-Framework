@@ -1,0 +1,17 @@
+{
+  "id": "tavaan.engine.backup",
+  "type": "engine",
+  "name": "Backup",
+  "title_fa": "پشتیبان‌گیری",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Backup\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Backup\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Backup\\BackupServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config", "filesystem"]},
+  "soft_requires": {"engines": ["database", "crypt", "cache", "compat"], "extensions": ["zip", "openssl"]},
+  "config": {"file": "config/backup.php", "key": "backup"},
+  "commands": ["backup:run", "backup:list", "backup:verify", "backup:restore", "backup:prune"],
+  "facade": {"name": "Backup", "accessor": "backup"},
+  "docs": "docs/03-engines/backup.md",
+  "notes": "M5 — DB dump خالص (بدون mysqldump، chunked با cursor → حافظهٔ ثابت)، ZIP خالص (ZipWriterPure + ZipReader خودنوشته)، 🔒 رمزنگاری AES-256-GCM با کلید جدا از APP_KEY، verify (hash+decrypt)، restore با --force + maintenance mode، retention/prune."
+}

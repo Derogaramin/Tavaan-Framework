@@ -374,9 +374,16 @@ abstract class Grammar implements GrammarInterface
 
         return match ($lock) {
             'forUpdate' => 'for update',
+            'forUpdateSkipLocked' => $this->skipLockedClause(),
             'sharedLock' => $this->sharedLockClause(),
             default => '',
         };
+    }
+
+    /** 🔒 MySQL 8.0+ / PG 9.5+ — در SQLite باید خالی شود (compileLock اورراید). */
+    protected function skipLockedClause(): string
+    {
+        return 'for update skip locked';
     }
 
     protected function sharedLockClause(): string

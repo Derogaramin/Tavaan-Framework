@@ -1,0 +1,18 @@
+{
+  "id": "tavaan.engine.media",
+  "type": "engine",
+  "name": "Media",
+  "title_fa": "رسانه",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Media\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Media\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Media\\MediaServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config"]},
+  "soft_requires": {"engines": ["filesystem", "database", "compat", "http"], "extensions": ["gd", "imagick", "fileinfo", "exif"]},
+  "config": {"file": "config/media.php", "key": "media"},
+  "tables": ["tvn_media"],
+  "commands": [],
+  "facade": {"name": "Media", "accessor": "media"},
+  "docs": "docs/03-engines/media.md",
+  "notes": "M5 — آپلود امن (magic bytes + extension allowlist + rename تصادفی + 🔒 polyglot scan + Image Bomb protection)، پردازش تصویر gd/imagick با fallback (none → فقط ذخیره)، WebP/AVIF، variants، dedup با SHA-256، EXIF سانیتیزه‌شده (بدون GPS)."
+}

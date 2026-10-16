@@ -1,0 +1,27 @@
+{
+  "id": "tavaan.engine.queue",
+  "type": "engine",
+  "name": "Queue",
+  "title_fa": "صف و Worker",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Queue\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Queue\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Queue\\QueueServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config", "event"]},
+  "soft_requires": {"engines": ["database", "cache", "log"]},
+  "config": {"file": "config/queue.php", "key": "queue"},
+  "tables": ["tvn_jobs", "tvn_failed_jobs", "tvn_job_batches"],
+  "commands": [
+    "queue:work",
+    "queue:listen",
+    "queue:restart",
+    "queue:retry",
+    "queue:failed",
+    "queue:flush",
+    "queue:prune-failed",
+    "queue:monitor"
+  ],
+  "facade": {"name": "Queue", "accessor": "queue"},
+  "docs": "docs/03-engines/queue.md",
+  "notes": "M5 — ۵ درایور (sync/database/redis/file/null). Worker مقاوم با Retry/Backoff نمایی، Batch/Chain، Rate Limiting، Failed Jobs + DLQ. 🔒 سریال‌سازی فقط JSON + Allowlist؛ Pop اتمیک با SKIP LOCKED."
+}

@@ -169,7 +169,13 @@ final class LogManager implements LoggerInterface
 
     public function default(): Logger
     {
-        return $this->channel($this->defaultChannel);
+        // 🔒 پویا: تغییر زمان‌اجرای `log.default` باید اثر کند
+        // (کانال‌ها برحسب نام cache می‌شوند — هزینه‌ای ندارد)
+        $name = $this->config !== null
+            ? (string) $this->config->get('log.default', $this->defaultChannel)
+            : $this->defaultChannel;
+
+        return $this->channel($name);
     }
 
     // ─── ساخت کانال از config ─────────────────────────────────────────────

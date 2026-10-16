@@ -465,6 +465,26 @@ final class QueryBuilder implements QueryBuilderInterface
         return $this;
     }
 
+    /**
+     * قفل ردیف با SKIP LOCKED — ردیف‌های قفل‌شده توسط دیگران رد می‌شوند.
+     *
+     * 🔒 MySQL 8.0+ / PostgreSQL 9.5+؛ در SQLite clause خالی است
+     * (کل DB در تراکنش قفل می‌شود — اتمیک بودن همچنان برقرار است).
+     * کاربرد: Pop اتمیک در Queue Workerهای موازی (DOC-061 §6).
+     */
+    public function forUpdateSkipLocked(): static
+    {
+        $this->lock = 'forUpdateSkipLocked';
+
+        return $this;
+    }
+
+    /** نام مستعار forUpdateSkipLocked (DOC-061 §6). */
+    public function lockForUpdateSkipLocked(): static
+    {
+        return $this->forUpdateSkipLocked();
+    }
+
     public function sharedLock(): static
     {
         $this->lock = 'sharedLock';

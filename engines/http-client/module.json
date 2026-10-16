@@ -1,0 +1,17 @@
+{
+  "id": "tavaan.engine.http-client",
+  "type": "engine",
+  "name": "HttpClient",
+  "title_fa": "کلاینت HTTP",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\HttpClient\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\HttpClient\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\HttpClient\\HttpClientServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config", "event"]},
+  "soft_requires": {"engines": ["security", "cache", "compat"], "extensions": ["curl"]},
+  "config": {"file": "config/http-client.php", "key": "http-client"},
+  "commands": [],
+  "facade": {"name": "Http", "accessor": "http.client"},
+  "docs": "docs/03-engines/http-client.md",
+  "notes": "M5 — Fluent API + Retry (نمایی+jitter) + Circuit Breaker + 🔒 SSRF Guard (با re-check در redirectها) + Pool موازی (curl_multi با fallback ترتیبی) + Fake برای تست. Transport: curl → stream (بدون ext)."
+}

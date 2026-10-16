@@ -33,4 +33,12 @@ return [
     \Tavaan\Engine\Rbac\RbacServiceProvider::class,
     \Tavaan\Engine\Security\SecurityServiceProvider::class,
     \Tavaan\Engine\Audit\AuditServiceProvider::class,
+    \Tavaan\Engine\Queue\QueueServiceProvider::class,
+    \Tavaan\Engine\Schedule\ScheduleServiceProvider::class,
+    \Tavaan\Engine\Filesystem\FilesystemServiceProvider::class,
+    \Tavaan\Engine\HttpClient\HttpClientServiceProvider::class,
+    \Tavaan\Engine\Mail\MailServiceProvider::class,
+    \Tavaan\Engine\Notification\NotificationServiceProvider::class,
+    \Tavaan\Engine\Media\MediaServiceProvider::class,
+    \Tavaan\Engine\Backup\BackupServiceProvider::class,
 ];

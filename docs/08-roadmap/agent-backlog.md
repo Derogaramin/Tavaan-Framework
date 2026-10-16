@@ -216,14 +216,14 @@ tickets:
 ## ۶. تیکت‌های M5-M9 — خلاصهٔ فشرده
 ```yaml
 # M5
-  - {id: TVN-0061, title: "Queue + Worker", engine: queue, phase: M5, docs: [DOC-061]}
-  - {id: TVN-0062, title: "Schedule + Cron", engine: schedule, phase: M5, docs: [DOC-062]}
-  - {id: TVN-0063, title: "Filesystem (local/s3/ftp)", engine: filesystem, phase: M5, docs: [DOC-063]}
-  - {id: TVN-0074, title: "Media (image processing)", engine: media, phase: M5, docs: [DOC-074]}
-  - {id: TVN-0065, title: "Mail (SMTP خودنوشته)", engine: mail, phase: M5, docs: [DOC-065]}
-  - {id: TVN-0066, title: "Notification (چندکاناله)", engine: notification, phase: M5, docs: [DOC-066]}
-  - {id: TVN-0064, title: "HttpClient + SSRF", engine: http-client, phase: M5, docs: [DOC-064]}
-  - {id: TVN-0068, title: "Backup", engine: backup, phase: M5, docs: [DOC-068]}
+  - {id: TVN-0061, title: "Queue + Worker", engine: queue, phase: M5, docs: [DOC-061], status: done}
+  - {id: TVN-0062, title: "Schedule + Cron", engine: schedule, phase: M5, docs: [DOC-062], status: done}
+  - {id: TVN-0063, title: "Filesystem (local/s3/ftp)", engine: filesystem, phase: M5, docs: [DOC-063], status: done}
+  - {id: TVN-0074, title: "Media (image processing)", engine: media, phase: M5, docs: [DOC-074], status: done}
+  - {id: TVN-0065, title: "Mail (SMTP خودنوشته)", engine: mail, phase: M5, docs: [DOC-065], status: done}
+  - {id: TVN-0066, title: "Notification (چندکاناله)", engine: notification, phase: M5, docs: [DOC-066], status: done}
+  - {id: TVN-0064, title: "HttpClient + SSRF", engine: http-client, phase: M5, docs: [DOC-064], status: done}
+  - {id: TVN-0068, title: "Backup", engine: backup, phase: M5, docs: [DOC-068], status: done}
 # M6
   - {id: TVN-0044, title: "API (Resource/OpenAPI)", engine: api, phase: M6, docs: [DOC-044]}
   - {id: TVN-0067, title: "Observability (Metrics/Trace)", engine: observability, phase: M6, docs: [DOC-067]}
@@ -292,11 +292,11 @@ function pickNextTicket(agent):
 | M2 | 8 | 0 | 0 | 8 |
 | M3 | 6 | 0 | 0 | 6 |
 | M4 | 7 | 0 | 0 | 7 |
-| M5 | 9 | 9 | 0 | 0 |
+| M5 | 9 | 0 | 0 | 9 |
 | M6 | 6 | 6 | 0 | 0 |
 | M7 | 3 | 3 | 0 | 0 |
 | M8 | 5 | 5 | 0 | 0 |
 | M9 | 8 | 8 | 0 | 0 |
-| **جمع** | **63** | **31** | **0** | **32** |
+| **جمع** | **63** | **22** | **0** | **41** |
 
 > ⚠️ این فایل با پیشرفت پروژه به‌روز می‌شود. `status` هر تیکت را پس از اتمام تغییر دهید.

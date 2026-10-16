@@ -81,6 +81,12 @@ interface QueryBuilderInterface
 
     public function forUpdate(): static;
 
+    /** قفل ردیف با SKIP LOCKED (MySQL 8+/PG 9.5+؛ در SQLite خالی) — DOC-061 §6. */
+    public function forUpdateSkipLocked(): static;
+
+    /** نام مستعار forUpdateSkipLocked. */
+    public function lockForUpdateSkipLocked(): static;
+
     public function sharedLock(): static;
 
     public function union(self|\Closure $query, bool $all = false): static;

@@ -1,0 +1,17 @@
+{
+  "id": "tavaan.engine.mail",
+  "type": "engine",
+  "name": "Mail",
+  "title_fa": "پست الکترونیک",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Mail\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Mail\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Mail\\MailServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config", "event"]},
+  "soft_requires": {"engines": ["view", "queue", "log", "filesystem"], "extensions": ["openssl"]},
+  "config": {"file": "config/mail.php", "key": "mail"},
+  "commands": [],
+  "facade": {"name": "Mail", "accessor": "mailer"},
+  "docs": "docs/03-engines/mail.md",
+  "notes": "M5 — SMTP client خالص خودنوشته (STARTTLS/SSL + AUTH LOGIN/PLAIN، بدون ext)، MIME builder با RFC 2047 فارسی، ۶ transport (smtp/sendmail/mail/log/array/ses)، Mailable + Queue + Fake/Assertions. 🔒 محافظ Header Injection."
+}

@@ -138,6 +138,33 @@ final class EventDispatcher implements DispatcherInterface
             return $halt ? null : [];
         }
 
+        return $this->fireListeners($name, $event, $payload, $halt);
+    }
+
+    /**
+     * Dispatch همزمان بدون بررسی marker صف‌روند — برای اجرای رویدادهای
+     * صف‌شده توسط Worker موتور Queue (CallQueuedEvent در M5 / DOC-061).
+     *
+     * 🔒 بدون این متد، اجرای رویداد ShouldQueue در Worker باعث
+     * push مجدد به صف (حلقهٔ بی‌پایان) می‌شد.
+     *
+     * @return array<int, mixed>|mixed
+     */
+    public function dispatchNow(object|string $event, mixed $payload = [], bool $halt = false): mixed
+    {
+        $name = \is_string($event) ? $event : $event::class;
+        $this->assertAllowlisted($name);
+
+        return $this->fireListeners($name, $event, $payload, $halt);
+    }
+
+    /**
+     * حلقهٔ اصلی فراخوانی Listenerها (مشترک بین dispatch و dispatchNow).
+     *
+     * @return array<int, mixed>|mixed
+     */
+    private function fireListeners(string $name, object|string $event, mixed $payload, bool $halt): mixed
+    {
         $listeners = $this->registry->listenersFor($event);
         $responses = [];
 

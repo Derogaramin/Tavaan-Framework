@@ -1,0 +1,17 @@
+{
+  "id": "tavaan.engine.schedule",
+  "type": "engine",
+  "name": "Schedule",
+  "title_fa": "زمان‌بندی",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Schedule\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Schedule\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Schedule\\ScheduleServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config", "console"]},
+  "soft_requires": {"engines": ["cache", "queue", "log"]},
+  "config": {"file": "config/schedule.php", "key": "schedule"},
+  "commands": ["schedule:run", "schedule:list"],
+  "facade": {"name": "Schedule", "accessor": "schedule"},
+  "docs": "docs/03-engines/schedule.md",
+  "notes": "M5 — Cron Expression Parser خودنوشته (۵ فیلد + OR کلاسیک DOM/DOW)، Fluent API، Overlap Prevention با mutex اتمیک، onOneServer، runInBackground. فقط یک entry در crontab: schedule:run."
+}
