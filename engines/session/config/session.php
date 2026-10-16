@@ -24,6 +24,9 @@ return [
     'csrf' => [
         // 🔒 لایهٔ API (token/bearer auth) و endpoint احراز کانال بلادرنگ
         // از CSRF معاف‌اند (DOC-044/DOC-045) — مانند قرارداد رایج api-group.
-        'except' => ['api/*', 'broadcasting/auth'],   // مسیرهای معاف (webhook و …)
+        // 🔒 callback/notify پرداخت: redirect سرور-به-سرور درگاه‌ها بدون توکن
+        // جلسهٔ ما می‌آیند؛ اصالت با verify از API درگاه + امضای IPN تضمین
+        // می‌شود نه CSRF (DOC-073 §4/§7).
+        'except' => ['api/*', 'broadcasting/auth', 'payment/callback', 'payment/notify/*'],   // مسیرهای معاف (webhook و …)
     ],
 ];

@@ -232,9 +232,9 @@ tickets:
   - {id: TVN-0075, title: "FeatureFlag", engine: feature-flag, phase: M6, docs: [DOC-075], status: done}
   - {id: TVN-0045, title: "Realtime (SSE/WS)", engine: realtime, phase: M6, docs: [DOC-045], status: done}
 # M7
-  - {id: TVN-0071, title: "Workflow (BPM)", engine: workflow, phase: M7, docs: [DOC-071]}
-  - {id: TVN-0072, title: "Report (xlsx خودنوشته)", engine: report, phase: M7, docs: [DOC-072]}
-  - {id: TVN-0073, title: "Payment (درگاه‌ها)", engine: payment, phase: M7, docs: [DOC-073]}
+  - {id: TVN-0071, title: "Workflow (BPM)", engine: workflow, phase: M7, docs: [DOC-071], status: done}
+  - {id: TVN-0072, title: "Report (xlsx خودنوشته)", engine: report, phase: M7, docs: [DOC-072], status: done}
+  - {id: TVN-0073, title: "Payment (درگاه‌ها)", engine: payment, phase: M7, docs: [DOC-073], status: done}
 # M8
   - {id: TVN-0077, title: "Scaffold (make:*)", engine: scaffold, phase: M8, docs: [DOC-077]}
   - {id: TVN-0078, title: "Admin (CRUD generator)", engine: admin, phase: M8, docs: [DOC-078]}
@@ -294,9 +294,9 @@ function pickNextTicket(agent):
 | M4 | 7 | 0 | 0 | 7 |
 | M5 | 9 | 0 | 0 | 9 |
 | M6 | 6 | 0 | 0 | 6 |
-| M7 | 3 | 3 | 0 | 0 |
+| M7 | 3 | 0 | 0 | 3 |
 | M8 | 5 | 5 | 0 | 0 |
 | M9 | 8 | 8 | 0 | 0 |
-| **جمع** | **63** | **16** | **0** | **47** |
+| **جمع** | **63** | **13** | **0** | **50** |
 
 > ⚠️ این فایل با پیشرفت پروژه به‌روز می‌شود. `status` هر تیکت را پس از اتمام تغییر دهید.

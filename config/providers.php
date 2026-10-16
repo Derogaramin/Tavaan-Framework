@@ -47,4 +47,7 @@ return [
     \Tavaan\Engine\Tenancy\TenancyServiceProvider::class,
     \Tavaan\Engine\FeatureFlag\FeatureFlagServiceProvider::class,
     \Tavaan\Engine\Realtime\RealtimeServiceProvider::class,
+    \Tavaan\Engine\Workflow\WorkflowServiceProvider::class,
+    \Tavaan\Engine\Report\ReportServiceProvider::class,
+    \Tavaan\Engine\Payment\PaymentServiceProvider::class,
 ];

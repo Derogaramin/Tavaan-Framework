@@ -1,0 +1,17 @@
+{
+  "id": "tavaan.engine.workflow",
+  "type": "engine",
+  "name": "Workflow",
+  "title_fa": "گردش‌کار",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Workflow\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Workflow\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Workflow\\WorkflowServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config"]},
+  "soft_requires": {"engines": ["event", "database", "migration", "rbac", "queue", "console", "auth"]},
+  "config": {"file": "config/workflow.php", "key": "workflow"},
+  "commands": ["workflow:timers", "workflow:list"],
+  "facade": {"name": "Workflow", "accessor": "workflow"},
+  "docs": "docs/03-engines/workflow.md",
+  "notes": "M7 — State Machine/BPM خودنوشته: DSL تعریف فرایند (ProcessBuilder) + JSON/Schema (Designer)، Guard/Action، دروازهٔ انحصاری (اولین guard موفق) و موازی (fork/join با Token)، Human Task (assignee role:/user: + claim/complete/delegate)، Timer (انسانی/ISO-8601 + workflow:timers)، Sub-Process (پیش‌برد والد با تکمیل فرزند)، History، Visualizer (DOT/Mermaid)، fire اتمیک (snapshot/restore)، محافظ DoS (max_active_instances) و mask متغیرهای حساس."
+}

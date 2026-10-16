@@ -1,0 +1,17 @@
+{
+  "id": "tavaan.engine.payment",
+  "type": "engine",
+  "name": "Payment",
+  "title_fa": "پرداخت",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Payment\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Payment\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Payment\\PaymentServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config"]},
+  "soft_requires": {"engines": ["http-client", "database", "migration", "orm", "event", "crypt", "http", "console"]},
+  "config": {"file": "config/payment.php", "key": "payment"},
+  "commands": ["payment:list"],
+  "facade": {"name": "Payment", "accessor": "payment"},
+  "docs": "docs/03-engines/payment.md",
+  "notes": "M7 — انتزاع درگاه‌های پرداخت با GatewayInterface مشترک (core/Contracts/Payment): زرین‌پال/آیدی‌پی/پی‌پینگ/سامان/به‌پرداخت/پارسیان/سداد/ملی/Stripe (خودنوشته، بدون SDK) + کیف پول داخلی (WalletStoreInterface). 🔒 امنیت: verify فقط از API درگاه با مبلغ محلی Transaction (ضد amount tampering)، عدم اعتماد به Status بازگشتی، idempotency_key یکتا (ضد replay/double payment)، PAN mask، امضای HMAC برای IPN، SSRF guard موتور http-client. routeهای /payment/callback و /payment/notify/{gateway}. درگاه سفارشی فقط با extend() یا config class (AC-PAY-10)."
+}

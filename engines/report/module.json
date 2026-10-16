@@ -1,0 +1,16 @@
+{
+  "id": "tavaan.engine.report",
+  "type": "engine",
+  "name": "Report",
+  "title_fa": "گزارش‌ساز",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Report\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Report\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Report\\ReportServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config"]},
+  "soft_requires": {"engines": ["database", "filesystem", "view", "i18n", "compat", "http"]},
+  "config": {"file": "config/report.php", "key": "report"},
+  "facade": {"name": "Report", "accessor": "report"},
+  "docs": "docs/03-engines/report.md",
+  "notes": "M7 — Dataset (Closure/QueryBuilder/SQL/آرایه) + فیلترهای allowlist، Group/Subtotal، Pivot، Aggregate با Decimal (بدون float — ADR-0013)، تاریخ جلالی، خروجی CSV (BOM+delimiter «;»+streaming+🔒 ضد CSV Injection)، xlsx خودنوشته OOXML با ZipWriterPure (بدون PhpSpreadsheet/ext-zip)، HTML با قالب report::table + fallback escaped، JSON، PDF اختیاری، 🔒 sandbox مسیر export و max_rows."
+}
