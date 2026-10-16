@@ -1,0 +1,17 @@
+{
+  "id": "tavaan.engine.hash",
+  "type": "engine",
+  "name": "Hash",
+  "title_fa": "درهم‌سازی رمز عبور",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Hash\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Hash\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Hash\\HashServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config"]},
+  "config": {"file": "config/hash.php", "key": "hash"},
+  "tables": [],
+  "commands": [],
+  "facade": {"name": "Hash", "accessor": "hash"},
+  "docs": "docs/03-engines/hash.md",
+  "notes": "M4 — Argon2id (پیش‌فرض) + bcrypt fallback با Rehash خودکار. 🔒 هرگز md5/sha برای رمز."
+}

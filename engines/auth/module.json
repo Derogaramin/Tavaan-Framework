@@ -1,0 +1,18 @@
+{
+  "id": "tavaan.engine.auth",
+  "type": "engine",
+  "name": "Auth",
+  "title_fa": "احراز هویت",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Auth\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Auth\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Auth\\AuthServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["session", "hash", "crypt", "event", "database", "cache", "config"]},
+  "soft_requires": {"engines": ["http", "orm", "notification"]},
+  "config": {"file": "config/auth.php", "key": "auth"},
+  "tables": ["password_resets", "personal_access_tokens", "user_devices", "two_factor_secrets"],
+  "commands": [],
+  "facade": {"name": "Auth", "accessor": "auth"},
+  "docs": "docs/03-engines/auth.md",
+  "notes": "M4 — چند Guard (session/jwt)، JWT خودنوشته با algorithm pinning، refresh rotation + reuse detection، OTP یک‌بارمصرف، TOTP RFC 6238، Device tracking، Session hardening، Password broker."
+}

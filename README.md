@@ -3,7 +3,7 @@
 فریمورک PHP 8.2+ **صفر‌وابستگی**، فارسی‌اول و ماژولار — بدون یک پکیج خارجی در زمان اجرا.
 
 > پیاده‌سازی بر اساس مستندات رسمی: [Tavaan-Doc](https://github.com/Derogaramin/Tavaan-Doc)
-> وضعیت فعلی: **فاز M1 (هسته) + M2 (وب) — تکمیل و سبز** ✅ — «سلام دنیا»ی وب با View/Session/Router بالا آمده است
+> وضعیت فعلی: **فاز M1 (هسته) + M2 (وب) + M3 (داده) — تکمیل و سبز** ✅ — CRUD کامل با DB (Schema/Migration/ORM/Validation/Pagination) بالا آمده است
 
 ---
 
@@ -39,9 +39,23 @@ php bin/tvn serve                 # سرور توسعه → http://127.0.0.1:800
 |---|---|---|
 | **M1** | هستهٔ صفر‌وابستگی (container, config, event, pipeline, error, log, compat, optimizer, module, console) | ✅ **انجام شد** |
 | **M2** | وب (http, router, session, cookie, view, i18n, jalali, cors) + crypt (پیش‌نیاز زودهنگام) | ✅ **انجام شد** |
-| M3 | داده (database, schema, migration, orm, pagination, validation) | — |
+| **M3** | داده (database, schema, migration, orm, pagination, validation) | ✅ **انجام شد** |
 | M4 | امنیت/هویت (crypt, hash, auth, rbac, security, cache, audit) | — |
 | M5..M9 | صف/سرویس‌ها/دامنه/ابزار/اپلیکیشن‌ها | — |
+
+### معیارهای پذیرش M3 (نتایج اندازه‌گیری‌شده)
+
+| معیار | هدف | نتیجه |
+|---|---|---|
+| Query Builder معادل در ۳ درایور (MySQL/PG/SQLite) | ✅ | ✅ Grammar parity (compile-test هر ۳) + اجرای واقعی روی SQLite |
+| ۰ SQL Injection در Fuzzing | ✅ | ✅ ۲۰۰ payload / ۷۲۲ assertion سبز + allowlist operator/identifier |
+| Migration up/down + lock | ✅ | ✅ batch/rollback معکوس/dry-run/fresh-guard + FileLock اتمیک |
+| ORM با رابطه‌ها + eager loading (۰ N+1) | ✅ | ✅ ۱۰ نوع رابطه + eager دقیقاً ۲ کوئری + nested ۳ کوئری |
+| Hydrate ۱۰۰۰ رکورد | ≤ ۲۵ms | ✅ **۱٫۳ms** (با cast money/json) |
+| Validation با قواعد ایرانی | ۸۵ قاعده | ✅ ۹۲ قاعده (کدملی/شبا/کارت/پستی/شناسهٔ شرکت/جلالی/ارقام فارسی) |
+| CRUD کامل با DB (خروجی کلیدی M3) | ✅ | ✅ `examples/crud/blog-crud.php` سرتاسری سبز |
+| Prepared Statement ۱۰۰٪ | ✅ | ✅ `EMULATE_PREPARES=false` + binding تایپ‌دار |
+| Session driver دیتابیس (TVN-0022) | ✅ | ✅ DatabaseHandler + migration جدول sessions |
 
 ### معیارهای پذیرش M2 (نتایج اندازه‌گیری‌شده)
 
@@ -58,7 +72,7 @@ php bin/tvn serve                 # سرور توسعه → http://127.0.0.1:800
 | ETag/304 + gzip | ✅ | ✅ |
 | CORS preflight + origin allowlist | ✅ | ✅ (origin متخلف → بدون هدر) |
 
-> ⚠️ درایورهای session روی database/redis در M3/M4 کامل می‌شوند (اکنون: file/cookie/array).
+> ✅ درایور session روی database در M3 فعال شد؛ redis در M4 (موتور cache).
 
 ### معیارهای پذیرش M1 (نتایج اندازه‌گیری‌شده)
 
@@ -72,7 +86,7 @@ php bin/tvn serve                 # سرور توسعه → http://127.0.0.1:800
 | ۱۰۰۰ make متوالی | ≤ ۱ms | ✅ ۰٫۱۶ms |
 | ClassMap cache | ≥ ۷۰٪ سریع‌تر | ✅ ۹۰٫۶٪ |
 | Event dispatch + priority/wildcard قطعی | ✅ | ✅ |
-| تست‌های M1 | سبز | ✅ (مجموع فعلی: ۳۰۲ تست / ۷۷۹ assertion) |
+| تست‌های M1 | سبز | ✅ (مجموع فعلی: ۴۴۵ تست / ۲۱۸۹ assertion) |
 | صفر `eval`/`putenv` | ✅ | ✅ (gate خودکار) |
 
 > ⚠️ Outbox/Inbox موتور Event به موتور database (M3) وابسته است و در M3 فعال می‌شود.
@@ -93,7 +107,7 @@ docs/              ← مستندات (کپی SSOT از Tavaan-Doc)
 
 ## دستورات CLI موجود (M1+M2)
 
-`list` `about` `version` `env` `doctor` `optimize` `optimize:clear` `config:cache` `config:clear` `autoload:cache` `module:list` `event:list` `test` `serve` `route:list` `route:cache` `route:clear` `route:match` `view:cache` `view:clear` `key:generate`
+`list` `about` `version` `env` `doctor` `optimize` `optimize:clear` `config:cache` `config:clear` `autoload:cache` `module:list` `event:list` `test` `serve` `route:list` `route:cache` `route:clear` `route:match` `view:cache` `view:clear` `key:generate` `migrate` `migrate:rollback` `migrate:status` `migrate:fresh` `migrate:refresh` `migrate:install`
 
 ## توسعه
 
@@ -106,10 +120,11 @@ php tools/scripts/bench-autoload.php
 php engines/http/benchmarks/router.bench.php
 php engines/http/benchmarks/kernel.bench.php
 php engines/view/benchmarks/render.bench.php
+php engines/orm/benchmarks/hydrate.bench.php
 ```
 
 قواعد کد: `docs/01-standards/` — هر فایل با `declare(strict_types=1)`، یک کلاس در هر فایل، استثنا با `messageId` (نه متن خام)، پول = int minor-unit.
 
 ## پروانه
 
-MIT — نگارش 0.2.0 (پیش از 1.0؛ API ممکن است بر اساس ADRها تکامل یابد)
+MIT — نگارش 0.3.0 (پیش از 1.0؛ API ممکن است بر اساس ADRها تکامل یابد)

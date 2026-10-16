@@ -111,6 +111,16 @@ final class ControllerResolver
                     continue;
                 }
 
+                // FormRequest (موتور validation — DOC-051 §5): authorize + validate خودکار
+                if (\class_exists(\Tavaan\Engine\Validation\FormRequest::class)
+                    && \is_subclass_of($typeName, \Tavaan\Engine\Validation\FormRequest::class)) {
+                    /** @var \Tavaan\Engine\Validation\FormRequest $formRequest */
+                    $formRequest = $typeName::createFrom($request);
+                    $formRequest->validateResolved();
+                    $args[] = $formRequest;
+                    continue;
+                }
+
                 // Enum backed
                 if (\enum_exists($typeName) && \array_key_exists($name, $routeParameters)) {
                     $args[] = $typeName::from($routeParameters[$name]);

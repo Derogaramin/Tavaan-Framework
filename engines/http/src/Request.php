@@ -18,10 +18,12 @@ use Tavaan\Engine\Http\Exceptions\PayloadTooLargeException;
  * - Method Override (_method / X-HTTP-Method-Override)
  * - 🔒 تشخیص Request Smuggling (CL + TE همزمان → 400)
  *
+ * ⚠️ غیرfinal: گسترش فقط توسط `Tavaan\Engine\Validation\FormRequest` (DOC-051 §5).
+ *
  * @api 1.0
  * @see docs/03-engines/http.md
  */
-final class Request implements RequestInterface
+class Request implements RequestInterface
 {
     private const MAX_JSON_DEPTH = 32;
 
@@ -68,7 +70,7 @@ final class Request implements RequestInterface
      * @param array<string, mixed> $cookies
      * @param array<string, UploadedFileInterface> $files
      */
-    private function __construct(
+    protected function __construct(
         Uri $uri,
         HeaderBag $headers,
         ParameterBag $query,
@@ -88,6 +90,47 @@ final class Request implements RequestInterface
         $this->server = $server;
         $this->files = $files;
         $this->rawBody = $rawBody;
+    }
+
+    /**
+     * ساخت نمونهٔ کلاس فرزند (FormRequest) از حالت یک درخواست موجود.
+     *
+     * 🔒 فقط درون سلسلهٔ Request قابل فراخوانی است (protected) — دسترسی به
+     * state خصوصی از scope همین کلاس مجاز است.
+     *
+     * @template T of Request
+     *
+     * @param class-string<T> $class
+     *
+     * @return T
+     */
+    protected static function fromRequestInto(string $class, Request $source): Request
+    {
+        if (!\is_subclass_of($class, self::class)) {
+            throw new \InvalidArgumentException(\sprintf('[%s] is not a Request subclass.', $class));
+        }
+
+        return new $class(
+            $source->uri,
+            $source->headers,
+            $source->query,
+            $source->post,
+            $source->attributes,
+            $source->cookies,
+            $source->server,
+            $source->files,
+            $source->rawBody,
+        );
+    }
+
+    /**
+     * دسترسی bag ورودی POST (mutable) — برای FormRequest::merge/replace.
+     *
+     * @internal فقط برای زیرکلاس‌های مجاز (FormRequest)
+     */
+    protected function postBag(): ParameterBag
+    {
+        return $this->post;
     }
 
     // ─── ساخت ─────────────────────────────────────────────────────────────

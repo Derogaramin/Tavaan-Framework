@@ -1,0 +1,18 @@
+{
+  "id": "tavaan.engine.validation",
+  "type": "engine",
+  "name": "Validation",
+  "title_fa": "اعتبارسنجی",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Validation\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Validation\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Validation\\ValidationServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["i18n", "config"]},
+  "soft_requires": {"engines": ["database", "http"]},
+  "config": {"file": "config/validation.php", "key": "validation"},
+  "tables": [],
+  "commands": [],
+  "facade": {"name": "Validator", "accessor": "validator"},
+  "docs": "docs/03-engines/validation.md",
+  "notes": "M3 — ۸۵+ قاعده (شامل قواعد ایرانی 🇮🇷)، FormRequest، Attribute-based، wildcard، ReDoS guard."
+}

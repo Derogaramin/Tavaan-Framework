@@ -1,0 +1,18 @@
+{
+  "id": "tavaan.engine.cache",
+  "type": "engine",
+  "name": "Cache",
+  "title_fa": "حافظهٔ نهان",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Cache\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Cache\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Cache\\CacheServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config", "event"]},
+  "soft_requires": {"engines": ["database"], "extensions": ["redis", "apcu", "memcached"]},
+  "config": {"file": "config/cache.php", "key": "cache"},
+  "tables": ["cache", "cache_locks"],
+  "commands": ["cache:clear"],
+  "facade": {"name": "Cache", "accessor": "cache"},
+  "docs": "docs/03-engines/cache.md",
+  "notes": "M4 — ۶ درایور (array/file/database/redis/apcu/memcached) با fallback خودکار به file. Tag + Lock اتمیک + Stampede Protection. 🔒 سریال‌سازی فقط JSON."
+}

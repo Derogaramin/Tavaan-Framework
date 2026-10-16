@@ -5,14 +5,57 @@
   "title_fa": "درخواست/پاسخ و کرنل وب",
   "version": "0.1.0",
   "namespace": "Tavaan\\Engine\\Http\\",
-  "autoload": {"psr-4": {"Tavaan\\Engine\\Http\\": "src/"}},
-  "providers": ["Tavaan\\Engine\\Http\\HttpServiceProvider"],
-  "requires": {"php": ">=8.2", "engines": ["pipeline", "event", "error", "config"]},
-  "soft_requires": {"engines": ["session", "router", "view", "cors", "cookie", "security"]},
-  "config": {"file": "config/http.php", "key": "http"},
+  "autoload": {
+    "psr-4": {
+      "Tavaan\\Engine\\Http\\": "src/"
+    }
+  },
+  "providers": [
+    "Tavaan\\Engine\\Http\\HttpServiceProvider"
+  ],
+  "requires": {
+    "php": ">=8.2",
+    "engines": [
+      "pipeline",
+      "event",
+      "error",
+      "config"
+    ]
+  },
+  "soft_requires": {
+    "engines": [
+      "session",
+      "router",
+      "view",
+      "cors",
+      "cookie",
+      "security",
+      "validation"
+    ]
+  },
+  "config": {
+    "file": "config/http.php",
+    "key": "http"
+  },
   "tables": [],
-  "commands": ["serve", "route:list", "route:cache", "route:clear", "route:match", "middleware:list"],
-  "facade": [{"name": "Http", "accessor": "http.kernel"}, {"name": "Request", "accessor": "request"}],
+  "commands": [
+    "serve",
+    "route:list",
+    "route:cache",
+    "route:clear",
+    "route:match",
+    "middleware:list"
+  ],
+  "facade": [
+    {
+      "name": "Http",
+      "accessor": "http.kernel"
+    },
+    {
+      "name": "Request",
+      "accessor": "request"
+    }
+  ],
   "docs": "docs/03-engines/http.md",
   "notes": "Routing/Cookie/Cors زیر-namespace همین موتور هستند (مطابق DOC-040/042/046)."
 }

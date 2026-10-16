@@ -22,4 +22,12 @@ return [
     \Tavaan\Engine\I18n\I18nServiceProvider::class,
     \Tavaan\Engine\Session\SessionServiceProvider::class,
     \Tavaan\Engine\View\ViewServiceProvider::class,
+    \Tavaan\Engine\Database\DatabaseServiceProvider::class,
+    \Tavaan\Engine\Database\Schema\SchemaServiceProvider::class,
+    \Tavaan\Engine\Database\Migration\MigrationServiceProvider::class,
+    \Tavaan\Engine\Validation\ValidationServiceProvider::class,
+    \Tavaan\Engine\Database\ORM\OrmServiceProvider::class,
+    \Tavaan\Engine\Hash\HashServiceProvider::class,
+    \Tavaan\Engine\Cache\CacheServiceProvider::class,
+    \Tavaan\Engine\Auth\AuthServiceProvider::class,
 ];

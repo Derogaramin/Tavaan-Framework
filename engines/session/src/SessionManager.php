@@ -6,15 +6,19 @@ namespace Tavaan\Engine\Session;
 
 use Tavaan\Core\Contracts\Config\RepositoryInterface;
 use Tavaan\Engine\Crypt\Crypt;
+use Tavaan\Core\Contracts\Database\ConnectionInterface;
+use Tavaan\Core\Facade\Facade;
 use Tavaan\Engine\Session\Handlers\ArrayHandler;
+use Tavaan\Engine\Session\Handlers\CacheHandler;
 use Tavaan\Engine\Session\Handlers\CookieHandler;
+use Tavaan\Engine\Session\Handlers\DatabaseHandler;
 use Tavaan\Engine\Session\Handlers\FileHandler;
 
 /**
  * تَوان | Tavaan — Session
  * SessionManager — ساخت Session با درایور انتخابی از config.
  *
- * درایورهای M2: array/file/cookie — database/redis در M3/M4 افزوده می‌شوند.
+ * درایورها: array/file/cookie/database (M3) + redis (M4 — روی موتور cache).
  *
  * @api 1.0
  * @see docs/03-engines/session.md
@@ -42,10 +46,12 @@ final class SessionManager
                 (array) ($this->config?->get('session.lottery', [2, 100]) ?? [2, 100]),
             ),
             'cookie' => $this->cookieHandler = new CookieHandler($this->requireCrypt()),
-            'database', 'redis' => throw new \RuntimeException(\sprintf(
-                'Session driver [%s] در فاز M3/M4 با موتورهای database/cache فعال می‌شود.',
-                $name,
-            )),
+            'database' => new DatabaseHandler($this->requireConnection()),
+            'redis' => new CacheHandler(
+                $this->requireCache()->store('redis'),
+                prefix: 'session:',
+                lifetimeSeconds: (int) ($this->config?->get('session.lifetime', 120) ?? 120) * 60,
+            ),
             default => throw new \InvalidArgumentException(\sprintf('Unknown session driver [%s].', $name)),
         };
     }
@@ -78,5 +84,25 @@ final class SessionManager
         }
 
         return $this->crypt;
+    }
+
+    private function requireConnection(): ConnectionInterface
+    {
+        $connection = Facade::getFacadeApplication()->make(ConnectionInterface::class);
+        if (!$connection instanceof ConnectionInterface) {
+            throw new \RuntimeException('Session database driver requires the database engine (M3).');
+        }
+
+        return $connection;
+    }
+
+    private function requireCache(): \Tavaan\Engine\Cache\CacheManager
+    {
+        $cache = Facade::getFacadeApplication()->make('cache');
+        if (!$cache instanceof \Tavaan\Engine\Cache\CacheManager) {
+            throw new \RuntimeException('Session redis driver requires the cache engine (M4).');
+        }
+
+        return $cache;
     }
 }

@@ -1,0 +1,18 @@
+{
+  "id": "tavaan.engine.orm",
+  "type": "engine",
+  "name": "ORM",
+  "title_fa": "نگاشت شیء-رابطه",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Database\\ORM\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Database\\ORM\\": "../database/src/ORM/"}},
+  "providers": ["Tavaan\\Engine\\Database\\ORM\\OrmServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["database", "event"]},
+  "soft_requires": {"engines": ["i18n", "crypt", "hash"]},
+  "config": {"file": "config/orm.php", "key": "orm"},
+  "tables": [],
+  "commands": [],
+  "facade": null,
+  "docs": "docs/03-engines/orm.md",
+  "notes": "کد در engines/database/src/ORM (namespace مطابق DOC-050 machine block). دو حالت: Active Record + Repository."
+}

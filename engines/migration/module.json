@@ -1,0 +1,22 @@
+{
+  "id": "tavaan.engine.migration",
+  "type": "engine",
+  "name": "Migration",
+  "title_fa": "مهاجرت دیتابیس",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Database\\Migration\\",
+  "autoload": {
+    "psr-4": {
+      "Tavaan\\Engine\\Database\\Migration\\": "../database/src/Migration/",
+      "Tavaan\\Engine\\Migration\\": "src/"
+    }
+  },
+  "providers": ["Tavaan\\Engine\\Database\\Migration\\MigrationServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["database", "schema", "console"]},
+  "config": {"file": null, "key": null},
+  "tables": ["tvn_migrations"],
+  "commands": ["migrate", "migrate:rollback", "migrate:status", "migrate:fresh", "migrate:refresh", "migrate:install"],
+  "facade": null,
+  "docs": "docs/03-engines/migration.md",
+  "notes": "Migrator در engines/database/src/Migration (namespace مطابق DOC-049)؛ دستورات CLI در src/Console."
+}

@@ -2,6 +2,28 @@
 
 فرمت: Keep a Changelog — نسخه‌گذاری: SemVer.
 
+## [0.3.0] - 2026-10-16 — فاز M3: داده
+
+### افزوده شد
+- **TVN-0030 Database**: `ConnectionManager` چنداتصال (default/tenant)، `Connection` با **Lazy PDO + Reconnect خودکار** («gone away»)، Prepared Statement ۱۰۰٪ (`EMULATE_PREPARES=false` + binding تایپ‌دار null/bool/int/DateTime)، `QueryBuilder` کامل (select/join/nested-where/whereIn+subquery/whereBetween/whereExists/whereRaw/group/having/order/limit/lock/union/CTE/aggregate)، `Grammar` سه درایور (MySQL/PostgreSQL/SQLite — wrap با prefix، allowlist operator/direction)، upsert و insertOrIgnore در هر ۳ گویش، `TransactionManager` با **Savepoint تودرتو + Deadlock retry** (backoff 50/150/450ms+jitter)، `QueryLog` (slow-query + **N+1 detection** با نرمال‌سازی SQL + mask bindings)، Read/Write Splitting + sticky، chunk/chunkById/lazy/cursor (حافظهٔ ثابت)، `Ulid` (ADR-0006) در `core/Support`
+- **TVN-0031 Schema**: `Blueprint` با ۳۵+ نوع ستون (ulid/uuid/enum/json/money-decimal/timestamps(precision)/softDeletes/morphs/foreignId/rememberToken)، `ColumnDefinition` سیال + freeze، `ForeignKeyDefinition` (onDelete/onUpdate با allowlist)، DDL سه درایور (MySQL inline KEY + engine/charset، PG jsonb/serial/GIN-fulltext/check-enum، SQLite numeric/check/autoincrement)، ALTER (add/drop/rename column + index؛ FK-add در SQLite با skip امن)، introspect/hasTable/hasColumn/getColumnType/getTables، dropAllTables (migrate:fresh)
+- **TVN-0032 Migration**: `Migrator` با **FileLock اتمیک** (flock + TTL ضد lock مرده)، batch numbering، rollback ترتیب معکوس، dry-run، status، fresh با **guard در production** (بدون force → رد)، مسیرهای خودکار (database/ + engines/* + modules/* + addPath ماژول‌ها)، `MigrationRepository` (tvn_migrations با prefix-aware)، کشف ماژول مالک؛ CLI: `migrate` `migrate:rollback` `migrate:status` `migrate:fresh` `migrate:refresh` `migrate:install`
+- **TVN-0033 ORM**: `Model`Active Record — keyType ulid/uuid/bigint با **تولید کلید خودکار**، fillable/guarded + `MassAssignmentException` در حالت strict، Castهای داخلی (int/float/bool/array/json/datetime/immutable_datetime/date/timestamp/decimal/**money:CUR** (ADR-0013)/​**encrypted**/**hashed**/enum/custom CastInterface)، accessor/mutator (`getXAttribute`/`setXAttribute`)، dirty tracking (getChanges/getOriginal/isDirty)، timestamps خودکار، **Soft Delete** (withTrashed/onlyTrashed/restore/forceDelete/trashed)، **۱۰ نوع رابطه** (HasOne/HasMany/BelongsTo/BelongsToMany با attach/detach/sync/toggle+withTimestamps/HasManyThrough/HasOneThrough/MorphOne/MorphMany/MorphTo/MorphToMany) + `MorphMap`، **Eager Loading با الگوریتم DOC-050 §4.1** (nested + constraint + با exactly ۲ کوئری — N+1=۰)، withCount (correlated subquery)، lazy loading، Observer (همهٔ رویدادها با لغو via false)، `dispatchesEvents` → Domain Event، Global/Local Scope، replicate/refresh/touch/load، toArray/toJson با hidden/visible/appends، serialize پول/enum/datetime؛ الگوی **Repository + Domain Object** (بدون extends Model — قرارداد `RepositoryInterface`)
+- **TVN-0034 Pagination**: `Paginator` (page-based + meta/links استاندارد DOC-053 §5 + links() HTML RTL + clamp max_per_page=۱۰۰)، `CursorPaginator` (multi-column cursor با base64url + tie-breaker یکتا)، `keysetPaginate` (afterId)
+- **TVN-0035 Validation**: **۹۲ قاعدهٔ داخلی** (فراتر از ۸۵ قاعدهٔ DOC-051): presence/type/size/format/compare/set/file/database(unique/exists/exists_multiple/unique_composite)/security(honeypot/no_html/safe_url/password/strong_password/not_compromised با blacklist constant-time)/math-money(decimal/money/percent)/advanced(prohibited/distinct/exclude_if/nested/each) + **قواعد ایرانی 🇮🇷**: iran_mobile (با نرمال‌سازی +98/98/ارقام فارسی)، iran_national_code (checksum وزن ۱۰-i)، iran_sheba (ISO 7064 mod-97)، iran_card_number (Luhn)، iran_postal_code، iran_company_id، jalali_date (کبیسه breaks-based)، persian_digits؛ wildcard expansion (`items.*.qty`)، **ReDoS guard** (طول الگو + رد nested quantifier)، allowlist شناسه در قواعد DB، MessageBag کامل، پیام‌های fa+en با variant اندازه‌ای و placeholder، FormRequest (چرخهٔ authorize→prepare→validate→422/403 + resolve خودکار در ControllerResolver)، **Attribute-based DTO validation** (`#[Required, Email, Between(18,120)]` + `Validator::forDto`)، Rule objectها (Rule::in/unique/exists) و extend
+- **TVN-0022 (تکمیل)**: درایور `database` نشست — `DatabaseHandler` (JSON-only + upsert اتمیک + GC) + migration جدول `sessions`
+- **Contracts (DOC-014)**: `Database\` (Connection/QueryBuilder/Grammar/TransactionManager/SchemaBuilder/Migration/Paginator)، `ORM\` (Model/Cast/Scope/Observer/Repository)، `Validation\` (Validator/Rule)، `Cache\` (Store/Lock/LockProvider/Repository)، `Auth\` (Authenticatable/Guard/StatefulGuard/UserProvider)، `Authorization\` (Gate/Response)، `Encryption\HasherInterface`
+- **Facades**: `DB` `Schema` `Validator` • **مثال**: `examples/crud/blog-crud.php` (خروجی کلیدی M3 — CRUD سرتاسری با Schema/ORM/Validation/Pagination/Transaction روی SQLite)
+- **بنچمارک**: `engines/orm/benchmarks/hydrate.bench.php`
+
+### تغییر یافت
+- `Request` غیرfinal شد (گسترش فقط توسط `FormRequest` — DOC-051 §5) + `fromRequestInto`/`postBag` محافظت‌شده
+- `ControllerResolver`: resolve خودکار FormRequest (authorize+validate) در method injection
+- `SessionManager`: درایور database فعال شد (redis در M4)
+
+### نتایج
+- ۴۴۵ تست / ۲۱۸۹ assertion سبز • Hydrate ۱۰۰۰ رکورد **۱٫۳ms** (هدف ≤۲۵ms) • حافظهٔ ۱۰۰۰ مدل ۶MB (هدف ≤۸MB) • eager loading دقیقاً ۲ کوئری (N+1=۰) • SQL Injection fuzzing: ۲۰۰ payload / ۷۲۲ assertion سبز • ۵۷۴ فایل lint پاک • gate ممنوعه‌ها سبز
+
 ## [0.2.0] - 2026-10-15 — فاز M2: وب
 
 ### افزوده شد
