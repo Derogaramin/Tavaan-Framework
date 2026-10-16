@@ -52,6 +52,13 @@ final class EventDispatcher implements DispatcherInterface
     /** @var list<string> رویدادهای push‌شده (M1: بدون queue → ضبط محلی) */
     private array $pushed = [];
 
+    /** @var list<array{name: string, at: float}> لاگ dispatch (فقط وقتی recording فعال باشد — Debug Bar) */
+    private array $dispatchLog = [];
+
+    private int $recordingCap = 0;
+
+    private float $recordingOrigin = 0.0;
+
     private bool $stopOnError = false;
 
     /**
@@ -130,6 +137,7 @@ final class EventDispatcher implements DispatcherInterface
         }
 
         $this->assertAllowlisted($name);
+        $this->recordDispatch($name);
 
         // ShouldQueue → صف
         if (\is_object($event) && $event instanceof ShouldQueue) {
@@ -138,7 +146,12 @@ final class EventDispatcher implements DispatcherInterface
             return $halt ? null : [];
         }
 
-        return $this->fireListeners($name, $event, $payload, $halt);
+        $responses = $this->fireListeners($name, $event, $payload, $halt);
+
+        // ShouldBroadcast → موتور realtime (M6 / DOC-045 §3)
+        $this->broadcastIfNeeded($event);
+
+        return $responses;
     }
 
     /**
@@ -154,8 +167,48 @@ final class EventDispatcher implements DispatcherInterface
     {
         $name = \is_string($event) ? $event : $event::class;
         $this->assertAllowlisted($name);
+        $this->recordDispatch($name);
 
         return $this->fireListeners($name, $event, $payload, $halt);
+    }
+
+    // ─── ضبط dispatchها (Debug Bar — DOC-067 §5) ─────────────────────────
+
+    /**
+     * فعال‌سازی ضبط نام رویدادهای dispatch‌شده (با سقف cap).
+     * در حالت عادی غیرفعال است و هیچ سرباری ندارد.
+     */
+    public function startRecording(int $cap = 500): void
+    {
+        $this->recordingCap = \max(1, $cap);
+        $this->recordingOrigin = \microtime(true);
+    }
+
+    public function stopRecording(): void
+    {
+        $this->recordingCap = 0;
+        $this->dispatchLog = [];
+    }
+
+    public function isRecording(): bool
+    {
+        return $this->recordingCap > 0;
+    }
+
+    /** @return list<array{name: string, at: float}> */
+    public function dispatchLog(): array
+    {
+        return $this->dispatchLog;
+    }
+
+    private function recordDispatch(string $name): void
+    {
+        if ($this->recordingCap > 0 && \count($this->dispatchLog) < $this->recordingCap) {
+            $this->dispatchLog[] = [
+                'name' => $name,
+                'at' => \round((\microtime(true) - $this->recordingOrigin) * 1000, 3),
+            ];
+        }
     }
 
     /**
@@ -348,6 +401,38 @@ final class EventDispatcher implements DispatcherInterface
 
         // M1: صف هنوز موجود نیست — ضبط محلی برای تست/اشکال‌زدایی
         $this->pushed[] = $name;
+    }
+
+    /**
+     * انتشار رویداد ShouldBroadcast روی کانال‌های بلادرنگ (DOC-045 §3).
+     *
+     * 🔒 best-effort: خطای broker هرگز نباید dispatch را بشکند.
+     */
+    private function broadcastIfNeeded(object|string $event): void
+    {
+        if (!\is_object($event)) {
+            return;
+        }
+        if (!$event instanceof \Tavaan\Core\Contracts\Realtime\ShouldBroadcast) {
+            return;
+        }
+        if (!$this->container->bound('realtime')) {
+            return;
+        }
+
+        try {
+            $this->container->make('realtime')->broadcast($event);
+        } catch (\Throwable $e) {
+            if ($this->container->bound('log')) {
+                $logger = $this->container->make('log');
+                if ($logger instanceof LoggerInterface) {
+                    $logger->warning('realtime.broadcast_failed', [
+                        'event' => $event::class,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
+        }
     }
 
     /** @return list<string> */

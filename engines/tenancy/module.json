@@ -1,0 +1,17 @@
+{
+  "id": "tavaan.engine.tenancy",
+  "type": "engine",
+  "name": "Tenancy",
+  "title_fa": "چنداجاره‌ای",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Tenancy\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Tenancy\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Tenancy\\TenancyServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config"]},
+  "soft_requires": {"engines": ["database", "cache", "http", "event", "console", "migration", "orm", "crypt"]},
+  "config": {"file": "config/tenancy.php", "key": "tenancy"},
+  "commands": ["tenant:create", "tenant:list", "tenant:migrate", "tenant:delete", "tenant:stats", "db:tenant-guard"],
+  "facade": {"name": "Tenant", "accessor": "tenant"},
+  "docs": "docs/03-engines/tenancy.md",
+  "notes": "M6 — سه استراتژی (Shared/Row-Level با TenantScope+Observer، DB-per-Tenant با اتصال پویا و provisioning، Schema-per-Tenant با search_path)، زنجیرهٔ Resolver (Domain/Header/Path/Query/Token/Default)، TenantContext با run/withoutCurrentScope (مجوز+Audit)، QuotaGuard پنجره‌دار، cache ایزوله (TenantScopeStore — driver «tenant»)، TenantConfigRepository overlay، migration جدول tvn_tenants."
+}

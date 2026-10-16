@@ -225,12 +225,12 @@ tickets:
   - {id: TVN-0064, title: "HttpClient + SSRF", engine: http-client, phase: M5, docs: [DOC-064], status: done}
   - {id: TVN-0068, title: "Backup", engine: backup, phase: M5, docs: [DOC-068], status: done}
 # M6
-  - {id: TVN-0044, title: "API (Resource/OpenAPI)", engine: api, phase: M6, docs: [DOC-044]}
-  - {id: TVN-0067, title: "Observability (Metrics/Trace)", engine: observability, phase: M6, docs: [DOC-067]}
-  - {id: TVN-0052, title: "Search (فارسی)", engine: search, phase: M6, docs: [DOC-052]}
-  - {id: TVN-0082, title: "Tenancy", engine: tenancy, phase: M6, docs: [DOC-082E]}
-  - {id: TVN-0075, title: "FeatureFlag", engine: feature-flag, phase: M6, docs: [DOC-075]}
-  - {id: TVN-0045, title: "Realtime (SSE/WS)", engine: realtime, phase: M6, docs: [DOC-045]}
+  - {id: TVN-0044, title: "API (Resource/OpenAPI)", engine: api, phase: M6, docs: [DOC-044], status: done}
+  - {id: TVN-0067, title: "Observability (Metrics/Trace)", engine: observability, phase: M6, docs: [DOC-067], status: done}
+  - {id: TVN-0052, title: "Search (فارسی)", engine: search, phase: M6, docs: [DOC-052], status: done}
+  - {id: TVN-0082, title: "Tenancy", engine: tenancy, phase: M6, docs: [DOC-082E], status: done}
+  - {id: TVN-0075, title: "FeatureFlag", engine: feature-flag, phase: M6, docs: [DOC-075], status: done}
+  - {id: TVN-0045, title: "Realtime (SSE/WS)", engine: realtime, phase: M6, docs: [DOC-045], status: done}
 # M7
   - {id: TVN-0071, title: "Workflow (BPM)", engine: workflow, phase: M7, docs: [DOC-071]}
   - {id: TVN-0072, title: "Report (xlsx خودنوشته)", engine: report, phase: M7, docs: [DOC-072]}
@@ -293,10 +293,10 @@ function pickNextTicket(agent):
 | M3 | 6 | 0 | 0 | 6 |
 | M4 | 7 | 0 | 0 | 7 |
 | M5 | 9 | 0 | 0 | 9 |
-| M6 | 6 | 6 | 0 | 0 |
+| M6 | 6 | 0 | 0 | 6 |
 | M7 | 3 | 3 | 0 | 0 |
 | M8 | 5 | 5 | 0 | 0 |
 | M9 | 8 | 8 | 0 | 0 |
-| **جمع** | **63** | **22** | **0** | **41** |
+| **جمع** | **63** | **16** | **0** | **47** |
 
 > ⚠️ این فایل با پیشرفت پروژه به‌روز می‌شود. `status` هر تیکت را پس از اتمام تغییر دهید.

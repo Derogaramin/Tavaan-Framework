@@ -21,7 +21,7 @@ if (\defined('TVN_BOOTSTRAPPED')) {
 }
 
 // ── ۱) ثابت‌ها ───────────────────────────────────────────────────────────
-\defined('TVN_VERSION')   || \define('TVN_VERSION', '0.5.1');
+\defined('TVN_VERSION')   || \define('TVN_VERSION', '0.6.0');
 \defined('TVN_START')     || \define('TVN_START', \microtime(true));
 \defined('TVN_BASE_PATH') || \define('TVN_BASE_PATH', \dirname(__DIR__));
 

@@ -22,6 +22,8 @@ return [
     'absolute_timeout' => env_int('TVN_SESSION_ABSOLUTE', 43200),
     'fingerprint'      => true,
     'csrf' => [
-        'except' => [],        // مسیرهای معاف (webhook و …)
+        // 🔒 لایهٔ API (token/bearer auth) و endpoint احراز کانال بلادرنگ
+        // از CSRF معاف‌اند (DOC-044/DOC-045) — مانند قرارداد رایج api-group.
+        'except' => ['api/*', 'broadcasting/auth'],   // مسیرهای معاف (webhook و …)
     ],
 ];

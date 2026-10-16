@@ -52,6 +52,16 @@ final class HttpKernel implements KernelInterface
     ) {
     }
 
+    /**
+     * فهرست middlewareهای resolve‌شدهٔ درخواست جاری (برای Debug Bar — DOC-067 §5).
+     *
+     * @return list<object>
+     */
+    public function resolvedMiddleware(): array
+    {
+        return $this->resolvedMiddleware;
+    }
+
     public function handle(RequestInterface $request): ResponseInterface
     {
         if (!$request instanceof Request) {

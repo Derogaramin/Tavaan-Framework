@@ -1,0 +1,20 @@
+{
+  "id": "tavaan.engine.realtime",
+  "type": "engine",
+  "name": "Realtime",
+  "title_fa": "بلادرنگ",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Realtime\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Realtime\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Realtime\\RealtimeServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config", "event", "http"]},
+  "soft_requires": {"engines": ["database", "cache", "queue", "auth"]},
+  "config": {"file": "config/realtime.php", "key": "realtime"},
+  "commands": ["realtime:websocket"],
+  "facade": [
+    {"name": "Broadcast", "accessor": "broadcast"},
+    {"name": "Realtime", "accessor": "realtime.facade"}
+  ],
+  "docs": "docs/03-engines/realtime.md",
+  "notes": "M6 — SSE بدون هیچ ext (StreamedResponse + heartbeat + retry)، WebSocket خودنوشته RFC 6455 (handshake/accept-key، frame codec با mask اجباری client، fragmentation، ping/pong، Origin check)، brokerها: Array/Database(polling با TTL prune)/Redis(bازاستفاده از RedisClient صف با seq سراسری و fallback خودکار)، ChannelRegistry با {param}/wildcard، احراز کانال خصوصی (POST /broadcasting/auth + توکن HMAC)، Presence با cache TTL، قلاب ShouldBroadcast در EventDispatcher، routes/channels.php."
+}

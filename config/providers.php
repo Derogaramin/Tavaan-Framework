@@ -41,4 +41,10 @@ return [
     \Tavaan\Engine\Notification\NotificationServiceProvider::class,
     \Tavaan\Engine\Media\MediaServiceProvider::class,
     \Tavaan\Engine\Backup\BackupServiceProvider::class,
+    \Tavaan\Engine\Observability\ObservabilityServiceProvider::class,
+    \Tavaan\Engine\Search\SearchServiceProvider::class,
+    \Tavaan\Engine\Api\ApiServiceProvider::class,
+    \Tavaan\Engine\Tenancy\TenancyServiceProvider::class,
+    \Tavaan\Engine\FeatureFlag\FeatureFlagServiceProvider::class,
+    \Tavaan\Engine\Realtime\RealtimeServiceProvider::class,
 ];

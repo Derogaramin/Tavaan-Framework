@@ -1,0 +1,19 @@
+{
+  "id": "tavaan.engine.observability",
+  "type": "engine",
+  "name": "Observability",
+  "title_fa": "رصدپذیری",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Observability\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Observability\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Observability\\ObservabilityServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config", "log"]},
+  "soft_requires": {"engines": ["event", "http", "cache", "database", "queue"]},
+  "config": {"file": "config/observability.php", "key": "observability"},
+  "facade": [
+    {"name": "Metrics", "accessor": "metrics"},
+    {"name": "Trace", "accessor": "tracer"}
+  ],
+  "docs": "docs/03-engines/observability.md",
+  "notes": "M6 — Metrics (Counter/Gauge/Histogram/Summary + Prometheus text format + پایستگی cache)، Tracing خودنوشته (W3C TraceContext، Span/Tracer با Sampling قطعی، exporterها: Array/Log/OTLP-HTTP/Jaeger-UDP با Thrift Compact خودنوشته)، Health Checks (live/ready)، Debug Bar فقط-dev با خروجی escape شده."
+}

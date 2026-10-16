@@ -2,7 +2,7 @@
   "$schema": "https://docs.tavaan.dev/schemas/project.v1.json",
   "name": "tavaan",
   "title_fa": "تَوان",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "tavaan": "^1.0",
   "php": ">=8.2.0",
   "environment": {
@@ -28,8 +28,21 @@
     "routes": "routes"
   },
   "engines": {
-    "required": ["container", "config", "event", "error", "log", "console"],
-    "optional": ["pipeline", "compat", "optimizer", "module", "test"]
+    "required": [
+      "container",
+      "config",
+      "event",
+      "error",
+      "log",
+      "console"
+    ],
+    "optional": [
+      "pipeline",
+      "compat",
+      "optimizer",
+      "module",
+      "test"
+    ]
   },
   "modules": {
     "enabled": [],
@@ -38,13 +51,20 @@
   "kits": [],
   "providers": "config/providers.php",
   "scripts": {
-    "dev": ["tvn serve --host=127.0.0.1 --port=8000"]
+    "dev": [
+      "tvn serve --host=127.0.0.1 --port=8000"
+    ]
   },
   "build": {
-    "optimizer": ["config", "autoload"]
+    "optimizer": [
+      "config",
+      "autoload"
+    ]
   },
   "security": {
     "plugins_signature_required": true,
-    "allowed_plugin_vendors": ["tavaan"]
+    "allowed_plugin_vendors": [
+      "tavaan"
+    ]
   }
 }

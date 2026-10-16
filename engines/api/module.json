@@ -1,0 +1,17 @@
+{
+  "id": "tavaan.engine.api",
+  "type": "engine",
+  "name": "API",
+  "title_fa": "لایهٔ API",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Api\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Api\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Api\\ApiServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config", "http"]},
+  "soft_requires": {"engines": ["validation", "orm", "cache", "router"]},
+  "config": {"file": "config/api.php", "key": "api"},
+  "commands": ["api:docs"],
+  "facade": null,
+  "docs": "docs/03-engines/api.md",
+  "notes": "M6 — JsonResource با when/whenLoaded/whenHas/whenCounted/mergeWhen/whenPivotLoaded، AnonymousResourceCollection با meta/links صفحه‌بندی، Versioning (url/header/query + هدرهای Deprecation/Sunset)، Idempotency-Key با قفل in-progress و RFC 9457، Throttle (نام‌دار و عددی، per-user/key/IP، هدرهای X-RateLimit-*)، OpenAPI 3.1 generator خودنوشته (attribute-based + FormRequest rules + YAML emitter داخلی)."
+}

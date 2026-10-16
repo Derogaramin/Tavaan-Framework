@@ -1,0 +1,16 @@
+{
+  "id": "tavaan.engine.feature-flag",
+  "type": "engine",
+  "name": "FeatureFlag",
+  "title_fa": "پرچم قابلیت",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\FeatureFlag\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\FeatureFlag\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\FeatureFlag\\FeatureFlagServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config"]},
+  "soft_requires": {"engines": ["cache", "database", "rbac", "tenancy"]},
+  "config": {"file": "config/features.php", "key": "features"},
+  "facade": {"name": "Feature", "accessor": "feature"},
+  "docs": "docs/03-engines/feature-flag.md",
+  "notes": "M6 — Targeting با قواعد role/permission/user_id/tenant/percentage/env/ip، Kill Switch فوری (cache)، درصد پایدار (crc32(seed|feature))، A/B Testing پایدار، درایورهای config/database با کش نسخه‌دار، Feature::for($user) scoped."
+}

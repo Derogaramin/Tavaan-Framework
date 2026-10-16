@@ -1,0 +1,17 @@
+{
+  "id": "tavaan.engine.search",
+  "type": "engine",
+  "name": "Search",
+  "title_fa": "جست‌وجو",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Search\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Search\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Search\\SearchServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["config"]},
+  "soft_requires": {"engines": ["database", "event", "orm"]},
+  "config": {"file": "config/search.php", "key": "search"},
+  "commands": ["search:reindex"],
+  "facade": {"name": "Search", "accessor": "search"},
+  "docs": "docs/03-engines/search.md",
+  "notes": "M6 — ایندکس معکوس خودنوشتهٔ فارسی‌آگاه (BM25 + نرمال‌سازی ی/ک/نیم‌فاصله/اعراب + stemming + ایست‌واژه‌ها)، درایورهای SQLite FTS5/MySQL FULLTEXT(ngram)/PostgreSQL tsvector، آداپترهای HTTP Meilisearch/Typesense، Facet/Suggest/Highlight با escape-then-mark، پایستگی اتمیک JSON، ایندکس خودکار از رویدادهای مدل (Searchable trait)، محافظ DoS (طول کوئری/تعداد توکن)."
+}
