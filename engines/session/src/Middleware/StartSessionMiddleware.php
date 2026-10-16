@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tavaan\Engine\Session\Middleware;
 
 use Tavaan\Core\Contracts\Config\RepositoryInterface;
+use Tavaan\Core\Contracts\Container\ContainerInterface;
 use Tavaan\Core\Contracts\Http\MiddlewareInterface;
 use Tavaan\Core\Contracts\Http\RequestInterface;
 use Tavaan\Core\Contracts\Http\ResponseInterface;
@@ -14,7 +15,6 @@ use Tavaan\Engine\Http\Request;
 use Tavaan\Engine\Http\Response;
 use Tavaan\Engine\Session\Session;
 use Tavaan\Engine\Session\SessionManager;
-use Tavaan\Core\Contracts\Container\ContainerInterface;
 
 /**
  * تَوان | Tavaan — Session

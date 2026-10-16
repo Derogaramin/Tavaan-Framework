@@ -270,9 +270,13 @@ class Container implements ContainerInterface
 
         $args = $this->resolveCallParameters($reflection, $parameters, $this->callableName($callback));
 
-        return $reflection instanceof \ReflectionFunction
-            ? $reflection->invokeArgs($args)
-            : $reflection->invokeArgs($target, $args);
+        if ($reflection instanceof \ReflectionFunction) {
+            return $reflection->invokeArgs($args);
+        }
+
+        // resolveCallable فقط ReflectionFunction/ReflectionMethod تولید می‌کند
+        /** @var \ReflectionMethod $reflection */
+        return $reflection->invokeArgs($target, $args);
     }
 
     // ─── Scope ────────────────────────────────────────────────────────────
@@ -816,7 +820,9 @@ class Container implements ContainerInterface
 
         $this->dispatchingEvent = true;
         try {
-            $this->instances['events']->dispatch($event, $payload);
+            /** @var \Tavaan\Core\Contracts\Events\DispatcherInterface $dispatcher */
+            $dispatcher = $this->instances['events'];
+            $dispatcher->dispatch($event, $payload);
         } catch (\Throwable) {
             // رویداد دیباگ نباید resolve را بشکند
         } finally {

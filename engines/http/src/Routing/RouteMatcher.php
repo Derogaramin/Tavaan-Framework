@@ -88,22 +88,31 @@ final class RouteMatcher
         $key = $this->caseSensitive ? $seg : \strtolower($seg);
 
         // 1) Static — بالاترین اولویت
-        if (isset($node->static[$key])) {
-            $this->walk($node->static[$key], $segments, $i + 1, $params, $results, $allowedMethods, $host, $method);
+        $child = $node->lookupStatic($key);
+        if ($child !== null) {
+            $this->walk($child, $segments, $i + 1, $params, $results, $allowedMethods, $host, $method);
         }
 
         // 2) Parametric (مرتب: constrained اول)
-        foreach ($node->params as $edge) {
-            if (\preg_match('#^' . $edge['regex'] . '$#u', $seg) === 1) {
-                $this->walk($edge['node'], $segments, $i + 1, [...$params, $edge['name'] => $seg], $results, $allowedMethods, $host, $method);
+        $edge = $node->p1;
+        if ($edge !== null) {
+            if (\preg_match('#^' . $edge->regex . '$#u', $seg) === 1) {
+                $this->walk($edge->node, $segments, $i + 1, [...$params, $edge->name => $seg], $results, $allowedMethods, $host, $method);
+            }
+            if ($node->pMore !== null) {
+                foreach ($node->pMore as $edge) {
+                    if (\preg_match('#^' . $edge->regex . '$#u', $seg) === 1) {
+                        $this->walk($edge->node, $segments, $i + 1, [...$params, $edge->name => $seg], $results, $allowedMethods, $host, $method);
+                    }
+                }
             }
         }
 
         // 3) Wildcard — بقیهٔ مسیر را می‌بلعد
-        if ($node->wildcard !== null) {
+        if ($node->wildcardNode !== null) {
             $rest = \implode('/', \array_slice($segments, $i));
-            if (\preg_match('#^' . $node->wildcard['regex'] . '$#u', $rest) === 1) {
-                $this->walk($node->wildcard['node'], $segments, \count($segments), [...$params, $node->wildcard['name'] => $rest], $results, $allowedMethods, $host, $method);
+            if (\preg_match('#^' . $node->wildcardRegex . '$#u', $rest) === 1) {
+                $this->walk($node->wildcardNode, $segments, \count($segments), [...$params, $node->wildcardName => $rest], $results, $allowedMethods, $host, $method);
             }
         }
     }
@@ -115,27 +124,45 @@ final class RouteMatcher
      */
     private function collectHandlers(TrieNode $node, array $params, array &$results, array &$allowedMethods, string $host, string $method): void
     {
-        foreach ($node->handlers as $handlerMethod => $handlers) {
-            if (!\in_array($handlerMethod, $allowedMethods, true)) {
-                $allowedMethods[] = $handlerMethod;
-            }
-            // 🔒 فقط متد درخواست‌شده کاندید است؛ بقیه فقط در Allow گزارش می‌شوند
-            if ($handlerMethod !== $method) {
-                continue;
-            }
-            foreach ($handlers as $handler) {
-                $route = $handler['route'];
-                if (!$this->domainMatches($route, $host)) {
-                    continue;
+        $h1 = $node->h1;
+        if ($h1 !== null) {
+            $this->considerHandler($h1, $params, $results, $allowedMethods, $host, $method);
+            $h2 = $node->h2;
+            if ($h2 !== null) {
+                $this->considerHandler($h2, $params, $results, $allowedMethods, $host, $method);
+                if ($node->hMore !== null) {
+                    foreach ($node->hMore as $handler) {
+                        $this->considerHandler($handler, $params, $results, $allowedMethods, $host, $method);
+                    }
                 }
-                $results[] = [
-                    'route' => $route,
-                    'params' => $params,
-                    'specificity' => $handler['specificity'],
-                    'order' => $handler['order'],
-                ];
             }
         }
+    }
+
+    /**
+     * @param array<string, string> $params
+     * @param list<array{route: Route, params: array<string, string>, specificity: int, order: int}> $results
+     * @param list<string>          $allowedMethods
+     */
+    private function considerHandler(HandlerEntry $handler, array $params, array &$results, array &$allowedMethods, string $host, string $method): void
+    {
+        if (!\in_array($handler->method, $allowedMethods, true)) {
+            $allowedMethods[] = $handler->method;
+        }
+        // 🔒 فقط متد درخواست‌شده کاندید است؛ بقیه فقط در Allow گزارش می‌شوند
+        if ($handler->method !== $method) {
+            return;
+        }
+        $route = $handler->route;
+        if (!$this->domainMatches($route, $host)) {
+            return;
+        }
+        $results[] = [
+            'route' => $route,
+            'params' => $params,
+            'specificity' => $handler->specificity,
+            'order' => $handler->order,
+        ];
     }
 
     private function domainMatches(Route $route, string $host): bool

@@ -9,7 +9,6 @@ use Tavaan\Core\Contracts\Auth\UserProviderInterface;
 use Tavaan\Core\Contracts\Database\ConnectionInterface;
 use Tavaan\Core\Contracts\Encryption\HasherInterface;
 use Tavaan\Core\Contracts\Events\DispatcherInterface;
-use Tavaan\Engine\Auth\Exceptions\ThrottledException;
 use Tavaan\Engine\Auth\Throttle\LoginThrottle;
 use Tavaan\Support\Time\Clock;
 

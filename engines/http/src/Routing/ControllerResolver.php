@@ -121,9 +121,9 @@ final class ControllerResolver
                     continue;
                 }
 
-                // Enum backed
+                // Enum backed — فقط BackedEnum از route param قابل resolve است
                 if (\enum_exists($typeName) && \array_key_exists($name, $routeParameters)) {
-                    $args[] = $typeName::from($routeParameters[$name]);
+                    $args[] = $this->resolveEnum($typeName, $routeParameters[$name]);
                     continue;
                 }
 
@@ -182,12 +182,46 @@ final class ControllerResolver
 
         // Enum backed از route param
         if (!$type->isBuiltin() && \enum_exists($type->getName())) {
-            $enumClass = $type->getName();
-
-            return \is_string($value) || \is_int($value) ? $enumClass::from($value) : $value;
+            return $this->resolveEnum($type->getName(), $value);
         }
 
         return $this->castValue($value, $type);
+    }
+
+    /** @var array<string, 'int'|'string'|null> memo نوع backing برای enumها */
+    private array $enumBacking = [];
+
+    /**
+     * resolve مقدار route param به enum.
+     *
+     * 🔒 فقط BackedEnum دارای from() است (unit/pure enum → مقدار خام برمی‌گردد
+     * و PHP در مرز پارامتر TypeError می‌دهد). رشتهٔ عددی برای enum با
+     * backing=int به int تبدیل می‌شود (مانند Laravel).
+     *
+     * @param class-string $enumClass
+     */
+    private function resolveEnum(string $enumClass, mixed $value): mixed
+    {
+        if (!\is_subclass_of($enumClass, \BackedEnum::class)) {
+            return $value;
+        }
+
+        if (!\array_key_exists($enumClass, $this->enumBacking)) {
+            $backing = (new \ReflectionEnum($enumClass))->getBackingType();
+            $this->enumBacking[$enumClass] = $backing instanceof \ReflectionNamedType
+                ? ($backing->getName() === 'int' ? 'int' : 'string')
+                : null;
+        }
+
+        if ($this->enumBacking[$enumClass] === 'int' && \is_string($value) && \ctype_digit($value)) {
+            $value = (int) $value;
+        }
+
+        if (!\is_string($value) && !\is_int($value)) {
+            return $value;
+        }
+
+        return $enumClass::from($value);
     }
 
     private function castValue(mixed $value, ?\ReflectionType $type): mixed

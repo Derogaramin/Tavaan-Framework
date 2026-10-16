@@ -16,7 +16,7 @@ use Tavaan\Engine\Database\Migration\Migrator;
  */
 final class MigrateRollbackCommand extends Command
 {
-    protected string $signature = 'migrate:rollback {--step=1 : تعداد batch}';
+    protected string $signature = 'migrate:rollback {--step=1 : تعداد batch} {--force : بدون تأیید}';
 
     protected string $description = 'بازگرداندن آخرین batch از migrationها';
 
@@ -26,7 +26,7 @@ final class MigrateRollbackCommand extends Command
         $migrator = $this->app->make(Migrator::class);
         $migrator->setOutput(fn (string $line): mixed => $this->line($line));
 
-        if (!$this->confirm('rollback داده‌ها را تغییر می‌دهد. ادامه می‌دهید؟', false)) {
+        if (!(bool) $this->option('force') && !$this->confirm('rollback داده‌ها را تغییر می‌دهد. ادامه می‌دهید؟', false)) {
             $this->warn('لغو شد.');
 
             return self::SUCCESS;

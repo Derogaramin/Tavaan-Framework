@@ -8,8 +8,8 @@ use Tavaan\Core\Contracts\Database\ConnectionInterface;
 use Tavaan\Core\Contracts\I18n\TranslatorInterface;
 use Tavaan\Core\Contracts\Validation\ValidatorInterface;
 use Tavaan\Core\Exceptions\Validation\ValidationException;
-use Tavaan\Support\Arr;
 use Tavaan\Engine\Validation\Concerns\ValidatesAttributes;
+use Tavaan\Support\Arr;
 
 /**
  * تَوان | Tavaan — Validation

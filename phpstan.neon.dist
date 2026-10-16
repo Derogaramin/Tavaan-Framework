@@ -1,11 +1,18 @@
-# dev-only — PHPStan level max بدون baseline (AC-CON-05)
+# dev-only — PHPStan level max بدون baseline (AC-CON-05 / DOC-111 §2)
 parameters:
     level: max
     paths:
         - core
         - engines
     excludePaths:
-        analyse:
-            - engines/*/tests
-            - engines/*/benchmarks
+        analyseAndScan:
+            - */tests/*
+            - */benchmarks/*
     treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
+    bootstrapFiles:
+        - core/Support/helpers.php
+    scanDirectories:
+        - engines
+    universalObjectCratesClasses:
+        - Tavaan\Engine\Database\ORM\Model

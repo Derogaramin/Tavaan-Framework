@@ -13,8 +13,35 @@ namespace Tavaan\Engine\Http\Routing;
  */
 final class Route
 {
-    /** @var list<string> متدهای HTTP (uppercase) */
-    private array $methods;
+    /**
+     * بیت‌ماسک متدهای استاندارد (بهینه‌سازی حافظه — DOC-040 §12).
+     * آرایهٔ list<string> در PHP حداقل ~۱۸۴ بایت هزینه دارد؛ int صفر بایت.
+     */
+    private const METHOD_BITS = [
+        'GET' => 1,
+        'HEAD' => 2,
+        'POST' => 4,
+        'PUT' => 8,
+        'PATCH' => 16,
+        'DELETE' => 32,
+        'OPTIONS' => 64,
+    ];
+
+    private const BIT_METHODS = [
+        1 => 'GET',
+        2 => 'HEAD',
+        4 => 'POST',
+        8 => 'PUT',
+        16 => 'PATCH',
+        32 => 'DELETE',
+        64 => 'OPTIONS',
+    ];
+
+    /** متدهای HTTP استاندارد (uppercase) — بیت‌ماسک */
+    private int $methodBits = 0;
+
+    /** @var list<string> متدهای غیراستاندارد (نادر — فقط در صورت نیاز allocate می‌شود) */
+    private array $extraMethods = [];
 
     private string $uri;
 
@@ -41,8 +68,8 @@ final class Route
 
     private int $order = 0;
 
-    /** @var list<array{name?: string, regex?: string, static?: string}> بخش‌های پارس‌شده */
-    private array $segments = [];
+    /** آیا شمارنده‌های segments حداقل یک‌بار محاسبه شده‌اند؟ (پارس تنبل) */
+    private bool $parsed = false;
 
     private int $staticCount = 0;
 
@@ -58,13 +85,21 @@ final class Route
      */
     public function __construct(array $methods, string $uri, mixed $action)
     {
-        $this->methods = \array_values(\array_unique(\array_map(\strtoupper(...), $methods)));
-        if (\in_array('GET', $this->methods, true) && !\in_array('HEAD', $this->methods, true)) {
-            $this->methods[] = 'HEAD';   // RFC 9110: HEAD همراه GET
+        foreach ($methods as $method) {
+            $method = \strtoupper((string) $method);
+            $bit = self::METHOD_BITS[$method] ?? 0;
+            if ($bit !== 0) {
+                $this->methodBits |= $bit;
+            } elseif (!\in_array($method, $this->extraMethods, true)) {
+                $this->extraMethods[] = $method;
+            }
+        }
+        if (($this->methodBits & 1) !== 0 && ($this->methodBits & 2) === 0) {
+            $this->methodBits |= 2;   // RFC 9110: HEAD همراه GET
         }
         $this->uri = '/' . \trim($uri, '/');
         $this->action = $action;
-        $this->parseSegments();
+        // پارس segments تنبل است (ensureParsed) — ساخت/بارگذاری کش سریع‌تر
     }
 
     // ─── Fluent ───────────────────────────────────────────────────────────
@@ -170,10 +205,20 @@ final class Route
 
     // ─── Getters ──────────────────────────────────────────────────────────
 
-    /** @return list<string> */
+    /** @return list<string> متدهای HTTP (ترتیب متعارف؛ HEAD همراه GET) */
     public function methods(): array
     {
-        return $this->methods;
+        $out = [];
+        foreach (self::BIT_METHODS as $bit => $name) {
+            if (($this->methodBits & $bit) !== 0) {
+                $out[] = $name;
+            }
+        }
+        foreach ($this->extraMethods as $method) {
+            $out[] = $method;
+        }
+
+        return $out;
     }
 
     public function uri(): string
@@ -228,9 +273,9 @@ final class Route
     public function parameterNames(): array
     {
         $names = [];
-        foreach ($this->segments as $segment) {
-            if (isset($segment['name'])) {
-                $names[] = $segment['name'];
+        foreach ($this->parseSegments() as $segment) {
+            if ($segment instanceof RouteSegment) {
+                $names[] = $segment->name;
             }
         }
 
@@ -243,14 +288,39 @@ final class Route
         return $this->bindingFields;
     }
 
-    /** @return list<array{name?: string, regex?: string, static?: string, wildcard?: bool}> */
+    /**
+     * نمایش فشردهٔ بخش‌ها (مصرف داخلی: RouteCompiler/UrlGenerator).
+     * در هر فراخوانی fresh پارس می‌شود و نگه‌داشته نمی‌شود —
+     * بهینه‌سازی حافظه (DOC-040 §12: ۱۰۰۰ روت ≤ ۲MB).
+     *
+     * @return list<string|RouteSegment>
+     */
+    public function rawSegments(): array
+    {
+        return $this->parseSegments();
+    }
+
+    /**
+     * نمایش سازگار با API قدیمی (materialize در هر فراخوانی).
+     *
+     * @return list<array{name?: string, regex?: string, static?: string, wildcard?: bool}>
+     */
     public function segments(): array
     {
-        return $this->segments;
+        $out = [];
+        foreach ($this->parseSegments() as $segment) {
+            $out[] = $segment instanceof RouteSegment
+                ? ['name' => $segment->name, 'regex' => $segment->regex, 'wildcard' => $segment->wildcard]
+                : ['static' => $segment];
+        }
+
+        return $out;
     }
 
     public function hasWildcard(): bool
     {
+        $this->ensureParsed();
+
         return $this->hasWildcard;
     }
 
@@ -259,6 +329,8 @@ final class Route
      */
     public function specificity(): int
     {
+        $this->ensureParsed();
+
         return 1000 * $this->staticCount
             + 100 * $this->constrainedCount
             + 10 * ($this->paramCount - $this->constrainedCount)
@@ -313,9 +385,11 @@ final class Route
         if ($this->action instanceof \Closure) {
             throw new \LogicException('Routes with Closure actions cannot be cached (route:cache).');
         }
+        // wheres/بایندینگ‌های inline ({id:[0-9]+} یا {product:slug}) باید materialize شوند
+        $this->ensureParsed();
 
         return [
-            'methods' => $this->methods,
+            'methods' => $this->methods(),
             'uri' => $this->uri,
             'action' => $this->action,
             'name' => $this->name,
@@ -346,52 +420,72 @@ final class Route
 
     // ─── داخلی ────────────────────────────────────────────────────────────
 
-    /** پارس uri → segments (static/param/wildcard) + inline regex/binding field. */
-    private function parseSegments(): void
+    /** پارس یک‌بارهٔ شمارنده‌ها (specificity/hasWildcard/toArray) در صورت نیاز. */
+    private function ensureParsed(): void
     {
-        $this->segments = [];
-        $this->staticCount = 0;
-        $this->paramCount = 0;
-        $this->constrainedCount = 0;
-        $this->hasWildcard = false;
+        if (!$this->parsed) {
+            $this->parseSegments();
+        }
+    }
+
+    /**
+     * پارس uri → segments (static/param/wildcard) + inline regex/binding field.
+     * شمارنده‌ها (برای specificity) و mutationهای wheres/bindingFields را
+     * به‌روز می‌کند ولی خود list را نگه نمی‌دارد (حافظه — DOC-040 §12).
+     *
+     * @return list<string|RouteSegment>
+     */
+    private function parseSegments(): array
+    {
+        $segments = [];
+        $staticCount = 0;
+        $paramCount = 0;
+        $constrainedCount = 0;
+        $hasWildcard = false;
 
         $path = \trim($this->uri, '/');
-        if ($path === '') {
-            return;
-        }
+        if ($path !== '') {
+            foreach (\explode('/', $path) as $part) {
+                if (\preg_match('/^\{([A-Za-z_][A-Za-z0-9_]*)(?::(.+))?\}$/s', $part, $m) === 1) {
+                    $name = $m[1];
+                    $inline = $m[2] ?? null;
 
-        foreach (\explode('/', $path) as $part) {
-            if (\preg_match('/^\{([A-Za-z_][A-Za-z0-9_]*)(?::(.+))?\}$/s', $part, $m) === 1) {
-                $name = $m[1];
-                $inline = $m[2] ?? null;
+                    // {product:slug} → binding field (اگر regex نباشد)
+                    if ($inline !== null && !isset($this->wheres[$name]) && !self::looksLikeRegex($inline)) {
+                        $this->bindingFields[$name] = $inline;
+                        $inline = null;
+                    }
+                    if ($inline !== null) {
+                        $this->wheres[$name] ??= $inline;
+                    }
 
-                // {product:slug} → binding field (اگر regex نباشد)
-                if ($inline !== null && !isset($this->wheres[$name]) && !self::looksLikeRegex($inline)) {
-                    $this->bindingFields[$name] = $inline;
-                    $inline = null;
-                }
-                if ($inline !== null) {
-                    $this->wheres[$name] ??= $inline;
+                    $regex = $this->wheres[$name] ?? null;
+                    if ($regex !== null && self::isMultiSegmentRegex($regex)) {
+                        $hasWildcard = true;   // wildcard segment (مانند .* یا شامل /)
+                        $segments[] = new RouteSegment($name, $regex, true);
+                        break;   // بقیهٔ مسیر بلعیده می‌شود
+                    }
+
+                    $segments[] = new RouteSegment($name, $regex);
+                    $paramCount++;
+                    if ($regex !== null) {
+                        $constrainedCount++;
+                    }
+                    continue;
                 }
 
-                $regex = $this->wheres[$name] ?? null;
-                if ($regex !== null && self::isMultiSegmentRegex($regex)) {
-                    $this->hasWildcard = true;   // wildcard segment (مانند .* یا شامل /)
-                    $this->segments[] = ['name' => $name, 'regex' => $regex, 'wildcard' => true];
-                    break;   // بقیهٔ مسیر بلعیده می‌شود
-                }
-
-                $this->segments[] = ['name' => $name, 'regex' => $regex, 'wildcard' => false];
-                $this->paramCount++;
-                if ($regex !== null) {
-                    $this->constrainedCount++;
-                }
-                continue;
+                $segments[] = $part;
+                $staticCount++;
             }
-
-            $this->segments[] = ['static' => $part];
-            $this->staticCount++;
         }
+
+        $this->staticCount = $staticCount;
+        $this->paramCount = $paramCount;
+        $this->constrainedCount = $constrainedCount;
+        $this->hasWildcard = $hasWildcard;
+        $this->parsed = true;
+
+        return $segments;
     }
 
     private static function looksLikeRegex(string $value): bool

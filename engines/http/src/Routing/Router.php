@@ -93,6 +93,11 @@ final class Router
         return $this->addRoute(['OPTIONS'], $uri, $action);
     }
 
+    public function head(string $uri, mixed $action): Route
+    {
+        return $this->addRoute(['HEAD'], $uri, $action);
+    }
+
     /** @param list<string> $methods */
     public function match(array $methods, string $uri, mixed $action): Route
     {

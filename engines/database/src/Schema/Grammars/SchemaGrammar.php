@@ -149,9 +149,7 @@ abstract class SchemaGrammar
         return $this->uniqueConstraintSql($name, [$column]);
     }
 
-    /**
-     * @param array<string, mixed> $command
-     */
+    /** SQL محدودیت foreign key (in-line در CREATE TABLE). */
     protected function foreignKeySql(ForeignKeyDefinition $fk, string $table): string
     {
         return 'constraint ' . $this->wrap($fk->name)

@@ -10,8 +10,7 @@ use Tavaan\Engine\Database\Schema\Blueprint;
  * جداول موتور Auth — password_resets / personal_access_tokens / user_devices / two_factor_secrets (DOC-056).
  */
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         if (!Schema::hasTable('password_resets')) {

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Tavaan\Core\Exceptions\Authorization\AuthorizationException;
 use Tavaan\Core\Exceptions\Auth\AuthenticationException;
+use Tavaan\Core\Exceptions\Authorization\AuthorizationException;
 use Tavaan\Core\Exceptions\Http\RouteNotFoundException;
 use Tavaan\Core\Exceptions\Validation\ValidationException;
 

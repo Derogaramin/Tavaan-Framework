@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tavaan\Engine\Log;
 
+use Tavaan\Core\Context\TraceContext;
 use Tavaan\Core\Contracts\Log\FormatterInterface;
 use Tavaan\Core\Contracts\Log\HandlerInterface;
 use Tavaan\Core\Contracts\Log\LoggerInterface;
 use Tavaan\Core\Contracts\Log\LogLevel;
 use Tavaan\Core\Contracts\Log\ProcessorInterface;
-use Tavaan\Core\Context\TraceContext;
 use Tavaan\Engine\Log\Formatters\LineFormatter;
 use Tavaan\Support\Time\Clock;
 

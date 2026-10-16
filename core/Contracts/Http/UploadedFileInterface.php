@@ -20,6 +20,9 @@ interface UploadedFileInterface
 
     public function mimeType(): string;
 
+    /** پسوند فایل (بدون نقطه، lowercase — از originalName یا mime). */
+    public function extension(): string;
+
     public function error(): int;
 
     public function isValid(): bool;

@@ -265,6 +265,26 @@ final class Application implements ApplicationInterface
         $this->container->extend($abstract, $extender);
     }
 
+    public function beginScope(string $id): void
+    {
+        $this->container->beginScope($id);
+    }
+
+    public function endScope(string $id): void
+    {
+        $this->container->endScope($id);
+    }
+
+    public function currentScope(): ?string
+    {
+        return $this->container->currentScope();
+    }
+
+    public function flushScoped(): void
+    {
+        $this->container->flushScoped();
+    }
+
     public function flush(): void
     {
         $this->container->flush();

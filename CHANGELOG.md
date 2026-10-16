@@ -2,6 +2,30 @@
 
 فرمت: Keep a Changelog — نسخه‌گذاری: SemVer.
 
+## [Unreleased] — ممیزی سلامت و یکپارچگی (M1–M4)
+
+### اصلاح شد
+- **Router/TrieNode (DOC-040 §12)**: بازنویسی حافظه‌بهینهٔ Route/Trie — segments فشرده (`string|RouteSegment` به‌جای آرایه‌های کلیددار)، methods به‌صورت بیت‌ماسک، پارس تنبل segments، یال‌های پارامتریک `ParamEdge`، هندلرهای برگ `HandlerEntry` (≤۲ مورد inline)، تک‌فرزند static به‌صورت inline، memo نرمال‌سازی کلیدها؛ حافظهٔ ۱۰۰۰ روت از ~۴٫۹MB (اندازهٔ واقعی؛ bench قدیمی ۱۴MB خطا گزارش می‌کرد) به **~۱٫۷MB ≤ ۲MB** کاهش یافت
+- **باگ `TrieNode::staticChild`**: فرزند سوم static وقتی map دو عضوی بود در slot تک‌فرزند جا می‌ماند و با lookup جدید پنهان می‌شد (۴۰۴) — invariant «map پر ⟹ single تهی» اکنون در هر دو مسیر برقرار است + ۲ تست رگرسیون
+- **باگ `Route::head` نبود**: `RouteRegistrar` متد `head` را forward می‌کرد ولی `Router::head()` وجود نداشت (fatal در زمان ثبت) — افزوده شد
+- **باگ latent Enum در ControllerResolver**: `from()` روی enum غیر-backed (unit enum) و رشتهٔ عددی برای enum با backing=int → اکنون فقط `BackedEnum` resolve می‌شود با cast مناسب (سبک Laravel)
+- **Contract-First (DOC-013)**: متدهای مورداستفادهٔ کد به قراردادهای موجود افزوده شد — `StoreInterface::add` (مبنای CacheLock)، `QueryBuilderInterface::updateOrInsert/orderByDesc`، `ContainerInterface::beginScope/endScope/currentScope/flushScoped` (+ delegate در `Application`)، `RequestInterface::cookies`، `ResponseInterface::hasHeader`، `UploadedFileInterface::extension`، `EncrypterInterface::encryptJson/decryptJson`، `KernelInterface::commands/resolve`
+- **`key:generate`**: تأییدیهٔ بازنویسی فقط وقتی کلید قبلیِ غیرخالی وجود دارد (راه‌اندازی اولیه/CI غیرتعاملی نمی‌شکند) + اصلاح غلط تایپی توضیح («تعداد»→«تولید»)
+- **`migrate:rollback --force`**: هم‌تراز با `migrate:fresh/refresh` (اجرای غیرتعاملی/CI)
+- **`.env` دیگر مرده نیست**: `TVN_AUTOLOAD_CACHE` با میکرواسکن زودهنگام در `core/bootstrap.php` (مرغ‌و‌تخم classmap↔env) و `TVN_CONFIG_CACHE` از `EnvRepository` خوانده می‌شود (پیش‌تر فقط `$_SERVER` واقعی — مقدار `.env` هرگز اثر نمی‌کرد)
+- **`phpstan.neon.dist` مطابق DOC-111 §2**: `bootstrapFiles`/`scanDirectories`/`universalObjectCratesClasses`/الگوی صحیح exclude (`*/tests/*`) — خطاهای `class.notFound` و همهٔ خطاهای کلاس «fatal» (`method/property/staticMethod/offsetAccess/function.notFound`) صفر شد
+- **Benchهای صادق‌تر**: router.bench حافظهٔ افزایشی واقعی روت‌ها را می‌سنجد (نه کل فرایند منهای ۲MB ثابت)؛ kernel.bench هدف cold (≤۲۵ms بدون opcache) را از warm (≤۸ms با opcache) تفکیک می‌کند (PERF-BOOT-01/02)؛ render.bench هدف DOC (متن معمولی ۱KB) را از سناریوی hostile (اطلاع‌رسانی) جدا کرد
+- **Docblockهای کهنه**: `EarlyErrorManager::isFatal`، `TokenManager::refresh`، `SchemaGrammar::foreignKeySql`، `Session::setFingerprint` (parameter.notFound)
+- **ساختار `storage/`** مطابق DOC-040 §7 ایجاد شد (app/cache/framework/logs/backups/temp + `.gitignore` و مجوزهای مستند)
+
+### تغییر یافت
+- `CacheLock` با تایپ `StoreInterface` (به‌جای object-shape) — Contract-First
+- `ModelQueryBuilder` با `@method`های صریح برای متدهای fluent فورواردشده (تحلیل ایستا/IDE)
+- `Ulid`/`Base32`: `(int) bindec(...)` قطعی (حذف offsetAccess float|int)
+
+### نتایج
+- ۵۴۶ تست / ۲۷۴۶ assertion سبز • ۶۷۹ فایل lint پاک • gate ممنوعه‌ها سبز • حافظهٔ ۱۰۰۰ روت ~۱٫۷MB ✅ • boot warm ~۷٫۵–۷٫۸ms ✅ / cold ~۱۸–۲۰ms ✅ • PHPStan level max: همهٔ خطاهای کلاس fatal صفر (باقی: بدهی مستندسازی نوعِ الگوی DI)
+
 ## [0.4.0] - 2026-10-16 — فاز M4: امنیت و هویت
 
 ### افزوده شد

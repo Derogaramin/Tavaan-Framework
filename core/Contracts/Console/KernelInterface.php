@@ -19,4 +19,10 @@ interface KernelInterface
     public function call(string $command, array $arguments = []): int;
 
     public function register(CommandInterface|string $command): void;
+
+    /** نگاشت نام دستور → class (برای list). @return array<string, string> */
+    public function commands(): array;
+
+    /** نمونهٔ Command یک دستور ثبت‌شده (throw اگر ثبت نشده باشد). */
+    public function resolve(string $name): CommandInterface;
 }

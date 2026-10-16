@@ -6,7 +6,6 @@ namespace Tavaan\Engine\Rbac;
 
 use Tavaan\Core\Contracts\Auth\Authenticatable;
 use Tavaan\Core\Contracts\Authorization\GateInterface;
-use Tavaan\Core\Contracts\Cache\RepositoryInterface as CacheRepository;
 use Tavaan\Core\Contracts\Container\ContainerInterface;
 use Tavaan\Core\Contracts\Database\ConnectionInterface;
 use Tavaan\Core\Contracts\Events\DispatcherInterface;

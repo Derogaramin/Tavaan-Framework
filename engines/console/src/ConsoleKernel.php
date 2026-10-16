@@ -9,7 +9,6 @@ use Tavaan\Core\Contracts\Console\InputInterface;
 use Tavaan\Core\Contracts\Console\KernelInterface;
 use Tavaan\Core\Contracts\Console\OutputInterface;
 use Tavaan\Core\Contracts\Container\ContainerInterface;
-use Tavaan\Engine\Console\Input\ArgvInput;
 use Tavaan\Engine\Console\Output\Output;
 
 /**

@@ -65,7 +65,10 @@ final readonly class ParameterSignature
                 if ($part instanceof \ReflectionIntersectionType) {
                     $names = [];
                     foreach ($part->getTypes() as $ip) {
-                        $names[] = $ip->getName();
+                        // getTypes() در intersection همیشه ReflectionNamedType است
+                        if ($ip instanceof \ReflectionNamedType) {
+                            $names[] = $ip->getName();
+                        }
                     }
                     $unionParts[] = ['kind' => 'intersection', 'names' => $names];
                 } elseif ($part instanceof \ReflectionNamedType) {
@@ -81,7 +84,9 @@ final readonly class ParameterSignature
         } elseif ($type instanceof \ReflectionIntersectionType) {
             $isIntersection = true;
             foreach ($type->getTypes() as $ip) {
-                $intersectionNames[] = $ip->getName();
+                if ($ip instanceof \ReflectionNamedType) {
+                    $intersectionNames[] = $ip->getName();
+                }
             }
         }
 

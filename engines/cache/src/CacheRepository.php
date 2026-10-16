@@ -9,7 +9,6 @@ use Tavaan\Core\Contracts\Cache\LockProviderInterface;
 use Tavaan\Core\Contracts\Cache\RepositoryInterface;
 use Tavaan\Core\Contracts\Cache\StoreInterface;
 use Tavaan\Engine\Cache\Locks\CacheLock;
-use Tavaan\Support\Time\Clock;
 
 /**
  * تَوان | Tavaan — Cache

@@ -69,6 +69,16 @@ interface ContainerInterface extends PsrContainerInterface
     /** Decorator روی نمونهٔ ساخته‌شده. */
     public function extend(string $abstract, \Closure $extender): void;
 
+    /** شروع scope جدید برای سرویس‌های Scoped (هر درخواست — AC-CON-04). */
+    public function beginScope(string $id): void;
+
+    public function endScope(string $id): void;
+
+    public function currentScope(): ?string;
+
+    /** پاک‌کردن سرویس‌های Scoped (پایان درخواست در حالت Resident — AC-CON-04). */
+    public function flushScoped(): void;
+
     /** پاک‌کردن همهٔ bindingها/نمونه‌ها (تست). */
     public function flush(): void;
 }

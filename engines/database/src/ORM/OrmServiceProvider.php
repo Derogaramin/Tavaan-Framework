@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tavaan\Engine\Database\ORM;
 
-use Tavaan\Core\Contracts\Container\ContainerInterface;
 use Tavaan\Core\Contracts\Events\DispatcherInterface;
 use Tavaan\Core\Provider\ServiceProvider;
 use Tavaan\Engine\Database\ConnectionManager;

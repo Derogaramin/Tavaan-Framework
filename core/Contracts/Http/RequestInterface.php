@@ -38,6 +38,9 @@ interface RequestInterface
     /** @return array<string, mixed> */
     public function all(): array;
 
+    /** همهٔ کوکی‌های درخواست. @return array<string, mixed> */
+    public function cookies(): array;
+
     public function file(string $key): ?UploadedFileInterface;
 
     /** @return array<string, UploadedFileInterface> */

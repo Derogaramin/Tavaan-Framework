@@ -10,8 +10,7 @@ use Tavaan\Engine\Database\Schema\Blueprint;
  * جداول tvn_outbox/tvn_inbox — الگوی Transactional Outbox (ADR-0009 / DOC-033 §5.3).
  */
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         if (!Schema::hasTable('tvn_outbox')) {

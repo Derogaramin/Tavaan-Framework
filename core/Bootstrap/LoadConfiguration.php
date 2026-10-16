@@ -28,8 +28,11 @@ final class LoadConfiguration implements BootstrapperInterface
         $environment = $app->environment();
 
         $cacheFile = $basePath . '/storage/cache/config.php';
+        // TVN_CONFIG_CACHE از EnvRepository خوانده می‌شود (B2 پیش از B3 اجرا شده) —
+        // $_SERVER فقط env واقعی را دارد و .env را نمی‌بیند (E1/DOC-027).
         $cacheEnabled = \is_file($cacheFile)
-            && ($environment === 'production' || ($_SERVER['TVN_CONFIG_CACHE'] ?? '') === 'true');
+            && ($environment === 'production'
+                || \Tavaan\Engine\Config\EnvRepository::instance()->bool('TVN_CONFIG_CACHE', false));
 
         if ($cacheEnabled) {
             /** @var array<string, mixed> $items */

@@ -81,7 +81,8 @@ php bin/tvn serve                 # سرور توسعه → http://127.0.0.1:800
 |---|---|---|
 | Hello World وب (سربار هر درخواست) | ≤ ۳ms | ✅ **۰٫۱ms** (~۹۶۰۰ RPS تئوری تک‌فرایند) |
 | Route match با ۱۰۰۰ روت | ≤ ۵µs | ✅ ۲٫۴µs (parametric: ۳٫۰µs) |
-| ساخت Trie از ۱۰۰۰ روت | ≤ ۱۵ms | ✅ ۸٫۰ms |
+| ساخت Trie از ۱۰۰۰ روت | ≤ ۱۵ms | ✅ ۵٫۶ms |
+| حافظهٔ ۱۰۰۰ روت + Trie | ≤ ۲MB | ✅ ~۱٫۷MB |
 | Session secure + CSRF-ready | ✅ | ✅ HttpOnly/SameSite/Fingerprint/Regeneration + ۴۱۹ |
 | View با auto-escape | ۰ XSS | ✅ (XSS fuzz + escape در attribute/JSON) |
 | تقویم جلالی | ۱۰۰٪ دقیق | ✅ ۸۰۰۰ نمونه intl parity + ۱۰۰۰۰ roundtrip |
@@ -104,7 +105,7 @@ php bin/tvn serve                 # سرور توسعه → http://127.0.0.1:800
 | ۱۰۰۰ make متوالی | ≤ ۱ms | ✅ ۰٫۱۶ms |
 | ClassMap cache | ≥ ۷۰٪ سریع‌تر | ✅ ۹۰٫۶٪ |
 | Event dispatch + priority/wildcard قطعی | ✅ | ✅ |
-| تست‌های M1 | سبز | ✅ (مجموع فعلی: ۵۴۴ تست / ۲۷۳۶ assertion) |
+| تست‌های M1 | سبز | ✅ (مجموع فعلی: ۵۴۶ تست / ۲۷۴۶ assertion) |
 | صفر `eval`/`putenv` | ✅ | ✅ (gate خودکار) |
 
 > ✅ Outbox/Inbox موتور Event در M3/M4 فعال شد (ADR-0009 — `event:outbox-relay`).

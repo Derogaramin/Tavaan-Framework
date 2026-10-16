@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tavaan\Engine\Database\ORM\Relations;
 
-use Tavaan\Engine\Database\ORM\Model;
-
 /**
  * تَوان | Tavaan — ORM
  * MorphOne — رابطهٔ چندریختی یک-به-یک.

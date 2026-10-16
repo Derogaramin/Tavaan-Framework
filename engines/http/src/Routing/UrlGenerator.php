@@ -51,13 +51,13 @@ final class UrlGenerator
         $path = '';
         $missing = [];
 
-        foreach ($route->segments() as $segment) {
-            if (isset($segment['static'])) {
-                $path .= '/' . $segment['static'];
+        foreach ($route->rawSegments() as $segment) {
+            if (\is_string($segment)) {
+                $path .= '/' . $segment;
                 continue;
             }
 
-            $paramName = $segment['name'];
+            $paramName = $segment->name;
             if (\array_key_exists($paramName, $params)) {
                 $value = $params[$paramName];
                 $value = \is_object($value) && \method_exists($value, 'getRouteKey') ? $value->getRouteKey() : $value;
@@ -73,7 +73,7 @@ final class UrlGenerator
             }
 
             // پارامتر اختیاری (regex شامل ? نیست) — اگر default ندارد، missing
-            if (($segment['wildcard'] ?? false) === true) {
+            if ($segment->wildcard) {
                 continue;
             }
             $missing[] = $paramName;

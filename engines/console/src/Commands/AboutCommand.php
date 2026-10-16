@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tavaan\Engine\Console\Commands;
 
 use Tavaan\Core\Autoloading\AutoloaderRegistry;
-use Tavaan\Engine\Console\Command;
 use Tavaan\Engine\Compat\Compat;
+use Tavaan\Engine\Console\Command;
 
 /**
  * اطلاعات کامل پروژه/محیط (AC-STR-02، AC-CLI-02).

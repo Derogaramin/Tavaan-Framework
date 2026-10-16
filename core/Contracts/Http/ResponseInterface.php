@@ -24,6 +24,8 @@ interface ResponseInterface
     /** خواندن یک header. */
     public function header(string $key, ?string $default = null): ?string;
 
+    public function hasHeader(string $key): bool;
+
     /** Immutable: افزودن/جایگزینی header. */
     public function withHeader(string $key, string $value, bool $replace = true): static;
 

@@ -10,8 +10,7 @@ use Tavaan\Engine\Database\Schema\Blueprint;
  * جداول cache و cache_locks — درایور database موتور Cache (DOC-060).
  */
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         if (!Schema::hasTable('cache')) {

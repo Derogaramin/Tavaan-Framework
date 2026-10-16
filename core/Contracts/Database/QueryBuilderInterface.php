@@ -70,6 +70,8 @@ interface QueryBuilderInterface
 
     public function orderBy(string $column, string $direction = 'asc'): static;
 
+    public function orderByDesc(string $column): static;
+
     /** @param array<int|string, mixed> $bindings */
     public function orderByRaw(string $sql, array $bindings = []): static;
 
@@ -145,6 +147,14 @@ interface QueryBuilderInterface
 
     /** @param array<string, mixed> $values */
     public function update(array $values): int;
+
+    /**
+     * به‌روزرسانی رکورد منطبق بر attributes یا درج آن در صورت نبود (اتمیک در حد ممکن).
+     *
+     * @param array<string, mixed> $attributes
+     * @param array<string, mixed> $values
+     */
+    public function updateOrInsert(array $attributes, array $values = []): bool;
 
     /** @param array<string, mixed> $extra */
     public function increment(string $column, int|float $amount = 1, array $extra = []): int;

@@ -117,8 +117,6 @@ final class TokenManager
     /**
      * Refresh با Rotation + Reuse Detection (DOC-056 §6.1).
      *
-     * @param array<string, mixed> $credentials برای صدور مجدد (scopes از رکورد اصلی)
-     *
      * @throws TokenInvalidException
      */
     public function refresh(string $refreshToken, ?Authenticatable $user = null): TokenPair

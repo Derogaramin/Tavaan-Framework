@@ -17,6 +17,9 @@ use Tavaan\Engine\Http\Routing\Exceptions\RouteCompilationException;
  */
 final class RouteCompiler
 {
+    /** @var array<string, string> memo برای normalize (اشتراک رشته‌های کلید تکراری) */
+    private array $lowerMemo = [];
+
     public function __construct(private readonly bool $caseSensitive = false)
     {
     }
@@ -24,9 +27,14 @@ final class RouteCompiler
     public function compile(RouteCollection $routes): TrieNode
     {
         $root = new TrieNode();
+        $this->lowerMemo = [];
 
-        foreach ($routes->all() as $route) {
-            $this->insert($root, $route);
+        try {
+            foreach ($routes->all() as $route) {
+                $this->insert($root, $route);
+            }
+        } finally {
+            $this->lowerMemo = [];   // memo فقط طول compile — جلوگیری از نگهداشت حافظه
         }
 
         return $root;
@@ -35,69 +43,65 @@ final class RouteCompiler
     private function insert(TrieNode $root, Route $route): void
     {
         $node = $root;
-        $segments = $route->segments();
 
-        foreach ($segments as $segment) {
-            if (isset($segment['static'])) {
-                $key = $this->normalize($segment['static']);
-                $node = $node->static[$key] ??= new TrieNode();
+        foreach ($route->rawSegments() as $segment) {
+            if (\is_string($segment)) {
+                $node = $node->staticChild($this->normalize($segment));
                 continue;
             }
 
-            /** @var string $name */
-            $name = $segment['name'];
-            $regex = $segment['regex'] ?? '[^/]+';
+            $name = $segment->name;
+            $regex = $segment->regex ?? '[^/]+';
             $this->assertSafeRegex($name, $regex);
 
-            if (($segment['wildcard'] ?? false) === true) {
-                $child = $node->wildcard['node'] ?? new TrieNode();
-                $node->wildcard = ['name' => $name, 'regex' => $regex, 'node' => $child];
+            if ($segment->wildcard) {
+                $child = $node->wildcardNode ?? new TrieNode();
+                $node->wildcardName = $name;
+                $node->wildcardRegex = $regex;
+                $node->wildcardNode = $child;
                 $node = $child;
                 break;   // wildcard بقیه را می‌بلعد
             }
 
             $existing = null;
-            foreach ($node->params as $i => $edge) {
-                if ($edge['name'] === $name && $edge['regex'] === $regex) {
-                    $existing = $i;
+            foreach ($node->params() as $edge) {
+                if ($edge->name === $name && $edge->regex === $regex) {
+                    $existing = $edge;
                     break;
                 }
             }
 
             if ($existing !== null) {
-                $node = $node->params[$existing]['node'];
+                $node = $existing->node;
                 continue;
             }
 
             $child = new TrieNode();
-            $node->params[] = [
-                'edge' => $name,
-                'name' => $name,
-                'regex' => $regex,
-                'node' => $child,
-                'specificity' => ($segment['regex'] ?? null) !== null ? 100 : 10,
-                'order' => $route->order(),
-            ];
-            // مرتب‌سازی: constrained (specificity بالا) اول؛ ترتیب قطعی
-            \usort($node->params, static fn (array $a, array $b): int
-                => $b['specificity'] <=> $a['specificity'] ?: $a['order'] <=> $b['order']);
+            $node->addParam(new ParamEdge(
+                name: $name,
+                regex: $regex,
+                node: $child,
+                specificity: $segment->regex !== null ? 100 : 10,
+                order: $route->order(),
+            ));
             $node = $child;
         }
 
+        $specificity = $route->specificity();
+        $order = $route->order();
         foreach ($route->methods() as $method) {
-            $node->handlers[$method][] = [
-                'route' => $route,
-                'specificity' => $route->specificity(),
-                'order' => $route->order(),
-            ];
-            \usort($node->handlers[$method], static fn (array $a, array $b): int
-                => $b['specificity'] <=> $a['specificity'] ?: $a['order'] <=> $b['order']);
+            $node->addHandler(new HandlerEntry($method, $route, $specificity, $order));
         }
     }
 
     private function normalize(string $segment): string
     {
-        return $this->caseSensitive ? $segment : \strtolower($segment);
+        if ($this->caseSensitive) {
+            return $segment;
+        }
+
+        // memo: کلیدهای تکراری (مثل page ×۴۰۰) یک zend_string مشترک می‌شوند
+        return $this->lowerMemo[$segment] ??= \strtolower($segment);
     }
 
     /**

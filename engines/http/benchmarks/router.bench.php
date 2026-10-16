@@ -18,6 +18,10 @@ use Tavaan\Engine\Http\Routing\Router;
 
 $router = new Router(new Container());
 
+// خط‌پایهٔ حافظه پس از ساخت روتر — سنجهٔ «حافظهٔ ۱۰۰۰ روت» (DOC-040 §12)
+// باید خودِ روت‌ها + trie را بسنجد، نه زیرساخت Container/Router را.
+$memBase = \memory_get_usage();
+
 // ── ساخت ۱۰۰۰ روت (ترکیب static/param) ────────────────────────────────────
 $start = \hrtime(true);
 for ($i = 0; $i < 400; $i++) {
@@ -39,6 +43,9 @@ $start = \hrtime(true);
 $router->matchUri('GET', '/static/section0/page');   // triggers compile
 $compileUs = (\hrtime(true) - $start) / 1000;
 $buildMs = ($buildRoutesUs + $compileUs) / 1000;
+
+// حافظهٔ واقعی ۱۰۰۰ روت + trie کامپایل‌شده (بدون روترهای بعدیِ bench)
+$routerMemMb = (\memory_get_usage() - $memBase) / 1048576;
 
 $bench = function (string $label, callable $fn, float $targetUs, int $iterations = 20000): void {
     $fn();
@@ -87,8 +94,8 @@ $start = \hrtime(true);
 $router3->loadCached($loaded['routes']);
 \printf("%.2f ms\n", (\hrtime(true) - $start) / 1e6);
 
-\printf("memory (1000 routes)                       %9.2f MB (target ≤ 2 MB) %s\n",
-    (\memory_get_usage(true) - 2 * 1048576) / 1048576,
-    (\memory_get_usage(true) - 2 * 1048576) <= 2 * 1048576 ? '✅' : '❌');
+\printf("memory (1000 routes + trie)                %9.2f MB (target ≤ 2 MB) %s\n",
+    $routerMemMb,
+    $routerMemMb <= 2.0 ? '✅' : '❌');
 
 @\unlink($cacheFile);

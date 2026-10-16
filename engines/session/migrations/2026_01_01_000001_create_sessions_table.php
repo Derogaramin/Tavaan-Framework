@@ -10,8 +10,7 @@ use Tavaan\Engine\Database\Schema\Blueprint;
  * جدول sessions — درایور database نشست (DOC-041؛ تکمیل در M3).
  */
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         Schema::create('sessions', function (Blueprint $t): void {

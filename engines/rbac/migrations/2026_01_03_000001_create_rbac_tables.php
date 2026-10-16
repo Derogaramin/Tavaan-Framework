@@ -10,8 +10,7 @@ use Tavaan\Engine\Database\Schema\Blueprint;
  * جداول RBAC — DOC-057 §2.1 (tvn_permissions/tvn_roles/tvn_role_user/tvn_permission_role/tvn_delegations).
  */
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         if (!Schema::hasTable('tvn_permissions')) {

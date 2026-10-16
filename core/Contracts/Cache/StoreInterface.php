@@ -37,6 +37,9 @@ interface StoreInterface
 
     public function forever(string $key, mixed $value): bool;
 
+    /** put اتمیک فقط در صورت نبود کلید (put-if-absent) — مبنای atomic lock. */
+    public function add(string $key, mixed $value, int $ttl = 0): bool;
+
     public function forget(string $key): bool;
 
     public function flush(): bool;

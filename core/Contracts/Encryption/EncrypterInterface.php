@@ -16,6 +16,12 @@ interface EncrypterInterface
 
     public function decrypt(string $payload, string $aad = ''): string;
 
+    /** رمزنگاری ساختاریافتهٔ JSON (بدون serialize). @param array<string, mixed> $data */
+    public function encryptJson(array $data, string $aad = ''): string;
+
+    /** @return array<string, mixed> */
+    public function decryptJson(string $payload, string $aad = ''): array;
+
     public function hmac(string $data, string $context = ''): string;
 
     public function verifyHmac(string $data, string $mac, string $context = ''): bool;

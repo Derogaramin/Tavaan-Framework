@@ -287,4 +287,41 @@ final class RouterTest extends TestCase
         $this->router->match(['PATCH'], '/patch-only', [TestController::class, 'index']);
         $this->assertSame('/patch-only', $this->router->matchUri('PATCH', '/patch-only')->route->uri());
     }
+
+    /**
+     * Regression: گره با ≥۳ فرزند static — بهینه‌سازی حافظهٔ TrieNode
+     * (تک‌فرزند inline + مهاجرت به map) نباید فرزندی را پنهان کند.
+     */
+    public function testManyStaticChildrenAtSameLevel(): void
+    {
+        $this->router->get('/x/one', [TestController::class, 'index'])->name('x.one');
+        $this->router->get('/x/two', [TestController::class, 'index'])->name('x.two');
+        $this->router->get('/x/three', [TestController::class, 'index'])->name('x.three');
+
+        $this->assertSame('x.one', $this->router->matchUri('GET', '/x/one')->route->getName());
+        $this->assertSame('x.two', $this->router->matchUri('GET', '/x/two')->route->getName());
+        $this->assertSame('x.three', $this->router->matchUri('GET', '/x/three')->route->getName());
+
+        // فرزند چهارم/پنجم — پس از مهاجرت single→map
+        $this->router->get('/x/four', [TestController::class, 'index'])->name('x.four');
+        $this->router->get('/x/five', [TestController::class, 'index'])->name('x.five');
+        $this->assertSame('x.four', $this->router->matchUri('GET', '/x/four')->route->getName());
+        $this->assertSame('x.five', $this->router->matchUri('GET', '/x/five')->route->getName());
+
+        // همهٔ فرزندان قبلی هم هنوز قابل match باشند
+        $this->assertSame('x.one', $this->router->matchUri('GET', '/x/one')->route->getName());
+        $this->assertSame('x.three', $this->router->matchUri('GET', '/x/three')->route->getName());
+    }
+
+    /** Regression: همزیستی فرزند static و یال پارامتریک در یک گره. */
+    public function testStaticAndParamSiblings(): void
+    {
+        $this->router->get('/d/static', [TestController::class, 'index'])->name('d.static');
+        $this->router->get('/d/{id}', [TestController::class, 'index'])->whereNumber('id')->name('d.param');
+
+        $this->assertSame('d.static', $this->router->matchUri('GET', '/d/static')->route->getName());
+        $m = $this->router->matchUri('GET', '/d/42');
+        $this->assertSame('d.param', $m->route->getName());
+        $this->assertSame('42', $m->parameters['id']);
+    }
 }

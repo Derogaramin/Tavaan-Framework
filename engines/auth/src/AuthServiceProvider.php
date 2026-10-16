@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Tavaan\Engine\Auth;
 
+use Tavaan\Core\Context\RequestStack;
 use Tavaan\Core\Contracts\Auth\GuardInterface;
-use Tavaan\Core\Contracts\Cache\RepositoryInterface as CacheRepository;
 use Tavaan\Core\Contracts\Container\ContainerInterface;
 use Tavaan\Core\Contracts\Database\ConnectionInterface;
 use Tavaan\Core\Contracts\Encryption\EncrypterInterface;
 use Tavaan\Core\Contracts\Encryption\HasherInterface;
 use Tavaan\Core\Contracts\Events\DispatcherInterface;
-use Tavaan\Core\Context\RequestStack;
 use Tavaan\Core\Provider\ServiceProvider;
 
 /**

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tavaan\Engine\Cache\Locks;
 
 use Tavaan\Core\Contracts\Cache\LockInterface;
+use Tavaan\Core\Contracts\Cache\StoreInterface;
 use Tavaan\Support\Time\Clock;
 
 /**
@@ -21,11 +22,8 @@ final class CacheLock implements LockInterface
 {
     private bool $acquired = false;
 
-    /**
-     * @param object{add(string, mixed, int): bool, get(string): mixed, forget(string): bool} $store
-     */
     public function __construct(
-        private readonly object $store,
+        private readonly StoreInterface $store,
         private readonly string $name,
         private readonly int $seconds,
         private readonly string $ownerToken,

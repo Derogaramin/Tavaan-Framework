@@ -8,7 +8,6 @@ use Tavaan\Core\Contracts\Auth\Authenticatable;
 use Tavaan\Core\Contracts\Cache\RepositoryInterface;
 use Tavaan\Core\Contracts\Encryption\HasherInterface;
 use Tavaan\Core\Contracts\Events\DispatcherInterface;
-use Tavaan\Engine\Auth\Exceptions\ThrottledException;
 use Tavaan\Engine\Auth\Throttle\LoginThrottle;
 
 /**

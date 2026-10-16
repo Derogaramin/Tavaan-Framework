@@ -25,12 +25,10 @@ final class CreateUserDto
         #[Email]
         #[MaxLength(255)]
         public readonly string $email,
-
         #[Required]
         #[Integer]
         #[Between(18, 120)]
         public readonly int $age,
-
         #[Required]
         #[IranMobile]
         public readonly string $mobile,

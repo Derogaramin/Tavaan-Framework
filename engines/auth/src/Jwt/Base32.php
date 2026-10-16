@@ -35,7 +35,7 @@ final class Base32
         $out = '';
         foreach (\str_split($binary, 5) as $chunk) {
             $chunk = \str_pad($chunk, 5, '0');
-            $out .= self::ALPHABET[\bindec($chunk)];
+            $out .= self::ALPHABET[(int) \bindec($chunk)];
         }
 
         // padding تا مضرب ۸

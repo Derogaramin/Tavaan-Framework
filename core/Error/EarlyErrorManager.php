@@ -95,6 +95,7 @@ final class EarlyErrorManager
             return;   // handler کامل ثبت شده — Early دیگر فعال نیست
         }
 
+        /** @var array{type:int,message:string,file:string,line:int}|null $error */
         $error = \error_get_last();
         if ($error === null || !self::isFatal($error['type'])) {
             return;
@@ -105,7 +106,6 @@ final class EarlyErrorManager
         self::writeEmergency($e);
     }
 
-    /** @param array{type:int,message:string,file:string,line:int} $error */
     private static function isFatal(int $type): bool
     {
         return \in_array($type, [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR], true);

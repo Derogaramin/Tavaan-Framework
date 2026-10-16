@@ -17,7 +17,7 @@ final class KeyGenerateCommand extends Command
 {
     protected string $signature = 'key:generate {--show : فقط نمایش، بدون نوشتن} {--force : بدون تأیید}';
 
-    protected string $description = 'تعداد کلید اپلیکیشن (APP_KEY) — AES-256';
+    protected string $description = 'تولید کلید اپلیکیشن (APP_KEY) — AES-256';
 
     public function handle(): int
     {
@@ -37,13 +37,16 @@ final class KeyGenerateCommand extends Command
             return self::FAILURE;
         }
 
-        if (!$this->option('force') && !$this->confirm('  APP_KEY بازنویسی شود؟ (دادهٔ رمزنگاری‌شدهٔ قدیمی بدون کلید قبلی خوانده نمی‌شود)')) {
+        $contents = (string) \file_get_contents($envFile);
+
+        // فقط در صورت وجود کلید قبلیِ غیرخالی تأییدیهٔ بازنویسی پرسیده می‌شود؛
+        // در راه‌اندازی اولیه (کلید خالی) و حالت غیرتعاملی جریان نباید بشکند.
+        $hasExistingKey = \preg_match('/^TVN_APP_KEY=(\S.*)$/m', $contents) === 1;
+        if ($hasExistingKey && !$this->option('force') && !$this->confirm('  APP_KEY بازنویسی شود؟ (دادهٔ رمزنگاری‌شدهٔ قدیمی بدون کلید قبلی خوانده نمی‌شود)')) {
             $this->warn('  لغو شد.');
 
             return self::SUCCESS;
         }
-
-        $contents = (string) \file_get_contents($envFile);
         if (\preg_match('/^TVN_APP_KEY=.*$/m', $contents) === 1) {
             $contents = (string) \preg_replace('/^TVN_APP_KEY=.*$/m', 'TVN_APP_KEY=' . $key, $contents);
         } else {

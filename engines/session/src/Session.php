@@ -255,7 +255,7 @@ final class Session
         return \bin2hex(\random_bytes(20));
     }
 
-    /** @param mixed $fingerprintSource parts برای hash (IP|UA) */
+    /** @param string $fingerprint hash بخش‌های منبع (IP|UA) */
     public function setFingerprint(string $fingerprint): void
     {
         $this->fingerprint = $fingerprint;

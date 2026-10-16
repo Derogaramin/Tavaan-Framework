@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tavaan\Engine\Session;
 
 use Tavaan\Core\Contracts\Config\RepositoryInterface;
-use Tavaan\Engine\Crypt\Crypt;
 use Tavaan\Core\Contracts\Database\ConnectionInterface;
 use Tavaan\Core\Facade\Facade;
+use Tavaan\Engine\Crypt\Crypt;
 use Tavaan\Engine\Session\Handlers\ArrayHandler;
 use Tavaan\Engine\Session\Handlers\CacheHandler;
 use Tavaan\Engine\Session\Handlers\CookieHandler;

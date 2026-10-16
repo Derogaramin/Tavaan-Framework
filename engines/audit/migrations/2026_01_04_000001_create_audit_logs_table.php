@@ -10,8 +10,7 @@ use Tavaan\Engine\Database\Schema\Blueprint;
  * جدول tvn_audit_logs — زنجیرهٔ هش ممیزی (DOC-058 §2).
  */
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         if (Schema::hasTable('tvn_audit_logs')) {

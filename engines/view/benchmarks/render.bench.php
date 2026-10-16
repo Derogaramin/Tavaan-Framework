@@ -59,16 +59,18 @@ $renderMs = (\hrtime(true) - $start) / 1e6 / $iterations;
 \printf("render compiled (100 lines + layout)       %9.3f ms (target ≤ 0.5 ms) %s\n", $renderMs, $renderMs <= 0.5 ? '✅' : '❌');
 
 // escaper — دو سناریو: متن معمول (fast path) و متن پرخشونه (worst case)
+// هدف DOC-112 («Escaper::html برای ۱KB ≤ ۵µs») برای متن معمولی ۱KB است؛
+// سناریوی hostile سنجهٔ اطلاع‌رسانی بدترین حالت است (هدف مرجع ≤ ۱۰µs).
 $typical = \str_repeat('متن آزمایشی فارسی برای سنجش کارایی موتور ویو تَوان. ', 22);   // ~1KB بدون کاراکتر خاص
 $hostile = \str_repeat('متن آزمایشی با <html> & "quotes" ', 30);                       // ~1KB با escape فراوان
 
-foreach (['typical ~1KB' => $typical, 'hostile ~1KB (worst)' => $hostile] as $label => $text) {
+foreach (['typical ~1KB' => [$typical, 5.0], 'hostile ~1KB (info)' => [$hostile, 10.0]] as $label => [$text, $target]) {
     $start = \hrtime(true);
     for ($i = 0; $i < 10000; $i++) {
         Escaper::html($text);
     }
     $escUs = (\hrtime(true) - $start) / 1000 / 10000;
-    \printf("Escaper::html %-14s                %9.3f µs (target ≤ 5 µs) %s\n", $label, $escUs, $escUs <= 5 ? '✅' : '⚠️');
+    \printf("Escaper::html %-14s                %9.3f µs (target ≤ %.0f µs) %s\n", $label, $escUs, $target, $escUs <= $target ? '✅' : '⚠️');
 }
 
 // cleanup

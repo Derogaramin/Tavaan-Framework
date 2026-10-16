@@ -82,7 +82,7 @@ final readonly class Ulid implements \Stringable
 
         $out = '';
         for ($i = 0; $i < 26; $i++) {
-            $out .= self::ALPHABET[\bindec(\substr($bits, $i * 5, 5))];
+            $out .= self::ALPHABET[(int) \bindec(\substr($bits, $i * 5, 5))];
         }
 
         return $out;

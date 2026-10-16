@@ -6,16 +6,9 @@
 !.env.testing
 
 # Runtime
-/storage/*
-!/storage/.gitignore
-/storage/cache/*
-/storage/logs/*
-/storage/framework/sessions/*
-/storage/framework/views/*
-/storage/app/private/*
-/storage/backups/*
-/storage/temp/*
-!storage/**/.gitignore
+/storage/**
+!/storage/**/
+!/storage/**/.gitignore
 
 # Public uploads
 /public/uploads/*

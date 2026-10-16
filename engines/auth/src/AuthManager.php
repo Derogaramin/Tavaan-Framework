@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tavaan\Engine\Auth;
 
+use Tavaan\Core\Context\RequestStack;
 use Tavaan\Core\Contracts\Auth\Authenticatable;
 use Tavaan\Core\Contracts\Auth\GuardInterface;
 use Tavaan\Core\Contracts\Auth\StatefulGuard;
@@ -14,9 +15,7 @@ use Tavaan\Core\Contracts\Database\ConnectionInterface;
 use Tavaan\Core\Contracts\Encryption\EncrypterInterface;
 use Tavaan\Core\Contracts\Encryption\HasherInterface;
 use Tavaan\Core\Contracts\Events\DispatcherInterface;
-use Tavaan\Core\Context\RequestStack;
 use Tavaan\Engine\Auth\Devices\DeviceManager;
-use Tavaan\Engine\Auth\Exceptions\TokenInvalidException;
 use Tavaan\Engine\Auth\Guards\SessionGuard;
 use Tavaan\Engine\Auth\Guards\TokenGuard;
 use Tavaan\Engine\Auth\Jwt\JwtEncoder;

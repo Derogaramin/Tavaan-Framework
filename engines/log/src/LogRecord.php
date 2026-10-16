@@ -43,27 +43,69 @@ final readonly class LogRecord
     public function withSource(?string $file, ?int $line): self
     {
         return new self(
-            $this->channel, $this->level, $this->message, $this->context, $this->severity,
-            $this->timestamp, $this->traceId, $this->spanId, $this->userId, $this->tenantId,
-            $this->requestId, $this->environment, $file, $line, $this->memoryKb, $this->runtimeMs, $this->extra,
+            $this->channel,
+            $this->level,
+            $this->message,
+            $this->context,
+            $this->severity,
+            $this->timestamp,
+            $this->traceId,
+            $this->spanId,
+            $this->userId,
+            $this->tenantId,
+            $this->requestId,
+            $this->environment,
+            $file,
+            $line,
+            $this->memoryKb,
+            $this->runtimeMs,
+            $this->extra,
         );
     }
 
     public function withTrace(string $traceId, string $spanId): self
     {
         return new self(
-            $this->channel, $this->level, $this->message, $this->context, $this->severity,
-            $this->timestamp, $traceId, $spanId, $this->userId, $this->tenantId,
-            $this->requestId, $this->environment, $this->file, $this->line, $this->memoryKb, $this->runtimeMs, $this->extra,
+            $this->channel,
+            $this->level,
+            $this->message,
+            $this->context,
+            $this->severity,
+            $this->timestamp,
+            $traceId,
+            $spanId,
+            $this->userId,
+            $this->tenantId,
+            $this->requestId,
+            $this->environment,
+            $this->file,
+            $this->line,
+            $this->memoryKb,
+            $this->runtimeMs,
+            $this->extra,
         );
     }
 
     public function withIdentity(?string $userId, ?string $tenantId): self
     {
         return new self(
-            $this->channel, $this->level, $this->message, $this->context, $this->severity,
-            $this->timestamp, $this->traceId, $this->spanId, $userId, $tenantId,
-            $this->requestId, $this->environment, $this->file, $this->line, $this->memoryKb, $this->runtimeMs, $this->extra,
+            $this->channel,
+            $this->level,
+            $this->message,
+            $this->context,
+            $this->severity,
+            $this->timestamp,
+            $this->traceId,
+            $this->spanId,
+            $userId,
+            $tenantId,
+            $this->requestId,
+            $this->environment,
+            $this->file,
+            $this->line,
+            $this->memoryKb,
+            $this->runtimeMs,
+            $this->extra,
         );
     }
 
@@ -71,9 +113,22 @@ final readonly class LogRecord
     public function withExtra(array $extra): self
     {
         return new self(
-            $this->channel, $this->level, $this->message, $this->context, $this->severity,
-            $this->timestamp, $this->traceId, $this->spanId, $this->userId, $this->tenantId,
-            $this->requestId, $this->environment, $this->file, $this->line, $this->memoryKb, $this->runtimeMs,
+            $this->channel,
+            $this->level,
+            $this->message,
+            $this->context,
+            $this->severity,
+            $this->timestamp,
+            $this->traceId,
+            $this->spanId,
+            $this->userId,
+            $this->tenantId,
+            $this->requestId,
+            $this->environment,
+            $this->file,
+            $this->line,
+            $this->memoryKb,
+            $this->runtimeMs,
             [...$this->extra, ...$extra],
         );
     }
@@ -82,18 +137,46 @@ final readonly class LogRecord
     public function withContext(array $context): self
     {
         return new self(
-            $this->channel, $this->level, $this->message, [...$this->context, ...$context], $this->severity,
-            $this->timestamp, $this->traceId, $this->spanId, $this->userId, $this->tenantId,
-            $this->requestId, $this->environment, $this->file, $this->line, $this->memoryKb, $this->runtimeMs, $this->extra,
+            $this->channel,
+            $this->level,
+            $this->message,
+            [...$this->context, ...$context],
+            $this->severity,
+            $this->timestamp,
+            $this->traceId,
+            $this->spanId,
+            $this->userId,
+            $this->tenantId,
+            $this->requestId,
+            $this->environment,
+            $this->file,
+            $this->line,
+            $this->memoryKb,
+            $this->runtimeMs,
+            $this->extra,
         );
     }
 
     public function withEnvironment(string $environment): self
     {
         return new self(
-            $this->channel, $this->level, $this->message, $this->context, $this->severity,
-            $this->timestamp, $this->traceId, $this->spanId, $this->userId, $this->tenantId,
-            $this->requestId, $environment, $this->file, $this->line, $this->memoryKb, $this->runtimeMs, $this->extra,
+            $this->channel,
+            $this->level,
+            $this->message,
+            $this->context,
+            $this->severity,
+            $this->timestamp,
+            $this->traceId,
+            $this->spanId,
+            $this->userId,
+            $this->tenantId,
+            $this->requestId,
+            $environment,
+            $this->file,
+            $this->line,
+            $this->memoryKb,
+            $this->runtimeMs,
+            $this->extra,
         );
     }
 

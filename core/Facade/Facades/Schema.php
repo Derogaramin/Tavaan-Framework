@@ -6,7 +6,6 @@ namespace Tavaan\Core\Facade\Facades;
 
 use Tavaan\Core\Facade\Facade;
 
-
 /**
  * Facade ساختار دیتابیس (Schema).
  *

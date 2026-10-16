@@ -14,6 +14,30 @@ use Tavaan\Engine\Database\QueryBuilder;
  * ModelQueryBuilder — Builder آگاه به مدل: hydration، eager loading،
  * scopeها و withCount (DOC-050 §3.1/§4.1).
  *
+ * متدهای fluent از راه __call به QueryBuilder داخلی forward می‌شوند
+ * (و $this برمی‌گردند)؛ @methodهای زیر همان امضاها را برای تحلیل ایستا
+ * و IDE اعلام می‌کنند.
+ *
+ * @method self select(string ...$columns)
+ * @method self distinct()
+ * @method self join(string $table, \Closure|string $first, ?string $op = null, ?string $second = null, string $type = 'inner')
+ * @method self leftJoin(string $table, \Closure|string $first, ?string $op = null, ?string $second = null)
+ * @method self where(string|\Closure|QueryBuilder $column, mixed $op = null, mixed $value = null, string $boolean = 'and')
+ * @method self orWhere(string|\Closure|QueryBuilder $column, mixed $op = null, mixed $value = null)
+ * @method self whereIn(string $column, array|\Closure|QueryBuilder $values, string $boolean = 'and', bool $not = false)
+ * @method self whereNotIn(string $column, array|\Closure|QueryBuilder $values, string $boolean = 'and')
+ * @method self whereNull(string $column, string $boolean = 'and', bool $not = false)
+ * @method self whereNotNull(string $column, string $boolean = 'and')
+ * @method self whereBetween(string $column, array $values, string $boolean = 'and', bool $not = false)
+ * @method self whereRaw(string $sql, array $bindings = [], string $boolean = 'and')
+ * @method self groupBy(string ...$columns)
+ * @method self having(string $column, mixed $op = null, mixed $value = null, string $boolean = 'and')
+ * @method self orderBy(string $column, string $direction = 'asc')
+ * @method self orderByDesc(string $column)
+ * @method self limit(int $limit)
+ * @method self offset(int $offset)
+ * @method self forUpdate()
+ *
  * @api 1.0
  * @see docs/03-engines/orm.md
  */

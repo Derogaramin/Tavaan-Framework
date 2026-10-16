@@ -26,8 +26,12 @@ final class ShareErrorsFromSessionMiddleware implements MiddlewareInterface
     public function handle(RequestInterface $request, \Closure $next, string ...$params): ResponseInterface
     {
         if ($request instanceof Request && $request->hasSession() && $this->container->bound('view')) {
-            $errors = $request->session()?->get('errors', []);
-            $this->container->make('view')->share('errors', \is_array($errors) ? $errors : []);
+            /** @var \Tavaan\Engine\Session\Session|null $session */
+            $session = $request->session();
+            $errors = $session?->get('errors', []);
+            /** @var \Tavaan\Engine\View\ViewFactory $view */
+            $view = $this->container->make('view');
+            $view->share('errors', \is_array($errors) ? $errors : []);
         }
 
         return $next($request);
