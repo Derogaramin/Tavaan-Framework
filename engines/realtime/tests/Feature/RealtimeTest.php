@@ -370,8 +370,9 @@ final class RealtimeTest extends TestCase
 
     public function testWebSocketServerSubscribeAndFanOut(): void
     {
-        if (!\function_exists('stream_socket_pair')) {
-            $this->assertTrue(true);   // محیط بدون UNIX socket → skip
+        if (!\function_exists('stream_socket_pair') || \PHP_OS_FAMILY === 'Windows') {
+            // 🔧 محیط بدون UNIX socket یا ویندوز (stream_socket_pair → خطای 10042) → skip
+            $this->assertTrue(true);
 
             return;
         }

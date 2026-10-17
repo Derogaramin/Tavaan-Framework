@@ -103,17 +103,24 @@ final class ResponseFactory
         return Response::json($body, $status)->withHeader('Content-Type', 'application/problem+json; charset=UTF-8');
     }
 
-    /** 🔒 Path Traversal guard برای file/download. */
+    /**
+     * 🔒 Path Traversal guard برای file/download.
+     *
+     * 🔧 cross-platform (PathGuard): containment پیش از وجودسنجی بررسی می‌شود
+     * تا مسیر بیرونیِ وجود‌نداشته (مثل /etc/passwd در ویندوز) هم به‌درست
+     * PathTraversal بدهد نه FileNotFound؛ مقایسه با separator انتهایی است
+     * (base=/app دیگر /application را شامل نمی‌شود).
+     */
     private function assertSafePath(string $path): void
     {
+        $base = \defined('TVN_BASE_PATH') ? (string) TVN_BASE_PATH : '';
+        if ($base !== '' && !\Tavaan\Support\PathGuard::isInside($path, $base)) {
+            throw new \Tavaan\Core\Exceptions\Filesystem\PathTraversalException('filesystem.path_traversal', ['path' => \basename($path)]);
+        }
+
         $real = \realpath($path);
         if ($real === false || !\is_file($real)) {
             throw new \Tavaan\Core\Exceptions\Filesystem\FileNotFoundException('filesystem.file_not_found', ['path' => \basename($path)]);
-        }
-
-        $base = \defined('TVN_BASE_PATH') ? (string) \realpath((string) TVN_BASE_PATH) : '';
-        if ($base !== '' && !\str_starts_with($real, $base)) {
-            throw new \Tavaan\Core\Exceptions\Filesystem\PathTraversalException('filesystem.path_traversal', ['path' => \basename($path)]);
         }
     }
 

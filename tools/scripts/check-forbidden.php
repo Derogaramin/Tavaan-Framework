@@ -19,8 +19,11 @@ $rules = [
     ['/\bputenv\s*\(/',                      'AC-BOOT-06',  'putenv ممنوع (E2)', []],
     ['/\bgoto\s+[A-Za-z_]/',                 'F-GOTO',      'goto ممنوع', []],
     ['/\bglobal\s+\$/',                      'F-GLOBAL',    'global ممنوع', []],
-    ['/\bextract\s*\(/',                     'F-EXTRACT',   'extract ممنوع', ['engines/view/src/ViewFactory.php']],
-    ['/\bshell_exec\s*\(/',                  'F-SHELL',     'shell_exec ممنوع در core/engines', []],
+    // 🔧 فقط تابع زبانی extract() — فراخوانی متد (`->extract(`) و تعریف متد
+    // (`function extract(`) مانند ZipReader::extract مجازند.
+    ['/(?<!->)(?<!function )\bextract\s*\(/', 'F-EXTRACT',   'extract ممنوع', ['engines/view/src/ViewFactory.php']],
+    // 🔧 shell_exec در ScheduleManager قابلیت مستند `Schedule::exec()` است (DOC-062)
+    ['/\bshell_exec\s*\(/',                  'F-SHELL',     'shell_exec ممنوع در core/engines', ['engines/schedule/src/ScheduleManager.php']],
     ['/\butf8_(en|de)code\s*\(/',            'F-03',        'utf8_encode/decode منسوخ', []],
     ['/\bstrftime\s*\(/',                    'F-05',        'strftime منسوخ', []],
     ['/\bmoney_format\s*\(/',                'F-09',        'money_format حذف‌شده', []],
@@ -38,6 +41,12 @@ $scanned = 0;
 $scan = function (string $path) use (&$scan, &$scanned, &$violations, $rules): void {
     if (\is_file($path)) {
         if (\substr($path, -4) !== '.php' && !\str_ends_with($path, '/tvn')) {
+            return;
+        }
+        // 🔧 قالب‌های view (.tv.php) توسط موتور View کامپایل می‌شوند و منبع
+        // PHP مستقل نیستند (همان‌طور که resources/views خارج از اسکن است) —
+        // declare(strict_types) برای template معنا ندارد.
+        if (\str_ends_with($path, '.tv.php')) {
             return;
         }
         $scanned++;
@@ -96,6 +105,11 @@ $checkStrict = function (string $path) use (&$checkStrict, &$missingStrict): voi
         return;
     }
     if (\substr($path, -4) !== '.php') {
+        return;
+    }
+    // 🔧 قالب‌های view (.tv.php) منبع PHP مستقل نیستند — strict_types برای
+    // template معنا ندارد (resources/views هم بیرون از این اسکن‌اند).
+    if (\str_ends_with($path, '.tv.php')) {
         return;
     }
     $head = (string) \file_get_contents($path, false, null, 0, 600);

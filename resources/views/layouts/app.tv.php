@@ -20,13 +20,13 @@
 <body>
     <header>
         <span class="logo">⚡ تَوان</span>
-        <nav><a href="{{ route('home') }}">خانه</a> • <a href="{{ route('time') }}">ساعت</a> • <a href="{{ route('demo.counter') }}">شمارنده (session)</a></nav>
+        <nav><a href="{{ route('home') }}">خانه</a> • <a href="{{ route('time') }}">ساعت</a> • <a href="{{ route('demo.counter') }}">شمارنده (session)</a> • <a href="{{ route('demo.report') }}">گزارش 📊</a> • <a href="{{ route('demo.workflow') }}">گردش‌کار 🔁</a> • <a href="{{ route('demo.payment') }}">پرداخت 💳</a></nav>
     </header>
     <main>
         @yield('content')
     </main>
     <footer>
-        تَوان {{ TVN_VERSION }} — فاز M2 (وب) • {{ jalali(null, 'Y/m/d') }} • @yield('footer-extra', 'صفر وابستگی خارجی')
+        تَوان {{ TVN_VERSION }} — فاز M7 (دامنه) • {{ jalali(null, 'Y/m/d') }} • @yield('footer-extra', 'صفر وابستگی خارجی')
     </footer>
     @stack('scripts')
 </body>

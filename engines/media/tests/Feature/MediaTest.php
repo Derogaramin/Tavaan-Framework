@@ -24,6 +24,37 @@ final class MediaTest extends TestCase
     /** JPEG معتبر ۱×۱ (base64) */
     private const JPEG_1X1 = '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwcJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPDs0NDT/wAALCAABAAEBAREA/8QAFAABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8AmgAAAP/Z';
 
+    /**
+     * بایت‌های JPEG 1×1 معتبر.
+     *
+     * 🔧 (رفع سازگاری) fixture دست‌ساز base64 با libjpegهای سخت‌گیر
+     * («Bogus Huffman table definition» — gd جدید در ویندوز/دیبیان) رد می‌شد؛
+     * اکنون با خودِ gd تولید می‌شود تا برای libjpeg همان محیط همیشه معتبر باشد.
+     */
+    private static ?string $jpegFixture = null;
+
+    private static function jpegBytes(): string
+    {
+        if (self::$jpegFixture !== null) {
+            return self::$jpegFixture;
+        }
+
+        if (\function_exists('imagecreatetruecolor') && \function_exists('imagejpeg')) {
+            $im = \imagecreatetruecolor(1, 1);
+            if ($im !== false) {
+                \ob_start();
+                \imagejpeg($im, null, 90);
+                $data = (string) \ob_get_clean();
+                \imagedestroy($im);
+                if ($data !== '' && \str_starts_with($data, "\xFF\xD8")) {
+                    return self::$jpegFixture = $data;
+                }
+            }
+        }
+
+        return self::$jpegFixture = (string) \base64_decode(self::JPEG_1X1, true);
+    }
+
     private Application $app;
 
     private string $tmp;
@@ -62,7 +93,7 @@ final class MediaTest extends TestCase
     private function jpegUpload(string $name = 'photo.jpg', string $extra = ''): UploadedFile
     {
         $path = $this->tmp . '/' . $name;
-        \file_put_contents($path, \base64_decode(self::JPEG_1X1, true) . $extra);
+        \file_put_contents($path, self::jpegBytes() . $extra);
 
         return new UploadedFile($path, $name, 'image/jpeg', (int) \filesize($path), 0);
     }
@@ -115,7 +146,7 @@ final class MediaTest extends TestCase
         $validator = new MimeValidator();
 
         $jpegPath = $this->tmp . '/detect.jpg';
-        \file_put_contents($jpegPath, (string) \base64_decode(self::JPEG_1X1, true));
+        \file_put_contents($jpegPath, self::jpegBytes());
         $this->assertSame('image/jpeg', $validator->detectRealMime($jpegPath));
 
         $pngPath = $this->tmp . '/detect.png';
@@ -201,7 +232,7 @@ final class MediaTest extends TestCase
     public function testImageProcessingWithoutDriverThrowsCapability(): void
     {
         $jpegPath = $this->tmp . '/cap.jpg';
-        \file_put_contents($jpegPath, (string) \base64_decode(self::JPEG_1X1, true));
+        \file_put_contents($jpegPath, self::jpegBytes());
 
         $image = Image::make($jpegPath);
 
@@ -233,7 +264,7 @@ final class MediaTest extends TestCase
     public function testResizeThumbnailConvertWhenDriverAvailable(): void
     {
         $jpegPath = $this->tmp . '/proc.jpg';
-        \file_put_contents($jpegPath, (string) \base64_decode(self::JPEG_1X1, true));
+        \file_put_contents($jpegPath, self::jpegBytes());
 
         $image = Image::make($jpegPath);
         if ($image->driver() === 'none') {
@@ -278,7 +309,7 @@ final class MediaTest extends TestCase
     public function testExifAndMetadata(): void
     {
         $jpegPath = $this->tmp . '/exif.jpg';
-        \file_put_contents($jpegPath, (string) \base64_decode(self::JPEG_1X1, true));
+        \file_put_contents($jpegPath, self::jpegBytes());
 
         $exif = Image::make($jpegPath)->exif();
         $this->assertTrue(\is_array($exif));
@@ -298,7 +329,7 @@ final class MediaTest extends TestCase
     public function testFromPathAttachAndDelete(): void
     {
         $path = $this->tmp . '/local.jpg';
-        \file_put_contents($path, (string) \base64_decode(self::JPEG_1X1, true));
+        \file_put_contents($path, self::jpegBytes());
 
         $media = $this->media()->fromPath($path, folder: 'docs', originalName: 'my file.jpg');
         $this->assertSame('image/jpeg', $media->mimeType);

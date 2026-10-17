@@ -73,7 +73,8 @@ final class ConsoleTest extends TestCase
         $output->writeln('plain', 'info');
         \rewind($stream);
         $content = (string) \stream_get_contents($stream);
-        $this->assertSame("plain\n", $content);
+        // 🔧 خروجی کنسول از PHP_EOL پیروی می‌کند (ویندوز: \r\n)
+        $this->assertSame('plain' . PHP_EOL, $content);
 
         $stream2 = \fopen('php://memory', 'w+');
         \assert($stream2 !== false);

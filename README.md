@@ -3,7 +3,8 @@
 فریمورک PHP 8.2+ **صفر‌وابستگی**، فارسی‌اول و ماژولار — بدون یک پکیج خارجی در زمان اجرا.
 
 > پیاده‌سازی بر اساس مستندات رسمی: [Tavaan-Doc](https://github.com/Derogaramin/Tavaan-Doc)
-> وضعیت فعلی: **فاز M1 (هسته) + M2 (وب) + M3 (داده) + M4 (امنیت/هویت) — تکمیل و سبز** ✅ — CRUD کامل با DB + ورود/نقش/JWT/2FA/ممیزی ضدتقلب بالا آمده است
+> وضعیت فعلی: **فاز‌های M1–M7 تکمیل و سبز** ✅ — نگارش `0.7.1` • ۴۸/۴۸ موتور فعال • ۹۹۲ تست / ۶۷۰۴ assertion • سازگار با Linux/macOS/**Windows**
+> آخرین فاز: **M7 (دامنه)** — گردش‌کار/BPM، گزارش‌ساز با xlsx خودنوشته و درگاه‌های پرداخت ایرانی
 
 ---
 
@@ -12,7 +13,7 @@
 - 🚫 **صفر وابستگی** (ADR-0004): بدون `vendor/`، بدون Composer در runtime — Autoloader خودنوشته (ADR-0005)
 - 🇮🇷 **فارسی‌اول**: تقویم جلالی، ارقام فارسی، پیام‌های دوزبانه، Masking دادهٔ ایرانی (کارت/موبایل/کدملی)
 - 💉 **Container کامل**: Auto-Wiring با ReflectionCache، Contextual Binding، Scoped/Factory، Union/DNF قطعی، تشخیص چرخه با مسیر کامل
-- ⚙️ **معماری موتور‌محور**: ۵۳ موتور خودبسنده در `engines/` با manifest و مرزهای سخت
+- ⚙️ **معماری موتور‌محور**: ۴۸ موتور پیاده‌شده (از ۵۳ موتور طراحی‌شده) در `engines/` با manifest و مرزهای سخت
 - 🔒 **امن در برابر Deprecated**: قواعد سخت‌گیرانهٔ PHP 8.2 (DOC-010) + gate خودکار
 - 📐 **Contract-First**: همهٔ Interfaceها در `core/Contracts/`
 - 🧪 **Test Framework بومی**: بدون PHPUnit — `tvn test`
@@ -28,8 +29,14 @@ php bin/tvn test           # اجرای همهٔ تست‌ها
 php bin/tvn optimize       # تولید کش‌ها (config + classmap)
 php bin/tvn route:list     # فهرست روت‌ها
 php bin/tvn serve          # سرور توسعه
-php bin/tvn serve                 # سرور توسعه → http://127.0.0.1:8000 (صفحهٔ خوش‌آمد فارسی)
+php bin/tvn serve                 # سرور توسعه → http://127.0.0.1:8000 (خوش‌آمد + دموهای M7)
+php bin/tvn migrate               # جداول موتورها (queue/tenancy/workflow/payment/…)
 ```
+
+> 🪟 **ویندوز**: از نگارش `0.7.1` به‌طور کامل پشتیبانی می‌شود (PathGuard برای مسیرها،
+> charset ویندوزی در tenancy/backup). برای `storage:link` به Developer Mode یا ادمین نیاز است؛
+> تست‌های وابسته به `stream_socket_pair`/symlink به‌صورت مستند skip می‌شوند
+> (جزئیات: `docs/reports/windows-compatibility-fixes.md`).
 
 **نیازمندی‌ها:** PHP ≥ 8.2 با حداقل افزونه‌های `pdo`, `openssl`, `json`, `hash`, `mbstring` — بقیه fallback خالص PHP دارد (موتور `compat`).
 
@@ -41,7 +48,30 @@ php bin/tvn serve                 # سرور توسعه → http://127.0.0.1:800
 | **M2** | وب (http, router, session, cookie, view, i18n, jalali, cors) + crypt (پیش‌نیاز زودهنگام) | ✅ **انجام شد** |
 | **M3** | داده (database, schema, migration, orm, pagination, validation) | ✅ **انجام شد** |
 | **M4** | امنیت/هویت (crypt, hash, auth, rbac, security, cache, audit) | ✅ **انجام شد** |
-| M5..M9 | صف/سرویس‌ها/دامنه/ابزار/اپلیکیشن‌ها | — |
+| **M5** | ارتباطی/زیرساخت (queue, schedule, console, filesystem, media, mail, notification, http-client, backup) | ✅ **انجام شد** |
+| **M6** | سرویس‌ها (api, observability, search, tenancy, feature-flag, realtime) | ✅ **انجام شد** |
+| **M7** | دامنه (workflow, report, payment) | ✅ **انجام شد** — [گزارش](docs/reports/M7-implementation-report.md) |
+| M8..M9 | ابزار (scaffold/admin/plugin/test/upgrade) + اپلیکیشن‌ها و انتشار 1.0 | — |
+
+> گزارش‌های پیاده‌سازی: [M5](docs/reports/M5-implementation-report.md) • [M6](docs/reports/M6-implementation-report.md) • [M7](docs/reports/M7-implementation-report.md) • [سازگاری ویندوز 0.7.1](docs/reports/windows-compatibility-fixes.md)
+
+### معیارهای پذیرش M7 (نتایج اندازه‌گیری‌شده)
+
+| معیار | هدف | نتیجه |
+|---|---|---|
+| Workflow — تعریف DSL/JSON + validation | ✅ | ✅ ۷ خطای ساختاری با messageId دوزبانه |
+| fire با guard رد / مجوز RBAC | ✅ | ✅ اتمیک (snapshot/restore) + `workflow.unauthorized` |
+| Exclusive gateway / Parallel fork-join | ✅ | ✅ Token-based — join منتظر همهٔ توکن‌ها |
+| Human Task + Timer + Sub-process + History | ✅ | ✅ claim/complete/delegate با RBAC واقعی • تایمر انسانی/ISO • پیش‌برد خودکار والد |
+| Visualizer از definition | AC-WF-11 | ✅ Graphviz DOT + Mermaid (`workflow:list --diagram`) |
+| Report ۱۰۰۰۰ ردیف (html) | ≤ ۲s | ✅ **۱۰۲ms** |
+| xlsx ۱۰۰۰۰ ردیف (خودنوشته، بدون ext-zip) | ≤ ۳s | ✅ **۱۰۵ms** — با ZipArchive باز و اعتبارسنجی شد (AC-RPT-10) |
+| CSV streaming ۱۰۰۰۰۰ ردیف | حافظه ≤ ۵MB | ✅ سربار **~0MB** (تکه‌ای + BOM + `;` + ضد CSV Injection) |
+| Pivot aggregation | ≤ ۱s | ✅ **۵۶ms** (تجمیع با Decimal — بدون float) |
+| Payment — purchase/verify/refund با یک Contract | ✅ | ✅ ۱۰ درگاه (زرین‌پال/آیدی‌پی/پی‌پینگ/سامان/به‌پرداخت/پارسیان/سداد/ملی/Stripe/کیف پول) |
+| Callback امن (AC-PAY) | ✅ | ✅ verify با **مبلغ محلی** (Amount tampering رد) + عدم اعتماد به Status + idempotency (دو callback = یک اثر) + IPN با HMAC |
+| درگاه جدید فقط با پیاده‌سازی GatewayInterface | AC-PAY-10 | ✅ `Payment::extend()` — در تست با FakeGateway تأیید شد |
+| fire گردش‌کار (درایور array) | — | ✅ **۷٫۶µs/op** • start: ۱۳µs |
 
 ### معیارهای پذیرش M4 (نتایج اندازه‌گیری‌شده)
 
@@ -124,9 +154,36 @@ tools/scripts/     ← lint، check-forbidden، bench
 docs/              ← مستندات (کپی SSOT از Tavaan-Doc)
 ```
 
-## دستورات CLI موجود (M1+M2)
+## دستورات CLI (کامل — `tvn list`)
 
-`list` `about` `version` `env` `doctor` `optimize` `optimize:clear` `config:cache` `config:clear` `autoload:cache` `module:list` `event:list` `test` `serve` `route:list` `route:cache` `route:clear` `route:match` `view:cache` `view:clear` `key:generate` `migrate` `migrate:rollback` `migrate:status` `migrate:fresh` `migrate:refresh` `migrate:install` `cache:clear` `rbac:sync` `audit:verify` `audit:export` `audit:prune` `audit:show` `event:outbox-relay`
+| گروه | دستورات |
+|---|---|
+| عمومی | `about` `version` `list` `env` `doctor` `test` `serve` `optimize` `optimize:clear` `key:generate` |
+| config/autoload | `config:cache` `config:clear` `autoload:cache` |
+| route/view | `route:list` `route:cache` `route:clear` `route:match` `view:cache` `view:clear` |
+| داده | `migrate` `migrate:status` `migrate:rollback` `migrate:fresh` `migrate:refresh` `migrate:install` `db:tenant-guard` |
+| event/queue/schedule | `event:list` `event:outbox-relay` `queue:work` `queue:listen` `queue:retry` `queue:failed` `queue:flush` `queue:prune-failed` `queue:restart` `queue:monitor` `schedule:list` `schedule:run` |
+| امنیت/ممیزی | `rbac:sync` `audit:verify` `audit:show` `audit:export` `audit:prune` |
+| cache/storage | `cache:clear` `storage:link` |
+| ماژول | `module:list` |
+| M5 (backup) | `backup:run` `backup:list` `backup:verify` `backup:restore` `backup:prune` |
+| M6 | `api:docs` `search:reindex` `tenant:create` `tenant:list` `tenant:migrate` `tenant:delete` `tenant:stats` `realtime:websocket` |
+| **M7** | **`workflow:timers`** (هر دقیقه با Schedule) • **`workflow:list [--diagram=]`** • **`payment:list`** |
+
+## صفحه‌های دمو (`tvn serve`)
+
+پس از `php bin/tvn serve` روی `http://127.0.0.1:8000`:
+
+| مسیر | محتوا |
+|---|---|
+| `/` | خوش‌آمد — نگارش جاری + تازه‌های M7 |
+| `/demo/report` | 📊 گزارش زندهٔ HTML (فیلتر `?status=paid`، گروه‌بندی، Pivot، جمع کل) |
+| `/demo/report/csv` | 📥 دانلود CSV (BOM + `;` — آمادهٔ Excel فارسی) |
+| `/demo/workflow` | 🔁 چرخهٔ کامل BPM: start → submit → claim → complete → تاریخچه + نمودار Mermaid |
+| `/demo/payment` | 💳 چرخهٔ کیف پول داخلی: purchase → verify → refund (نیازمند `tvn migrate`) |
+| `/payment/result` | 🧾 صفحهٔ نتیجهٔ پرداخت (مقصد callback درگاه‌ها) |
+| `/payment/callback` | بازگشت کاربر از درگاه — 🔒 verify امن (خودکار ثبت‌شده) |
+| `/payment/notify/{gateway}` | IPN سرور-به-سرور با بررسی امضا (خودکار ثبت‌شده) |
 
 ## توسعه
 
@@ -140,10 +197,12 @@ php engines/http/benchmarks/router.bench.php
 php engines/http/benchmarks/kernel.bench.php
 php engines/view/benchmarks/render.bench.php
 php engines/orm/benchmarks/hydrate.bench.php
+php engines/report/benchmarks/report.bench.php     # اهداف DOC-072 §9
+php engines/workflow/benchmarks/workflow.bench.php
 ```
 
 قواعد کد: `docs/01-standards/` — هر فایل با `declare(strict_types=1)`، یک کلاس در هر فایل، استثنا با `messageId` (نه متن خام)، پول = int minor-unit.
 
 ## پروانه
 
-MIT — نگارش 0.4.0 (پیش از 1.0؛ API ممکن است بر اساس ADRها تکامل یابد)
+MIT — نگارش 0.7.1 (پیش از 1.0؛ API ممکن است بر اساس ADRها تکامل یابد)

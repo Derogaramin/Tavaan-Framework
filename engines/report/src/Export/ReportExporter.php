@@ -100,7 +100,7 @@ final class ReportExporter
         }
     }
 
-    /** 🔒 sandbox: مسیر مقصد باید داخل base path باشد. */
+    /** 🔒 sandbox: مسیر مقصد باید داخل base path بماند (PathGuard — cross-platform). */
     private function assertPathSandboxed(string $path): void
     {
         $base = \defined('TVN_BASE_PATH') ? (string) \TVN_BASE_PATH : null;
@@ -108,19 +108,7 @@ final class ReportExporter
             return;
         }
 
-        // مسیر ممکن است هنوز وجود نداشته باشد → ریشهٔ موجود را resolve می‌کنیم
-        $probe = $path;
-        while ($probe !== '' && !\file_exists($probe)) {
-            $parent = \dirname($probe);
-            if ($parent === $probe) {
-                break;
-            }
-            $probe = $parent;
-        }
-
-        $real = \realpath($probe);
-        $realBase = \realpath($base);
-        if ($real === false || $realBase === false || !\str_starts_with($real, $realBase . DIRECTORY_SEPARATOR)) {
+        if (!\Tavaan\Support\PathGuard::isInside($path, $base)) {
             throw ReportException::pathNotAllowed($path);
         }
     }

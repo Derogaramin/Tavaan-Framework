@@ -20,7 +20,7 @@
 
 **نتیجهٔ نهایی:** `۹۹۱ تست / ۶۷۰۱ assertion سبز` • lint کامل پاک (۱٬۱۴۴ فایل) • `۴۸/۴۸ موتور فعال` • نسخه `0.6.0 → 0.7.0`.
 
-> تنها شکست مجموعه (`MediaTest::testResizeThumbnailConvertWhenDriverAvailable`) **pre-existing و محیطی** است: libjpeg این sandbox با «Bogus Huffman table definition» روی JPEG تولیدیِ خودِ تست خطا می‌دهد — در baseline پیش از شروع M7 نیز قرمز بود و هیچ ارتباطی با کد M7 ندارد.
+> تنها شکست مجموعه در زمان نگارش این گزارش (`MediaTest::testResizeThumbnailConvertWhenDriverAvailable`) یک باگ **fixture** بود که در نگارش ۰٫۷٫۱ ریشه‌یابی و رفع شد (base64 «کوچک‌ترین JPEG» با libjpeg سخت‌گیر ناسازگار بود — اکنون fixture با خودِ gd تولید می‌شود): مجموعه اکنون **۹۹۲ تست / ۶۷۰۴ assertion سبز**. جزئیات: `docs/reports/windows-compatibility-fixes.md`.
 
 ---
 

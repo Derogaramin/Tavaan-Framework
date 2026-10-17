@@ -387,7 +387,10 @@ final class BackupManager
 
         foreach ($paths as $path) {
             $path = (string) $path;
-            $absolute = $path !== '' && $path[0] === '/' ? $path : $base . '/' . $path;
+            // 🔧 cross-platform: مسیر مطلق ویندوز (`C:\…`) هم مطلق است
+            $absolute = \Tavaan\Support\PathGuard::isAbsolute($path)
+                ? $path
+                : $base . '/' . \ltrim($path, '/\\');
             $absolute = $this->safeAbsolute($absolute, $base);
 
             if (\is_file($absolute)) {
@@ -447,7 +450,7 @@ final class BackupManager
         $normalizedBase = $this->normalize($base);
 
         if (!\str_starts_with($normalized, $normalizedBase . '/') && $normalized !== $normalizedBase
-            && !\str_starts_with($absolute, '/')) {
+            && !\Tavaan\Support\PathGuard::isAbsolute($absolute)) {
             throw BackupException::unsafePath($absolute);
         }
 
@@ -480,10 +483,16 @@ final class BackupManager
     /** @param list<string> $excludes */
     private function isExcluded(string $absolute, string $base, array $excludes): bool
     {
-        $relative = \ltrim(\str_replace('\\', '/', \substr($absolute, \strlen($base))), '/');
+        // 🔧 مسیرهای خارج از base (مثل temp در ویندوز) با substr کور بریده
+        // می‌شدند — اکنون relative فقط وقتی زیر base باشیم محاسبه می‌شود.
+        $normalized = $this->normalize($absolute);
+        $normalizedBase = $this->normalize($base);
+        $relative = \str_starts_with($normalized, $normalizedBase . '/')
+            ? \ltrim(\substr($normalized, \strlen($normalizedBase)), '/')
+            : $normalized;
 
         foreach ($excludes as $exclude) {
-            $exclude = \trim((string) $exclude, '/');
+            $exclude = \trim(\str_replace('\\', '/', (string) $exclude), '/');
             if ($exclude === '') {
                 continue;
             }

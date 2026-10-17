@@ -223,7 +223,15 @@ final class DatabaseTenantManager implements TenantStrategyInterface
             throw TenancyException::for('tenancy.unsafe_identifier', ['identifier' => $identifier]);
         }
         if ($isPath) {
-            if (\str_contains($identifier, '..') || \preg_match('/^[A-Za-z0-9_\/.-]+$/', $identifier) !== 1) {
+            if (\str_contains($identifier, '..')) {
+                throw TenancyException::for('tenancy.unsafe_identifier', ['identifier' => $identifier]);
+            }
+            // 🔧 cross-platform: در ویندوز backslash و حرف درایو (`C:`) هم
+            // در مسیر sqlite قانونی‌اند؛ `..` همچنان در هر دو پلتفرم رد می‌شود.
+            $pattern = \PHP_OS_FAMILY === 'Windows'
+                ? '/^[A-Za-z0-9_\/\\\\.:-]+$/'
+                : '/^[A-Za-z0-9_\/.-]+$/';
+            if (\preg_match($pattern, $identifier) !== 1) {
                 throw TenancyException::for('tenancy.unsafe_identifier', ['identifier' => $identifier]);
             }
 

@@ -6,6 +6,7 @@ namespace Tavaan\Engine\Api\Console;
 
 use Tavaan\Engine\Api\OpenApi\OpenApiGenerator;
 use Tavaan\Engine\Console\Command;
+use Tavaan\Support\PathGuard;
 
 /**
  * تَوان | Tavaan — Api
@@ -49,7 +50,8 @@ final class ApiDocsCommand extends Command
 
         // 🔒 محافظ مسیر: output باید داخل base path بماند
         $base = \defined('TVN_BASE_PATH') ? (string) \TVN_BASE_PATH : (\getcwd() ?: '.');
-        $target = \str_starts_with($output, '/') ? $output : $base . '/' . \ltrim($output, '/');
+        // 🔧 cross-platform: مسیر مطلق ویندوز (C:\…) هم تشخیص داده می‌شود
+        $target = PathGuard::isAbsolute($output) ? $output : $base . '/' . \ltrim($output, '/\\');
         $dir = \dirname($target);
         if (!\is_dir($dir) && !\mkdir($dir, 0775, true) && !\is_dir($dir)) {
             $this->error('ساخت پوشه ناموفق: ' . $dir);
@@ -59,7 +61,8 @@ final class ApiDocsCommand extends Command
 
         $realBase = \realpath($base);
         $real = \realpath($dir);
-        if ($real === false || $realBase === false || !\str_starts_with($real . '/', \rtrim($realBase, '/') . '/')) {
+        // 🔧 containment با PathGuard — در ویندوز realpath backslash برمی‌گرداند
+        if ($realBase === false || $real === false || !PathGuard::contains($realBase, $real)) {
             $this->error('مسیر خروجی باید داخل پروژه باشد: ' . $output);
 
             return self::FAILURE;
