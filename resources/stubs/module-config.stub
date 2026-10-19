@@ -1,0 +1,11 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * {{pascal}} — پیکربندی (تولیدشده با tvn make:module / make:engine).
+ */
+
+return [
+    // 'enabled' => env_bool('TVN_{{envPrefix}}_ENABLED', true),
+];

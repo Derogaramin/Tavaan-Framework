@@ -156,6 +156,7 @@ final class ConsoleKernel implements KernelInterface
             Commands\ConfigClearCommand::class,
             Commands\AutoloadCacheCommand::class,
             Commands\ModuleListCommand::class,
+            Commands\ModuleValidateCommand::class,
             Commands\EventListCommand::class,
             Commands\TestCommand::class,
         ];

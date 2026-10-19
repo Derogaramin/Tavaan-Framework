@@ -1,0 +1,19 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{namespace}};
+
+use Tavaan\Core\Contracts\Support\Renderable;
+
+/**
+ * {{class}} — ویجت قابل‌رندر (تولیدشده با `tvn make:widget` — DOC-077).
+ */
+final class {{class}} implements Renderable
+{
+    public function render(): mixed
+    {
+        // TODO: محتوای ویجت (رشتهٔ HTML یا Response)
+        return '';
+    }
+}

@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace Tavaan\Testing;
 
 use Tavaan\Core\Exceptions\TavaanException;
+use Tavaan\Testing\Database\Factory;
+use Tavaan\Testing\Mock\Mock;
 
 /**
  * تَوان | Tavaan — Testing
  * TestCase — پایهٔ تست با Assertionهای صفر‌وابستگی (DOC-084E §3).
+ *
+ * چرخهٔ هر متد تست (توسط Runner): `Mock::reset` → `setUp` → متد تست →
+ * بررسی انتظار استثنا → `Mock::verifyAll` → `tearDown` → `Mock::reset`.
  *
  * @api 1.0
  * @see docs/03-engines/test.md
@@ -22,6 +27,12 @@ abstract class TestCase
     private ?string $expectedMessageId = null;
 
     private ?int $expectedCode = null;
+
+    public function __construct()
+    {
+        // اتصال Model::factory() به قرارداد نام Factoryها (DOC-084E §6) — یک‌بار
+        Factory::ensureModelResolver();
+    }
 
     protected function setUp(): void
     {
@@ -41,29 +52,40 @@ abstract class TestCase
         $this->expectedCode = null;
         self::$assertionCount = 0;
 
+        Mock::reset();
         $this->setUp();
 
+        $thrown = null;
         try {
             $this->{$method}();
         } catch (\Throwable $e) {
-            if ($this->matchesExpectation($e)) {
-                return $this->finish();
+            $thrown = $e;
+        }
+
+        if ($thrown !== null) {
+            try {
+                $matched = $this->matchesExpectation($thrown);
+            } catch (\Throwable $matchError) {
+                $this->tearDown();
+                Mock::reset();
+                throw $matchError;
             }
-            $this->tearDown();
-            throw $e;
+            if (!$matched) {
+                $this->tearDown();
+                Mock::reset();
+                throw $thrown;
+            }
         }
 
-        if ($this->expectedException !== null) {
+        try {
+            Mock::verifyAll();
+            if ($this->expectedException !== null && $thrown === null) {
+                throw AssertionFailed::for(\sprintf('Expected exception [%s] was not thrown.', $this->expectedException));
+            }
+        } finally {
             $this->tearDown();
-            throw AssertionFailed::for(\sprintf('Expected exception [%s] was not thrown.', $this->expectedException));
+            Mock::reset();
         }
-
-        return $this->finish();
-    }
-
-    private function finish(): int
-    {
-        $this->tearDown();
 
         return self::$assertionCount;
     }
@@ -238,7 +260,10 @@ abstract class TestCase
         throw AssertionFailed::for($message);
     }
 
-    protected static function assertThat(bool $condition, string $message = ''): void
+    /**
+     * هستهٔ همهٔ Assertionها (عمومی تا TestResponse و ابزارهای جانبی بشمارند).
+     */
+    public static function assertThat(bool $condition, string $message = ''): void
     {
         self::$assertionCount++;
 

@@ -1,0 +1,31 @@
+<?php
+
+declare(strict_types=1);
+
+use Tavaan\Core\Facade\Facades\Schema;
+use Tavaan\Engine\Database\Migration\Migration;
+use Tavaan\Engine\Database\Schema\Blueprint;
+
+/*
+ * migration تولیدشده با `tvn make:migration` (DOC-077) — جدول {{table}}
+ */
+
+return new class () extends Migration {
+    public function up(): void
+    {
+        if (!Schema::hasTable('{{table}}')) {
+            Schema::create('{{table}}', function (Blueprint $t): void {
+                $t->string('id', 26)->primary();
+{{#each columns}}
+                $t->{{type}}('{{name}}');
+{{/each}}
+                $t->timestamps();
+            });
+        }
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('{{table}}');
+    }
+};

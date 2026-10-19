@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{namespace}};
+
+use Tavaan\Core\Contracts\Http\MiddlewareInterface;
+use Tavaan\Core\Contracts\Http\RequestInterface;
+use Tavaan\Core\Contracts\Http\ResponseInterface;
+
+/**
+ * {{class}} — middleware (تولیدشده با `tvn make:middleware` — DOC-077).
+ *
+ * ثبت: alias در config('http.middleware.aliases') یا middleware روت.
+ */
+final class {{class}} implements MiddlewareInterface
+{
+    public function handle(RequestInterface $request, \Closure $next, string ...$params): ResponseInterface
+    {
+        // TODO: منطق middleware
+
+        return $next($request);
+    }
+}

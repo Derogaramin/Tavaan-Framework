@@ -37,6 +37,9 @@ final class ApiTest extends TestCase
         Clock::setTestNow(null);
         $this->app = \tavaan_test_app();
         $this->app->make('config')->set('log.default', 'array');
+        // 🔒 Determinism: throttle/limiter با Clock ثابت تست می‌شوند — cache پیش‌فرض
+        // file باعث نشت state بین اجراها می‌شد (کلیدها با clock فریزشده «زنده» می‌مانند)
+        $this->app->make('config')->set('cache.default', 'array');
         JsonResource::$wrap = 'data';
     }
 

@@ -1,0 +1,40 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{namespace}};
+
+use Tavaan\Core\Contracts\Auth\Authenticatable;
+
+/**
+ * {{class}} — Policy برای {{model}} (تولیدشده با `tvn make:policy` — DOC-057 §4).
+ *
+ * ثبت: `Gate::policy({{model}}::class, {{class}}::class)` در ServiceProvider.
+ */
+final class {{class}}
+{
+    public function viewAny(?Authenticatable $user): bool
+    {
+        return $user !== null;
+    }
+
+    public function view(?Authenticatable $user, mixed $model): bool
+    {
+        return $user !== null;
+    }
+
+    public function create(?Authenticatable $user): bool
+    {
+        return $user !== null;
+    }
+
+    public function update(?Authenticatable $user, mixed $model): bool
+    {
+        return $user !== null;
+    }
+
+    public function delete(?Authenticatable $user, mixed $model): bool
+    {
+        return $user !== null;
+    }
+}

@@ -1,0 +1,25 @@
+# ماژول {{pascal}}
+
+تولیدشده با `tvn make:module {{slug}}` (DOC-077 §6).
+
+## ساختار
+
+```
+modules/{{slug}}/
+├── module.json          شناسنامهٔ ماژول (id/version/deps)
+├── composer.json        نگاشت PSR-4
+├── src/                 کد ماژول ({{domainNote}})
+├── config/{{slug}}.php  پیکربندی
+├── routes/              web.php / api.php / admin.php
+├── views/               قالب‌های .tv.php
+├── lang/{fa,en}/        ترجمه‌ها
+├── migrations/          migrationهای ماژول
+├── seeds/               دادهٔ اولیه
+└── tests/Unit/          تست‌ها
+```
+
+## نکات
+
+- کشف خودکار: `config/modules.php → paths` شامل `modules/` است؛ نیازی به ثبت دستی نیست.
+- اعتبارسنجی: `tvn module:validate module.{{slug}}`
+- تست: `tvn test modules/{{slug}}/tests`

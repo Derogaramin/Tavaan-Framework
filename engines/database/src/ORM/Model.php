@@ -133,6 +133,9 @@ abstract class Model implements ModelInterface
 
     private static bool $unguarded = false;
 
+    /** @var (\Closure(class-string<self>): object)|null تزریق‌شده توسط چارچوب تست (DOC-084E §6) */
+    private static ?\Closure $factoryResolver = null;
+
     public static function setConnectionResolver(?ConnectionManager $resolver): void
     {
         self::$connectionResolver = $resolver;
@@ -146,6 +149,33 @@ abstract class Model implements ModelInterface
     public static function setContainer(?ContainerInterface $container): void
     {
         self::$container = $container;
+    }
+
+    /**
+     * ثبت resolver ساخت Factory (توسط چارچوب تست — بدون وابستگی معکوس).
+     *
+     * @param (\Closure(class-string<self>): object)|null $resolver
+     */
+    public static function setFactoryResolver(?\Closure $resolver): void
+    {
+        self::$factoryResolver = $resolver;
+    }
+
+    /**
+     * Factory این مدل — `User::factory()->count(5)->create()` (DOC-084E §6).
+     *
+     * @throws \LogicException اگر چارچوب تست بوت نشده باشد (resolver ثبت نشده)
+     */
+    public static function factory(): object
+    {
+        if (self::$factoryResolver === null) {
+            throw new \LogicException(
+                'Model::factory() requires the testing framework — extend Tavaan\Testing\TestCase '
+                . 'or call Model::setFactoryResolver() first.',
+            );
+        }
+
+        return (self::$factoryResolver)(static::class);
     }
 
     public static function unguard(bool $unguarded = true): void

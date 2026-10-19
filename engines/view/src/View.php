@@ -59,18 +59,24 @@ final class View implements \Stringable
      */
     public function render(): string
     {
-        $content = $this->factory->evaluateTemplate($this->template, $this->data);
+        // 🔒 reset وضعیت sectionها در مرز چرخهٔ رندر (فرایند مقیم/تست)
+        $this->factory->beginViewRender();
+        try {
+            $content = $this->factory->evaluateTemplate($this->template, $this->data);
 
-        $depth = 0;
-        while (($parent = $this->factory->popExtends()) !== null) {
-            if (++$depth > self::MAX_LAYOUT_DEPTH) {
-                throw Exceptions\ViewException::maxDepth($parent, self::MAX_LAYOUT_DEPTH);
+            $depth = 0;
+            while (($parent = $this->factory->popExtends()) !== null) {
+                if (++$depth > self::MAX_LAYOUT_DEPTH) {
+                    throw Exceptions\ViewException::maxDepth($parent, self::MAX_LAYOUT_DEPTH);
+                }
+
+                $content = $this->factory->evaluateTemplate($parent, [...$this->data, '__content' => $content]);
             }
 
-            $content = $this->factory->evaluateTemplate($parent, [...$this->data, '__content' => $content]);
+            return $content;
+        } finally {
+            $this->factory->endViewRender();
         }
-
-        return $content;
     }
 
     public function __toString(): string

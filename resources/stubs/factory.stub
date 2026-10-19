@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{namespace}};
+
+use {{modelImport}};
+use Tavaan\Testing\Database\Factory;
+
+/**
+ * {{class}} — Factory تست برای {{model}} (تولیدشده با `tvn make:factory` — DOC-084E §6).
+ */
+final class {{class}} extends Factory
+{
+    /** @var class-string<{{model}}> */
+    protected string $model = {{modelImport}}::class;
+
+    /** @return array<string, mixed> */
+    public function definition(): array
+    {
+        return [
+            // 'name' => $this->faker->name(),
+            // 'email' => $this->faker->unique()->email(),
+        ];
+    }
+}

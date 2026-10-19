@@ -1,0 +1,21 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{namespace}};
+
+use Tavaan\Testing\Http\MakesHttpRequests;
+use Tavaan\Testing\TestCase;
+
+/**
+ * {{class}} — تست Feature (تولیدشده با `tvn make:test` — DOC-077).
+ */
+final class {{class}} extends TestCase
+{
+    use MakesHttpRequests;
+
+    public function testHome_ReturnsOk(): void
+    {
+        $this->get('/')->assertOk();
+    }
+}

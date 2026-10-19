@@ -316,7 +316,23 @@ $response->assertHeader('X-Tavaan-Ref');
 | Mockery | Mock | Mock ساده با `__call` |
 | FakerPHP | Faker | خودنوشته با دادهٔ فارسی |
 
-## ۱۳. بلوک ماشین‌خوان 🧠
+## ۱۳. وضعیت پیاده‌سازی (TVN-0084 — M8)
+
+| بخش | وضعیت |
+|---|---|
+| Assertion API + TestCase | ✅ (`engines/test/src/TestCase.php`) |
+| Native Runner + گزارش رنگی با file:line | ✅ (`TestRunner` + `TestSuite` + `TestResult`) |
+| `--group` (ضمنی از مسیر + `#[Group]`) / `--filter` | ✅ |
+| `--parallel=N` (فرزندان subprocess + ادغام JSON) | ✅ |
+| `--coverage` (pcov/xdebug؛ در نبودِ افزونه: هشدار و ادامه — §9) | ✅ |
+| Mock/Fake بدون eval (§4.1) | ✅ (`Mock`, `MockBuilder`, `Expectation`, `MockHandler`, `ProxyGenerator`) |
+| HttpTest درون‌فرایندی (§5) | ✅ (`MakesHttpRequests`, `TestResponse`) |
+| DatabaseTest + migrate (§6) | ✅ (`RefreshDatabase`) |
+| Factory + `Model::factory()` (§6) | ✅ (`Factory` + resolver افزودنی روی `Model`) |
+| Faker خودنوشته deterministic (§6.1) | ✅ (`Faker` — LCG با seed، دادهٔ فارسی، nationalCode/mobile/jalaliDate) |
+| PHPUnit Bridge (§2) | ⛔ انجام‌نشد — طبق قاعدهٔ 🔒 همان سند، Native Runner مرجع است؛ bridge به PHPUnitِ نصب‌شده نیاز دارد و در این مخزن dev-dependency مجاز نیست |
+
+## ۱۴. بلوک ماشین‌خوان 🧠
 ```yaml
 # machine-readable: tavaan.engine.test.v1
 engine:
@@ -325,16 +341,44 @@ engine:
   path: engines/test
   priority: P0
   phase: M8
+  status: done            # TVN-0084
   depends_on: [all]
   facade: null
   public_api:
     - class: TestCase
-      methods: [assertTrue, assertSame, assertEquals, expectException, get, post, postJson, actingAs, ...]
+      methods: [runBare, assertTrue, assertFalse, assertSame, assertNotSame, assertEquals, assertNull, assertNotNull, assertCount, assertContains, assertArrayHasKey, assertInstanceOf, assertStringContainsString, assertMatchesRegex, assertGreaterThan, assertLessThan, assertEqualsWithDelta, assertEmpty, assertNotEmpty, assertThat, expectException, expectExceptionMessageId, expectExceptionCode, fail]
     - class: TestRunner
-      methods: [run, suite, result]
-    - class: Mock
-      methods: [of]
-    - class: Factory
-      methods: [definition, create, make, count, state]
+      methods: [run, runSuite, render]
+    - class: TestSuite
+      methods: [discover, fromFiles, classes, files, filter, chunkFiles, discoverFiles]
+    - class: TestResult
+      methods: [recordPassed, recordFailure, recordError, merge, ok, toArray, fromArray]
+    - class: Mock\Mock
+      methods: [of, register, verifyAll, reset]
+    - class: Mock\MockBuilder
+      methods: [shouldReceive, getMock, handler]
+    - class: Mock\Expectation
+      methods: [with, andReturn, andReturnUsing, andThrow, once, twice, times, never, anyTimes, shouldReceive, getMock]
+    - class: Http\MakesHttpRequests   # trait
+      methods: [get, post, put, patch, delete, getJson, postJson, putJson, patchJson, deleteJson, json, call, withHeaders, actingAs, app]
+    - class: Http\TestResponse
+      methods: [assertOk, assertStatus, assertCreated, assertUnauthorized, assertForbidden, assertNotFound, assertSuccessful, assertJson, assertJsonStructure, assertJsonCount, assertJsonValidationErrors, assertRedirect, assertSee, assertDontSee, assertCookie, assertHeader, json, content, status, header, baseResponse]
+    - class: Database\RefreshDatabase  # trait
+      methods: [setUpDatabase, migrate, databaseConnection]
+    - class: Database\Factory
+      methods: [definition, state, count, make, create, for, ensureModelResolver, faker]
+    - class: Database\Faker
+      methods: [name, firstName, lastName, email, mobile, nationalCode, jalaliDate, numberBetween, randomElement, boolean, word, text, dateTime, unique]
+    - class: Coverage\CoverageReporter
+      methods: [detectDriver, start, report]
+    - class: Group                     # Attribute
+      methods: []
+  cli:
+    - "tvn test [filter] [paths...]"
+    - "tvn test --group=<slug|unit|feature|app|#[Group]>"
+    - "tvn test --filter=<name>"
+    - "tvn test --coverage       # pcov/xdebug اختیاری"
+    - "tvn test --parallel=<n>"
   loc_estimate: 2500
+  loc_actual: ~2900       # src (~2100) + tests (~800) — بدون fixtures
 ```

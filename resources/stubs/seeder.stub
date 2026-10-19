@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{namespace}};
+
+use Tavaan\Engine\Database\Connection;
+
+/**
+ * {{class}} — دادهٔ اولیه (تولیدشده با `tvn make:seeder` — DOC-077).
+ */
+final class {{class}}
+{
+    public function run(Connection $db): void
+    {
+        // $db->table('{{table}}')->insert([
+        //     ['id' => \Tavaan\Support\Ulid::generate()->toString(), 'created_at' => \date('Y-m-d H:i:s')],
+        // ]);
+    }
+}

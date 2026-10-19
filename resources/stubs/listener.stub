@@ -1,0 +1,19 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{namespace}};
+
+/**
+ * {{class}} — شنوندهٔ رویداد {{event}} (تولیدشده با `tvn make:listener` — DOC-077).
+ *
+ * ثبت: `$events->listen('{{eventName}}', [{{class}}::class, 'handle'])` یا در ServiceProvider.
+ */
+final class {{class}}
+{
+    /** @param array<string, mixed> $payload */
+    public function handle(string $event, array $payload): void
+    {
+        // TODO: واکنش به رویداد {{event}}
+    }
+}

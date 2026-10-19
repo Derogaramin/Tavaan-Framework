@@ -141,7 +141,23 @@ public function rollback(): void
 ## ۱۰. معیار پذیرش 🧪
 - AC-UPG-01..06. AC-UPG-07: ارتقا بدون downtime برای patch version (با strategy).
 
-## ۱۱. بلوک ماشین‌خوان 🧠
+## ۱۱. وضعیت پیاده‌سازی (TVN-0081 — M8)
+
+| بخش | وضعیت |
+|---|---|
+| جریان §2: pre-check → backup اجباری → down → مسیر گام‌به‌گام → (schema + data patch + config migration + cache clear) → setVersion → verify → up | ✅ `Upgrader::upgrade()` |
+| شکست میانی → rollback خودکار از backup + up + گزارش | ✅ |
+| DataPatch (§3) + `PatchRunner` با idempotency سطح repository (اجرای مجدد → skip) | ✅ T-02 |
+| ConfigMigrator (§4) روی `.env` — rename/remove/default/transform، حفظ کامنت‌ها، نوشتن اتمیک | ✅ T-03 |
+| VersionResolver (§5) — semver sort، مسیر گام‌به‌گام، بدون downgrade، هدف schema-only مجاز | ✅ T-01 |
+| rollback (§6) از `last_backup` + `previous_version` | ✅ T-04 |
+| PreChecker (§2 گام ۱): PHP/افزونه‌ها/فضای دیسک | ✅ T-05 |
+| Maintenance (§2 گام ۳): همان `storage/framework/down` موتور HTTP | ✅ T-06 |
+| CLI (§7): `upgrade --to= [--no-backup --skip-maintenance]` / `upgrade:check` / `upgrade:rollback --force` / `upgrade:status` / `upgrade:patches` | ✅ |
+| Backup از موتور Backup (§8) پشت `BackupRunnerInterface` (تست با Mock موتور Test — بدون I/O) | ✅ |
+| AC-UPG-07 (بدون downtime برای patch) | ⛔ strategy-based rolling upgrade خارج از دامنهٔ تک‌نفرهٔ M8 — زیرساخت maintenance/verify آماده است؛ در backlog M9 دنبال شود |
+
+## ۱۲. بلوک ماشین‌خوان 🧠
 ```yaml
 # machine-readable: tavaan.engine.upgrade.v1
 engine:
@@ -150,10 +166,29 @@ engine:
   path: engines/upgrade
   priority: P2
   phase: M8
+  status: done            # TVN-0081
   depends_on: [console, database, filesystem]
   facade: null
+  config_file: engines/upgrade/config/upgrade.php   # → config('upgrade.*')
+  commands: [upgrade, upgrade:check, upgrade:rollback, upgrade:status, upgrade:patches]
+  tables: [tvn_upgrades, tvn_upgrade_meta]
   public_api:
     - class: Upgrader
-      methods: [upgrade, check, rollback, status, patches]
+      methods: [upgrade, check, rollback, status, patches, currentVersion, down, up, isDown, repository, setOutput]
+    - class: VersionResolver
+      methods: [availableVersions, upgradePath, nextVersion, isSemver]
+    - class: PatchRunner
+      methods: [discover, run, rollbackVersion, versionPath]
+    - class: ConfigMigrator
+      methods: [migrate, log]
+    - class: PreChecker
+      methods: [check, report]
+    - class: UpgradeRepository
+      methods: [createRepository, patchApplied, logPatch, applied, nextBatch, getMeta, setMeta]
+    - class: DataPatch          # abstract
+      methods: [up, down]
+    - class: Support\BackupRunnerInterface
+      methods: [run, restore]
   loc_estimate: 600
+  loc_actual: ~1500      # src (~1100) + tests (~450)
 ```

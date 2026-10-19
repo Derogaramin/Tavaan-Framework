@@ -236,11 +236,11 @@ tickets:
   - {id: TVN-0072, title: "Report (xlsx خودنوشته)", engine: report, phase: M7, docs: [DOC-072], status: done}
   - {id: TVN-0073, title: "Payment (درگاه‌ها)", engine: payment, phase: M7, docs: [DOC-073], status: done}
 # M8
-  - {id: TVN-0077, title: "Scaffold (make:*)", engine: scaffold, phase: M8, docs: [DOC-077]}
-  - {id: TVN-0078, title: "Admin (CRUD generator)", engine: admin, phase: M8, docs: [DOC-078]}
-  - {id: TVN-0079, title: "Plugin (sandbox)", engine: plugin, phase: M8, docs: [DOC-079]}
-  - {id: TVN-0084, title: "Test Framework", engine: test, phase: M8, docs: [DOC-084E]}
-  - {id: TVN-0081, title: "Upgrade", engine: upgrade, phase: M8, docs: [DOC-081E]}
+  - {id: TVN-0077, title: "Scaffold (make:*)", engine: scaffold, phase: M8, docs: [DOC-077], status: done}
+  - {id: TVN-0078, title: "Admin (CRUD generator)", engine: admin, phase: M8, docs: [DOC-078], status: done}
+  - {id: TVN-0079, title: "Plugin (sandbox)", engine: plugin, phase: M8, docs: [DOC-079], status: done}
+  - {id: TVN-0084, title: "Test Framework", engine: test, phase: M8, docs: [DOC-084E], status: done}
+  - {id: TVN-0081, title: "Upgrade", engine: upgrade, phase: M8, docs: [DOC-081E], status: done}
 # M9
   - {id: TVN-0091, title: "Kit: Blog", phase: M9, docs: [DOC-091]}
   - {id: TVN-0092, title: "Kit: News Portal", phase: M9, docs: [DOC-092]}
@@ -295,8 +295,8 @@ function pickNextTicket(agent):
 | M5 | 9 | 0 | 0 | 9 |
 | M6 | 6 | 0 | 0 | 6 |
 | M7 | 3 | 0 | 0 | 3 |
-| M8 | 5 | 5 | 0 | 0 |
+| M8 | 5 | 0 | 0 | 5 |
 | M9 | 8 | 8 | 0 | 0 |
-| **جمع** | **63** | **13** | **0** | **50** |
+| **جمع** | **63** | **8** | **0** | **55** |
 
 > ⚠️ این فایل با پیشرفت پروژه به‌روز می‌شود. `status` هر تیکت را پس از اتمام تغییر دهید.

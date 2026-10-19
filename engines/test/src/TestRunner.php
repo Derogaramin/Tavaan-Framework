@@ -10,184 +10,178 @@ use Tavaan\Core\Contracts\Console\OutputInterface;
  * تَوان | Tavaan — Testing
  * TestRunner — Runner بومی صفر‌وابستگی (بدون PHPUnit — DOC-084E §7).
  *
- * کشف: فایل‌های `*Test.php` در مسیرهای داده‌شده → کلاس‌های TestCase → متدهای `test*`.
+ * کشف توسط `TestSuite` انجام می‌شود (فایل‌های `*Test.php` → کلاس‌های
+ * `TestCase` → متدهای `test*` + گروه‌ها). خروجی رنگی و گزارش شکست با
+ * فایل:خط (AC-TEST-01/05). برای اجرای موازی، `runSuite(..., progress: false)`
+ * بی‌صدا اجرا شده و `TestResult` قابل سریال‌شدن برمی‌گرداند.
  *
  * @api 1.0
  * @see docs/03-engines/test.md
  */
 final class TestRunner
 {
-    private int $passed = 0;
-
-    private int $failed = 0;
-
-    private int $assertions = 0;
-
-    /** @var list<array{test: string, error: string, trace: string}> */
-    private array $failures = [];
-
     public function __construct(private readonly OutputInterface $output)
     {
     }
 
     /**
+     * اجرای کامل: کشف → فیلتر → اجرا → گزارش انسانی.
+     *
      * @param list<string> $paths  دایرکتوری/فایل‌های تست
-     * @param string|null  $filter فیلتر نام (کلاس یا متد)
+     * @param string|null  $filter فیلتر نام (کلاس یا متد — case-insensitive)
+     * @param string|null  $group  فقط گروه مشخص (`--group=cache`)
      *
      * @return int کد خروج (0 = همه سبز)
      */
-    public function run(array $paths, ?string $filter = null): int
+    public function run(array $paths, ?string $filter = null, ?string $group = null): int
     {
         $start = \microtime(true);
-        $files = $this->discover($paths);
+        $suite = TestSuite::discover($paths)->filter($filter, $group);
 
-        if ($files === []) {
-            $this->output->writeln('  هیچ فایلی یافت نشد.', 'comment');
+        if ($suite->countClasses() === 0) {
+            $this->output->writeln('  هیچ تستی یافت نشد.', 'comment');
 
             return 0;
         }
 
-        $this->output->newLine();
-        $this->output->writeln('  🧪 tavaan test — Native Runner', 'bold');
-        $this->output->writeln('  ' . \count($files) . ' test file(s)', 'dim');
-        $this->output->newLine();
+        $this->printHeader($suite);
 
-        foreach ($files as $file) {
-            $classes = $this->loadTestClasses($file);
+        $result = $this->runSuite($suite);
+        $wallMs = (\microtime(true) - $start) * 1000;
 
-            foreach ($classes as $class) {
-                $this->runClass($class, $filter);
-            }
+        $this->render($result, $wallMs);
+
+        return $result->ok() ? 0 : 1;
+    }
+
+    /**
+     * اجرای یک Suite آماده (بدون کشف/گزارش) — برای حالت ماشین/موازی.
+     */
+    public function runSuite(TestSuite $suite, bool $progress = true): TestResult
+    {
+        $result = new TestResult();
+
+        foreach ($suite->classes() as $descriptor) {
+            $this->runClass($descriptor, $result, $progress);
         }
 
-        $elapsed = (\microtime(true) - $start) * 1000;
+        return $result;
+    }
 
+    /**
+     * چاپ گزارش انسانی (شکست‌ها با فایل:خط + خلاصهٔ رنگی — AC-TEST-05).
+     */
+    public function render(TestResult $result, ?float $wallMs = null): void
+    {
         $this->output->newLine();
-        if ($this->failures !== []) {
+
+        $failures = \array_values(\array_filter($result->failures(), static fn (TestFailure $f): bool => $f->kind === 'failure'));
+        $errors = \array_values(\array_filter($result->failures(), static fn (TestFailure $f): bool => $f->kind === 'error'));
+
+        if ($failures !== []) {
             $this->output->writeln('  Failures:', 'error');
-            foreach ($this->failures as $i => $failure) {
-                $this->output->writeln(\sprintf('  %d) %s', $i + 1, $failure['test']), 'bold');
-                $this->output->writeln('     ' . $failure['error'], 'comment');
-                if ($failure['trace'] !== '') {
-                    $this->output->writeln('     ' . $failure['trace'], 'dim');
-                }
+            foreach ($failures as $i => $failure) {
+                $this->printFailure($i + 1, $failure);
+            }
+            $this->output->newLine();
+        }
+        if ($errors !== []) {
+            $this->output->writeln('  Errors:', 'error');
+            foreach ($errors as $i => $failure) {
+                $this->printFailure($i + 1, $failure);
             }
             $this->output->newLine();
         }
 
         $summary = \sprintf(
-            '  Tests: %d passed, %d failed — Assertions: %d — Time: %.0f ms — Memory: %.1f MB',
-            $this->passed,
-            $this->failed,
-            $this->assertions,
-            $elapsed,
+            '  Tests: %d, Passed: %d, Failed: %d, Errors: %d — Assertions: %d — Time: %.0f ms — Memory: %.1f MB',
+            $result->total(),
+            $result->passed(),
+            $result->failed(),
+            $result->errored(),
+            $result->assertions(),
+            $wallMs ?? $result->durationMs(),
             \memory_get_peak_usage(true) / 1048576,
         );
-        $this->output->writeln($summary, $this->failed === 0 ? 'success' : 'error');
+        $this->output->writeln($summary, $result->ok() ? 'success' : 'error');
         $this->output->newLine();
-
-        return $this->failed === 0 ? 0 : 1;
     }
 
-    /** @param class-string<TestCase> $class */
-    private function runClass(string $class, ?string $filter): void
+    // ─── internals ────────────────────────────────────────────────────────
+
+    private function printHeader(TestSuite $suite): void
     {
-        $reflection = new \ReflectionClass($class);
-        $methods = [];
-        foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-            if (\str_starts_with($method->getName(), 'test')) {
-                $methods[] = $method->getName();
-            }
+        $this->output->newLine();
+        $this->output->writeln('  🧪 tavaan test — Native Runner', 'bold');
+        $this->output->writeln(\sprintf(
+            '  %d test file(s), %d test class(es), %d test(s)',
+            \count($suite->files()),
+            $suite->countClasses(),
+            $suite->countMethods(),
+        ), 'dim');
+        $this->output->newLine();
+    }
+
+    private function runClass(TestClassDescriptor $descriptor, TestResult $result, bool $progress): void
+    {
+        $shortName = $descriptor->shortName();
+        if ($progress) {
+            $this->output->write('  ' . \str_pad($shortName, 34));
         }
 
-        if ($methods === []) {
-            return;
-        }
-
-        $shortName = $reflection->getShortName();
-        $this->output->write('  ' . \str_pad($shortName, 34));
-
-        foreach ($methods as $method) {
-            $fullName = $shortName . '::' . $method;
-            if ($filter !== null && !\str_contains(\strtolower($fullName), \strtolower($filter))) {
-                continue;
-            }
+        foreach ($descriptor->methods as $method) {
+            $fullName = $shortName . '::' . $method->name;
 
             /** @var TestCase $test */
-            $test = new $class();
+            $test = new $descriptor->class();
 
+            $start = \microtime(true);
             try {
-                $this->assertions += $test->runBare($method);
-                $this->passed++;
-                $this->output->write('.', 'info');
+                $assertions = $test->runBare($method->name);
+                $result->recordPassed($assertions, (\microtime(true) - $start) * 1000);
+                if ($progress) {
+                    $this->output->write('.', 'info');
+                }
             } catch (AssertionFailed $e) {
-                $this->failed++;
-                $this->output->write('F', 'error');
-                $this->failures[] = ['test' => $fullName, 'error' => $e->getMessage(), 'trace' => ''];
+                $result->recordFailure($fullName, $e, (\microtime(true) - $start) * 1000);
+                if ($progress) {
+                    $this->output->write('F', 'error');
+                }
             } catch (\Throwable $e) {
-                $this->failed++;
-                $this->output->write('E', 'error');
-                $this->failures[] = [
-                    'test' => $fullName,
-                    'error' => '[' . $e::class . '] ' . $e->getMessage(),
-                    'trace' => $e->getFile() . ':' . $e->getLine(),
-                ];
-            }
-        }
-
-        $this->output->newLine();
-    }
-
-    /**
-     * @param list<string> $paths
-     *
-     * @return list<string>
-     */
-    private function discover(array $paths): array
-    {
-        $files = [];
-        foreach ($paths as $path) {
-            if (\is_file($path)) {
-                $files[] = $path;
-                continue;
-            }
-            if (!\is_dir($path)) {
-                continue;
-            }
-
-            $iterator = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS),
-            );
-            /** @var \SplFileInfo $file */
-            foreach ($iterator as $file) {
-                if ($file->isFile() && \str_ends_with($file->getFilename(), 'Test.php')) {
-                    $files[] = $file->getPathname();
+                $result->recordError($fullName, $e, (\microtime(true) - $start) * 1000);
+                if ($progress) {
+                    $this->output->write('E', 'error');
                 }
             }
         }
 
-        \sort($files);   // 🔒 ترتیب قطعی
-
-        return $files;
+        if ($progress) {
+            $this->output->newLine();
+        }
     }
 
-    /**
-     * @return list<class-string<TestCase>>
-     */
-    private function loadTestClasses(string $file): array
+    private function printFailure(int $index, TestFailure $failure): void
     {
-        $before = \get_declared_classes();
-        require_once $file;
-        $after = \get_declared_classes();
-
-        $classes = [];
-        foreach (\array_diff($after, $before) as $class) {
-            $reflection = new \ReflectionClass($class);
-            if ($reflection->isSubclassOf(TestCase::class) && !$reflection->isAbstract()) {
-                $classes[] = $class;
-            }
+        $this->output->writeln(\sprintf('  %d) %s', $index, $failure->test), 'bold');
+        if ($failure->kind === 'error') {
+            $this->output->writeln('     [' . $failure->exception . '] ' . $failure->message, 'comment');
+        } else {
+            $this->output->writeln('     ' . \str_replace(\PHP_EOL, \PHP_EOL . '     ', $failure->message), 'comment');
         }
+        if ($failure->location !== '') {
+            $this->output->writeln('     at ' . $this->relativize($failure->location), 'dim');
+        }
+    }
 
-        return $classes;
+    /** تبدیل مسیر مطلق به نسبی (بر پایهٔ TVN_BASE_PATH) برای خوانایی گزارش. */
+    private function relativize(string $location): string
+    {
+        if (!\defined('TVN_BASE_PATH')) {
+            return $location;
+        }
+        $base = \str_replace('\\', '/', \rtrim((string) \TVN_BASE_PATH, '/\\')) . '/';
+        $normalized = \str_replace('\\', '/', $location);
+
+        return \str_starts_with($normalized, $base) ? \substr($normalized, \strlen($base)) : $location;
     }
 }

@@ -41,6 +41,44 @@ final class Str
         return \mb_strtolower((string) \preg_replace('/(?<!^)[A-Z]/', $delimiter . '$0', $value));
     }
 
+    /**
+     * جمع سادهٔ انگلیسی (برای نام جدول/کلاس — DOC-077 §5).
+     *
+     * قواعد: irregularهای رایج، `s/x/z/ch/sh → +es`، `بی‌واکه+y → ies`، وگرنه `+s`.
+     * بزرگی حرف اول حفظ می‌شود (Product → Products).
+     */
+    public static function plural(string $value): string
+    {
+        if ($value === '') {
+            return $value;
+        }
+
+        $irregulars = [
+            'person' => 'people', 'child' => 'children', 'man' => 'men', 'woman' => 'women',
+            'mouse' => 'mice', 'foot' => 'feet', 'tooth' => 'teeth', 'goose' => 'geese',
+            'datum' => 'data', 'medium' => 'media', 'analysis' => 'analyses', 'index' => 'indices',
+        ];
+
+        $lower = \strtolower($value);
+        if (isset($irregulars[$lower])) {
+            $plural = $irregulars[$lower];
+
+            return \ctype_upper($value[0]) ? \ucfirst($plural) : $plural;
+        }
+
+        if (\preg_match('/[aeiou]z$/i', $value) === 1) {
+            return $value . 'zes';   // quiz → quizzes
+        }
+        if (\preg_match('/(s|x|z|ch|sh)$/i', $value) === 1) {
+            return $value . 'es';
+        }
+        if (\preg_match('/[^aeiou]y$/i', $value) === 1) {
+            return \substr($value, 0, -1) . 'ies';
+        }
+
+        return $value . 's';
+    }
+
     public static function startsWith(string $haystack, string $needle): bool
     {
         return \str_starts_with($haystack, $needle);

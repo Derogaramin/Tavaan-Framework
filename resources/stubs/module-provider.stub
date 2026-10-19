@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Modules\{{pascal}}\Providers;
+
+use Tavaan\Core\Provider\ServiceProvider;
+
+/**
+ * ماژول {{pascal}} — ServiceProvider (تولیدشده با `tvn make:module` — DOC-077 §6).
+ */
+final class {{pascal}}ServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        // TODO: bindingهای ماژول (بدون side effect)
+    }
+
+    public function boot(): void
+    {
+        // TODO: روت‌ها/ترجمه‌ها/migrationهای ماژول در صورت نیاز
+    }
+
+    /** @return list<string> */
+    public function provides(): array
+    {
+        return [];
+    }
+}

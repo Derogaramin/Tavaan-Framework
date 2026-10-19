@@ -57,6 +57,9 @@ final class ViewFactory
 
     private int $renderDepth = 0;
 
+    /** عمق چرخهٔ رندر سطح-ویو (View::render) — برای reset狀態 sectionها */
+    private int $viewRenderDepth = 0;
+
     private string $compiledPath;
 
     private int $maxDepth;
@@ -242,6 +245,56 @@ final class ViewFactory
         };
 
         return $renderer($compiledPath, [...$this->shared, ...$data], $this);
+    }
+
+    /**
+     * آغاز یک چرخهٔ رندر سطح-ویو (توسط View::render).
+     *
+     * 🔒 در سطح اول، state قالب‌ها (section/push/slot/extends) پاک می‌شود تا
+     * در فرایندهای مقیم/تست‌ها رندرهای متوالی روی هم انباشته نشوند
+     * (stopSection محتوای section را append می‌کند). بافرهای نشتی‌کردهٔ
+     * sectionهای نیمه‌کاره (استثنای رندر قبلی) نیز بسته می‌شوند.
+     */
+    public function beginViewRender(): void
+    {
+        if ($this->viewRenderDepth > 0) {
+            $this->viewRenderDepth++;
+
+            return;
+        }
+        $this->viewRenderDepth = 1;
+
+        // بستن بافرهای بازِ مانده از رندر ناموفق قبلی
+        while ($this->sectionStack !== []) {
+            \array_pop($this->sectionStack);
+            if (\ob_get_level() > 0) {
+                \ob_end_clean();
+            }
+        }
+        while ($this->pushStack !== []) {
+            \array_pop($this->pushStack);
+            if (\ob_get_level() > 0) {
+                \ob_end_clean();
+            }
+        }
+        while ($this->slotStack !== []) {
+            \array_pop($this->slotStack);
+            if (\ob_get_level() > 0) {
+                \ob_end_clean();
+            }
+        }
+
+        $this->sections = [];
+        $this->pushes = [];
+        $this->currentSlots = [];
+        $this->componentStack = [];
+        $this->extendsStack = [];
+    }
+
+    /** پایان چرخهٔ رندر سطح-ویو. */
+    public function endViewRender(): void
+    {
+        $this->viewRenderDepth = \max(0, $this->viewRenderDepth - 1);
     }
 
     /**

@@ -1,0 +1,12 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * ماژول {{pascal}} — روت‌های {{channel}} (تولیدشده با `tvn make:module`).
+ *
+ * 🔒 این فایل فقط روت تعریف می‌کند (بدون منطق).
+ */
+
+// use Tavaan\Core\Facade\Facades\Route;
+// Route::get('/{{slug}}', [/* Controller::class, 'index' */])->name('{{slug}}.index');

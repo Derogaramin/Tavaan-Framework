@@ -1,0 +1,28 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tavaan\Engine\{{pascal}};
+
+use Tavaan\Core\Provider\ServiceProvider;
+
+/**
+ * تَوان | Tavaan — {{pascal}}
+ * {{pascal}}ServiceProvider — ثبت bindingها (تولیدشده با `tvn make:engine`).
+ *
+ * @api 1.0
+ * @see docs/03-engines/{{slug}}.md
+ */
+final class {{pascal}}ServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        // TODO: bindingها (بدون side effect — DoD §2)
+    }
+
+    /** @return list<string> */
+    public function provides(): array
+    {
+        return [];
+    }
+}

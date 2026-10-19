@@ -1,0 +1,92 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{namespace}};
+
+use Tavaan\Engine\Http\Request;
+use Tavaan\Engine\Http\Response;
+
+/**
+ * {{class}} — کنترلر تولیدشده با `tvn make:controller` (DOC-077).
+ */
+final class {{class}}
+{
+{{#if resourceApi}}
+    public function index(): Response
+    {
+        // TODO: فهرست {{modelPlural}} (با pagination)
+        return Response::json(['data' => []]);
+    }
+
+    public function store(Request $request): Response
+    {
+        // TODO: validate + store
+        return Response::json(['message' => 'created'], 201);
+    }
+
+    public function show(int|string $id): Response
+    {
+        // TODO: یافتن {{model}} با شناسه
+        return Response::json(['data' => ['id' => $id]]);
+    }
+
+    public function update(Request $request, int|string $id): Response
+    {
+        // TODO: validate + update
+        return Response::json(['data' => ['id' => $id]]);
+    }
+
+    public function destroy(int|string $id): Response
+    {
+        // TODO: delete
+        return Response::json(['message' => 'deleted']);
+    }
+{{/if}}
+{{#if resourceWeb}}
+    public function index(): Response
+    {
+        return new Response((string) view('{{viewPrefix}}index')->render());
+    }
+
+    public function create(): Response
+    {
+        return new Response((string) view('{{viewPrefix}}create')->render());
+    }
+
+    public function store(Request $request): Response
+    {
+        // TODO: validate + store
+        return redirect('/{{routePrefix}}');
+    }
+
+    public function show(int|string $id): Response
+    {
+        return new Response((string) view('{{viewPrefix}}show', ['id' => $id])->render());
+    }
+
+    public function edit(int|string $id): Response
+    {
+        return new Response((string) view('{{viewPrefix}}edit', ['id' => $id])->render());
+    }
+
+    public function update(Request $request, int|string $id): Response
+    {
+        // TODO: validate + update
+        return redirect('/{{routePrefix}}');
+    }
+
+    public function destroy(int|string $id): Response
+    {
+        // TODO: delete
+        return redirect('/{{routePrefix}}');
+    }
+{{/if}}
+{{#if invokable}}
+    public function __invoke(Request $request): Response
+    {
+        // TODO: implement
+        return Response::json(['ok' => true]);
+    }
+{{/if}}
+}

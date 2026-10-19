@@ -10,6 +10,10 @@
 !/storage/**/
 !/storage/**/.gitignore
 
+# Installed third-party plugins (lock + files managed by tvn plugin:*)
+/plugins/*
+!/plugins/.gitkeep
+
 # Public uploads
 /public/uploads/*
 !/public/uploads/.gitignore

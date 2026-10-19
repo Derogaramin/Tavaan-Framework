@@ -1,0 +1,16 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{namespace}};
+
+/**
+ * {{class}} — رویداد دامنه (تولیدشده با `tvn make:event` — DOC-077).
+ */
+final class {{class}}
+{
+    /** @param array<string, mixed> $data */
+    public function __construct(public readonly array $data = [])
+    {
+    }
+}

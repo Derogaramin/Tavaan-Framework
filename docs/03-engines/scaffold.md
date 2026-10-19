@@ -195,7 +195,23 @@ if (\file_exists($target)) {
 - AC-SCF-02: `make:module` → `tvn module:validate` پاس.
 - AC-SCF-03: فایل تولیدشده PHPStan level max پاس شود.
 
-## ۱۱. بلوک ماشین‌خوان 🧠
+## ۱۱. وضعیت پیاده‌سازی (TVN-0077 — M8)
+
+| بخش | وضعیت |
+|---|---|
+| StubRenderer خودنوشته (`{{var}}`/`{{#if}}`/`{{#unless}}`/`{{#each}}` — §3) | ✅ `engines/scaffold/src/StubRenderer.php` (نشانگرهای بلوک باید در خط خود باشند؛ تودرتویی هم‌نوع پشتیبانی نمی‌شود) |
+| ۲۵ قالب در `resources/stubs/` | ✅ |
+| ۱۷ Generator + GeneratorManager (ثبت تنبل) | ✅ `src/Generators/*` |
+| ۱۷ دستور `make:*` (§2) | ✅ `src/Console/Commands/*` (کشف خودکار ConsoleKernel) |
+| Idempotency: هشدار بدون `--force`؛ `.bak` با `--force` (§7) | ✅ |
+| امنیت (§8): PascalCase/kebab/snake regex + sandbox مسیر (path traversal → `ScaffoldException`) | ✅ |
+| `make:module` ساختار کامل hexagonal/layered (§6) | ✅ + `tvn module:validate` (AC-SCF-02) |
+| `Str::plural` (نام جدول — §5) | ✅ افزودنی در `core/Support/Str.php` |
+| تست‌ها T-01..T-06 (§9) | ✅ `engines/scaffold/tests` (۲۸ تست) + `tests/Unit/StrTest.php` |
+
+> نکته: `make:model --fields=name,price:integer` هم `fillable` و هم ستون‌های migration را می‌سازد؛ `--migration/--factory/--seeder/--controller` به Generatorهای خواهر delegate می‌شوند (§5).
+
+## ۱۲. بلوک ماشین‌خوان 🧠
 ```yaml
 # machine-readable: tavaan.engine.scaffold.v1
 engine:
@@ -204,6 +220,7 @@ engine:
   path: engines/scaffold
   priority: P1
   phase: M8
+  status: done            # TVN-0077
   depends_on: [console, filesystem]
   facade: null
   commands: [make:module, make:controller, make:model, make:migration, make:request,
@@ -211,6 +228,16 @@ engine:
              make:seeder, make:factory, make:test, make:widget, make:resource, make:engine, make:middleware]
   public_api:
     - class: GeneratorManager
-      methods: [generate, register]
+      methods: [generate, register, get, has, keys, stubs, basePath]
+    - class: StubRenderer
+      methods: [render, renderString, path]
+    - class: Generator           # abstract
+      methods: [generate]
+    - class: GenerateCommand     # abstract
+      methods: [handle, nameArgument, moduleOption, forceOption, opt, basePath]
+    - class: ScaffoldServiceProvider
+      methods: [register, provides, makeManager]
+  stubs_path: resources/stubs
   loc_estimate: 1200
+  loc_actual: ~2600       # src (~1800) + stubs + tests (~600)
 ```

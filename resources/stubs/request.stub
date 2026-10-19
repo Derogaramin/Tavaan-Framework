@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{namespace}};
+
+use Tavaan\Engine\Validation\FormRequest;
+
+/**
+ * {{class}} — درخواست اعتبارسنجی‌شده (تولیدشده با `tvn make:request` — DOC-077).
+ */
+final class {{class}} extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /** @return array<string, mixed> */
+    public function rules(): array
+    {
+        return [
+            // 'title' => ['required', 'string', 'max:255'],
+        ];
+    }
+}

@@ -217,7 +217,23 @@ return [
 | Drupal Modules | permissions | capabilities مدل |
 | Shopware Plugins | — | — |
 
-## ۱۳. بلوک ماشین‌خوان 🧠
+## ۱۳. وضعیت پیاده‌سازی (TVN-0079 — M8)
+
+| بخش | وضعیت |
+|---|---|
+| Manifest `plugin.json` + اعتبارسنجی schema/semver/constraint (`Plugin::fromDirectory`) | ✅ |
+| امضای Ed25519 با sodium روی payload کانویک (ksort بازگشتی؛ `PluginVerifier::canonicalPayload` = ابزار امضای فروشنده) | ✅ — AC-PLG-09: بدون امضا + `require_signature` → رد |
+| `plugins.lock` با SHA-256 تک‌تک فایل‌ها (modified/missing/unexpected → `lock_tampered`)؛ نوشتن اتمیک | ✅ |
+| Scanner توکنی (§5.1) با رفع مثبت کاذب member-context؛ `vendor/` مستثنی (یکپارچگی با lock) | ✅ |
+| Sandbox: autoload اختصاصی (هسته همیشه اولویت دارد — locked_prefixes + append)، fallback loader برای مسیرهای خارج از base، vendor ایزوله (append-order)، capabilities registry زمان‌اجرا (`assertNetwork/assertDatabase`) | ✅ |
+| Hook: declare-محور (module.json میزبان + `allowed_hooks`)، fire با ایزولاسیون Throwable + timeout/memory همکاری‌کننده (§9) | ✅ |
+| چرخهٔ عمر: install/update(backup)/enable/disable/uninstall(--purge)/list/verify/scan + `loadEnabled` در بوت (افزونهٔ خراب → خودکار غیرفعال + رویداد `plugin.load_failed`) | ✅ |
+| Facade `Plugin` (accessor `plugins`) + رویدادهای `plugin.*` | ✅ |
+| تست‌ها T-01..T-08 | ✅ ۵۸ تست (امضای واقعی با sodium در زمان تست) |
+
+> ⚠️ محدودیت مستند: PHP نمی‌تواند کلاس load‌شده را unload کند — `disable` در همان فرایند، hookها/capabilityها را قطع می‌کند و در بوت بعدی افزونه load نمی‌شود؛ `enable` مجدد provider را دوباره boot می‌کند (provider پلاگین باید idempotent باشد).
+
+## ۱۴. بلوک ماشین‌خوان 🧠
 ```yaml
 # machine-readable: tavaan.engine.plugin.v1
 engine:
@@ -226,14 +242,32 @@ engine:
   path: engines/plugin
   priority: P1
   phase: M8
+  status: done            # TVN-0079
   depends_on: [module, filesystem, crypt]
   facade: {name: Plugin, accessor: plugins}
-  config_file: config/plugins.php
+  config_file: engines/plugin/config/plugins.php   # → config('plugins.*')
   exempt_from_zero_dependency: true    # 🔑 پلاگین‌ها می‌توانند vendor داشته باشند
+  commands: [plugin:install, plugin:enable, plugin:disable, plugin:update,
+             plugin:uninstall, plugin:list, plugin:verify, plugin:scan]
   public_api:
     - class: PluginManager
-      methods: [install, uninstall, enable, disable, update, list, verify, scan]
+      methods: [install, uninstall, enable, disable, update, list, verify, scan, loadEnabled, isLoaded, lock, path, pluginDir]
     - class: Hook
-      methods: [listen, fire, has]
+      methods: [declare, declared, listen, fire, has, flushPlugin, flush, setLimits, violations]
+    - class: PluginVerifier
+      methods: [verify, verifyForInstall, verifySignature, verifyFileHashes, assertAllowedCapabilities, canonicalPayload]
+    - class: PluginScanner
+      methods: [scan]
+    - class: PluginsLock
+      methods: [read, has, entry, put, remove, setEnabled, hashDirectory]
+    - class: PluginSandbox
+      methods: [load, unload, isBooted]
+    - class: PluginCapabilities
+      methods: [register, forClass, assertNetwork, assertDatabase, flush]
+    - class: Plugin            # readonly VO
+      methods: [fromDirectory, slug, namespace, hasVendor, supportsFramework]
+    - class: PluginProvider     # abstract
+      methods: [bindPluginId, clearPluginIds, pluginId, listenHook]
   loc_estimate: 900
+  loc_actual: ~1750       # src (~1300) + tests (~700) — بدون fixtures
 ```

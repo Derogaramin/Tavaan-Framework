@@ -50,4 +50,8 @@ return [
     \Tavaan\Engine\Workflow\WorkflowServiceProvider::class,
     \Tavaan\Engine\Report\ReportServiceProvider::class,
     \Tavaan\Engine\Payment\PaymentServiceProvider::class,
+    \Tavaan\Engine\Scaffold\ScaffoldServiceProvider::class,
+    \Tavaan\Engine\Plugin\PluginServiceProvider::class,
+    \Tavaan\Engine\Admin\AdminServiceProvider::class,
+    \Tavaan\Engine\Upgrade\UpgradeServiceProvider::class,
 ];

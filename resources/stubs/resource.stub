@@ -1,0 +1,22 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{namespace}};
+
+use Tavaan\Engine\Api\Resources\JsonResource;
+use Tavaan\Engine\Http\Request;
+
+/**
+ * {{class}} — Resource لایهٔ API (تولیدشده با `tvn make:resource` — DOC-044 §2).
+ */
+final class {{class}} extends JsonResource
+{
+    /** @return array<string, mixed> */
+    public function toArray(Request $request): array
+    {
+        return [
+            // 'id' => $this->resource['id'] ?? null,
+        ];
+    }
+}

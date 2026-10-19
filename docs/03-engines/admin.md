@@ -141,7 +141,31 @@ $f->jalaliDate('published_at')->format('Y/m/d');
 | Voyager | Admin | — |
 | Django Admin | auto CRUD | الهام از declarative resource |
 
-## ۱۲. بلوک ماشین‌خوان 🧠
+## ۱۲. وضعیت پیاده‌سازی (TVN-0078 — M8)
+
+| بخش | وضعیت |
+|---|---|
+| `Admin::resource(Model, …)` → ۱۰ route عمومی (dashboard + ۹ CRUD/action — ثبت یک‌بار، generic) | ✅ AC-ADM-01 |
+| Gate/Permission روی هر عملیات (`<perm>.view/create/update/delete` + action permissions) | ✅ AC-ADM-02 — guest→redirect/401(json)، بدون مجوز→403 |
+| Form با همهٔ ۲۷ نوع §6 (whitelist `__call`) + `Repeater` + قواعد خودکار (required/nullable/in/regex/min/max) | ✅ |
+| Validation خودکار از Form (§3) — validate روی ورودی **خام** سپس تبدیل | ✅ T-03 |
+| Mass-Assignment محافظت‌شده: فقط فیلدهای فرم (§7) | ✅ |
+| `jalali_date` دوطرفه: UI جلالی ↔ DB میلادی (§6.1) | ✅ T-07 |
+| richtext → `HtmlSanitizer` با پروفایل config (XSS §7) | ✅ T-04 |
+| منوی پویا: resourceها + `module.json→navigation` + فیلتر مجوز با Gate (§4) | ✅ T-05 |
+| داشبورد: widget (Renderable — خطا ایزوله) + chart (SVG خودنوشته بدون JS) (§5) | ✅ T-06 |
+| Layout کاملاً RTL فارسی (Vazirmatn با fallback) | ✅ T-08/AC-ADM-03 — برچسب‌های UI فعلاً فارسی inline؛ گذار کامل به `trans()` در pass ترجمهٔ en انجام می‌شود |
+| Theme override: `resources/views/vendor/admin/` (اولویت ViewFinder) | ✅ AC-ADM-04 |
+| Actions تک/گروهی (`Action::make/bulk` + handler + permission + confirm) | ✅ |
+| Search/filter/sort (whitelist) + pagination قطعی (default order = کلید اصلی) | ✅ |
+| slug خودکار از فیلد مبدأ، password hash (خالی=دست‌نخورده)، money/tags/json/switch نرمال‌سازی | ✅ |
+
+> 🐛 حین کار، باگ نهفتهٔ موتور View کشف و رفع شد: `ViewFactory` (singleton) بخش‌های
+> `@section` را بین رندرهای متوالی **انباشت** می‌کرد (`stopSection` = append) —
+> در فرایند مقیم/تست محتوا روی هم سوار می‌شد. `beginViewRender/endViewRender`
+> در مرز چرخهٔ رندر، state (sections/pushes/slots/extends + بافرهای نشتی‌کرده) را reset می‌کند.
+
+## ۱۳. بلوک ماشین‌خوان 🧠
 ```yaml
 # machine-readable: tavaan.engine.admin.v1
 engine:
@@ -150,15 +174,42 @@ engine:
   path: engines/admin
   priority: P2
   phase: M8
+  status: done            # TVN-0078
   depends_on: [view, rbac, orm, validation, http]
   facade: {name: Admin, accessor: admin}
-  config_file: config/admin.php
+  config_file: engines/admin/config/admin.php   # → config('admin.*')
+  routes:
+    - "GET    /{prefix}"
+    - "GET    /{prefix}/{resourceKey}"
+    - "GET    /{prefix}/{resourceKey}/create"
+    - "POST   /{prefix}/{resourceKey}"
+    - "GET    /{prefix}/{resourceKey}/{id}"
+    - "GET    /{prefix}/{resourceKey}/{id}/edit"
+    - "PUT    /{prefix}/{resourceKey}/{id}"
+    - "DELETE /{prefix}/{resourceKey}/{id}"
+    - "POST   /{prefix}/{resourceKey}/{id}/actions/{action}"
+    - "POST   /{prefix}/{resourceKey}/actions/{action}"
   public_api:
     - class: AdminManager
-      methods: [resource, menu, dashboard, widget]
+      methods: [resource, resources, find, menu, dashboard, widget, registerRoutes, prefix, guard]
     - class: Resource
-      methods: [title, columns, searchable, filterable, sortable, form, actions, show]
-    - class: Form
-      methods: [text, textarea, number, money, select, relation, media, richtext, jalaliDate, repeater]
+      methods: [title, icon, permission, uri, columns, searchable, filterable, sortable, perPage, form, actions, show, query, menuOrder, key, permissionFor, buildForm, actionList, action, showDefinition]
+    - class: Form\Form
+      methods: [__call (27 نوع §6), fields, field, names, rules]
+    - class: Form\Field
+      methods: [label, required, nullable, maxLength, minLength, min, max, options, default, placeholder, help, rows, currency, from, sanitizer, model, display, disk, multiple, format, rules, attr, fields, validationRules]
+    - class: Action
+      methods: [make, bulk, permission, handler, label, confirm, style, isAllowed, run]
+    - class: Show
+      methods: [fields, relation, columns]
+    - class: Menu\Menu
+      methods: [add, addFromManifests, items, visible]
+    - class: Dashboard\Dashboard
+      methods: [widget, chart, widgets, resolvedCharts, renderWidgets]
+    - class: Support\ValueTransformer
+      methods: [toStorage, toDisplay, jalaliToGregorian, gregorianToJalali, slugify]
+    - class: Support\ChartRenderer
+      methods: [render]
   loc_estimate: 2500
+  loc_actual: ~3300      # src (~1900) + views (~600) + tests (~800)
 ```

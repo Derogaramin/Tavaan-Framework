@@ -1,0 +1,15 @@
+{
+  "id": "tavaan.engine.{{slug}}",
+  "type": "engine",
+  "name": "{{pascal}}",
+  "title_fa": "{{pascal}}",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\{{pascal}}\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\{{pascal}}\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\{{pascal}}\\{{pascal}}ServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": []},
+  "tables": [],
+  "commands": [],
+  "docs": "docs/03-engines/{{slug}}.md",
+  "notes": "تولیدشده با tvn make:engine — جزئیات را کامل کنید (DOC-150)."
+}

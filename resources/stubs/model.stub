@@ -1,0 +1,21 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{namespace}};
+
+use Tavaan\Engine\Database\ORM\Model;
+
+/**
+ * {{class}} — مدل تولیدشده با `tvn make:model` (DOC-077).
+ */
+final class {{class}} extends Model
+{
+    protected string $table = '{{table}}';
+
+    /** @var list<string> */
+    protected array $fillable = {{fillable}};
+
+    /** @var array<string, string> */
+    protected array $casts = [];
+}

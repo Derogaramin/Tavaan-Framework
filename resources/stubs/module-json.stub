@@ -1,0 +1,15 @@
+{
+  "id": "module.{{slug}}",
+  "type": "module",
+  "name": "{{pascal}}",
+  "title_fa": "{{pascal}}",
+  "version": "0.1.0",
+  "namespace": "Modules\\{{pascal}}\\",
+  "autoload": {"psr-4": {"Modules\\{{pascal}}\\": "src/"}},
+  "providers": ["Modules\\{{pascal}}\\Providers\\{{pascal}}ServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": [], "modules": []},
+  "tables": [],
+  "commands": [],
+  "docs": "modules/{{slug}}/README.md",
+  "notes": "تولیدشده با tvn make:module (DOC-077 §6)."
+}

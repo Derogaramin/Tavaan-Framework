@@ -3,7 +3,7 @@
   "type": "engine",
   "name": "Test",
   "title_fa": "چارچوب تست خودنوشته",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "namespace": "Tavaan\\Testing\\",
   "autoload": {"psr-4": {"Tavaan\\Testing\\": "src/"}},
   "providers": [],
@@ -11,5 +11,5 @@
   "tables": [],
   "commands": ["test"],
   "docs": "docs/03-engines/test.md",
-  "notes": "حداقل M1: TestCase + Assertion + Native Runner (TVN-0084 در M8 کامل می‌شود)."
+  "notes": "M8 کامل (TVN-0084): Mock بدون eval + HttpTest درون‌فرایندی + DatabaseTest (SQLite in-memory + migrate) + Factory/Faker deterministic + Runner با group/filter/parallel/coverage. وابستگی نرم به http/database/auth/i18n (با گارد class_exists)."
 }

@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{namespace}};
+
+use Tavaan\Engine\Console\Command;
+
+/**
+ * {{class}} — دستور CLI (تولیدشده با `tvn make:command` — DOC-077).
+ */
+final class {{class}} extends Command
+{
+    protected string $signature = '{{commandName}}';
+
+    protected string $description = '{{description}}';
+
+    public function handle(): int
+    {
+        $this->info('{{class}} executed.');
+
+        return self::SUCCESS;
+    }
+}

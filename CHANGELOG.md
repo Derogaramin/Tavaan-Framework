@@ -2,6 +2,103 @@
 
 فرمت: Keep a Changelog — نسخه‌گذاری: SemVer.
 
+## [Unreleased] — M8: ابزار (TVN-0081 — موتور Upgrade) — ✅ فاز M8 کامل شد
+
+### افزوده شد
+- **موتور Upgrade (DOC-081E)**: جریان کامل ارتقا — `pre-check → backup اجباری → maintenance(down) → مسیر گام‌به‌گام نسخه‌ها → [schema migrations + data patches + config migrations + cache clear] → verify(health) → up` با **rollback خودکار** از backup در شکست میانی
+- **DataPatch + PatchRunner**: patchهای `upgrades/<version>/patch_*.php` (anonymous class) — idempotent با جدول `tvn_upgrades` (اجرای مجدد → skip)؛ version داخل patch باید با دایرکتوری بخواند؛ خطای patch → `upgrade.patch_failed` با دلیل کامل
+- **ConfigMigrator (§4)**: rename/remove/default/transform روی `.env` — ویرایش خط‌به‌خط (کامنت‌ها حفظ)، نوشتن اتمیک
+- **VersionResolver (§5)**: semver-sort دایرکتوری‌های upgrades، مسیر **گام‌به‌گام** (پرش ممنوع)، downgrade → `upgrade.no_path`، نسخهٔ هدف بدون patch (schema-only) مجاز
+- **PreChecker**: PHP min / افزونه‌ها / فضای آزاد دیسک → `upgrade.precheck_failed` با فهرست دلایل
+- **CLI (§7)**: `upgrade --to=X.Y.Z [--no-backup --skip-maintenance]`، `upgrade:check [--to]`، `upgrade:rollback [--force]`، `upgrade:status [--to]`، `upgrade:patches`
+- `UpgradeRepository` (tvn_upgrades + tvn_upgrade_meta با ساخت خودکار)، `BackupRunnerInterface` + adapter روی موتور Backup (تست‌پذیر با Mock)، maintenance با همان `storage/framework/down` موتور HTTP، `config/upgrade.php` + ترجمه‌های fa/en
+- **۲۴ تست** (T-01..T-06): جریان کامل با BackupRunner موک‌شده (Mock موتور Test — dogfooding M8)، rollback خودکار در patch ناموفق، idempotency بین دو Upgrader، pre-check مسدودکننده، maintenance toggle، config migration واقعی روی .env
+
+### نتایج
+- ۱۲۳۵ تست / ۸۲۸۹ assertion سبز (دو اجرای پیاپی) • gate ممنوعه‌ها پاک • lint ۱۲۹۳ فایل پاک • **M8: ۵/۵ تیکت انجام‌شده** (TVN-0084 Test ✅ TVN-0077 Scaffold ✅ TVN-0079 Plugin ✅ TVN-0078 Admin ✅ TVN-0081 Upgrade ✅)
+
+## [Unreleased] — M8: ابزار (TVN-0078 — موتور Admin)
+
+### افزوده شد
+- **موتور Admin (DOC-078)**: پیشخوان CRUD-generator — `Admin::resource(Model::class, fn(Resource $r) => …)` بدون کد اضافی ۱۰ route عمومی می‌سازد (AC-ADM-01): dashboard + index/create/store/show/edit/update/destroy + single/bulk actions
+- **Form با هر ۲۷ نوع فیلد §6** (text…tags، شامل `jalali_date`، `richtext`، `relation`، `repeater`) + قواعد validation خودکار از تعریف فرم (required/nullable خودکار/in از options/regex جلالی/min/max) — validate روی ورودی خام سپس تبدیل (ترتیب درست برای regex جلالی)
+- **امنیت (§7)**: همهٔ عملیات پشت `AuthenticateMiddleware` + `Gate` (`<perm>.view/create/update/delete` — AC-ADM-02)؛ whitelist فیلدهای فرم برای Mass Assignment؛ richtext با `HtmlSanitizer` پروفایل `rich_text` (T-04)؛ CSRF از middleware سراسری؛ guest→401/redirect و بدون‌مجوز→403
+- **jalali_date دوطرفه (§6.1)**: فرم/نمایش جلالی ↔ DB میلادی UTC (T-07)
+- **منوی پویا (§4)**: resourceها + `module.json → navigation` ماژول‌ها + `Admin::menu(...)` — فیلتر مجوز با Gate (T-05)
+- **داشبورد (§5)**: `widget()` (هر Renderable — خطای ویجت ایزوله، داشبورد نمی‌شکند) + `chart()` با **SVG خودنوشته بدون JS** (line/bar — صفر‌وابستگی) (T-06)
+- **RTL کامل (AC-ADM-03/T-08)**: layout `dir=rtl` `lang=fa` با فونت Vazirmatn+fallback و CSS درون‌خطی (بدون asset خارجی)
+- **Theme override (AC-ADM-04)**: `resources/views/vendor/admin/` به‌لطف اولویت ViewFinder خودکار برنده است (+ تست)
+- Actions تک/گروهی (`Action::make/bulk` + permission + handler + confirm + style؛ bulk delete پیش‌فرض)، search/filter/sort با whitelist، **pagination قطعی** (default order = کلید اصلی — بدون آن LIMIT/OFFSET در SQLite نامعین است)، slug خودکار از فیلد مبدأ، hash پسورد (خالی = دست‌نخورده)
+- Facade `Admin` (accessor `admin`)، `config/admin.php` (prefix/guard/per_page/menu)، ۳۹ تست (Feature درون‌فرایندی کامل + Unit اجزا)
+
+### اصلاح شد
+- **🐛 باگ نهفتهٔ موتور View (M2)**: `ViewFactory` singleton بخش‌های `@section` را بین رندرهای متوالی انباشت می‌کرد (`stopSection` = append و بدون reset) → در فرایند مقیم/چنددرخواستی (تست‌ها، queue worker، websocket) محتوای رندر قبلی در رندر بعدی نشت می‌کرد. `beginViewRender()/endViewRender()` در مرز چرخهٔ رندر: reset sections/pushes/slots/extends + بستن بافرهای خروجیِ نشتی‌کرده از رندر ناموفق + ۲۵ تست View بدون رگرسیون سبز
+
+### نتایج
+- ۱۲۱۱ تست / ۸۲۱۷ assertion سبز (دو اجرای پیاپی) • gate ممنوعه‌ها پاک • lint ۱۲۷۴ فایل پاک
+
+## [Unreleased] — M8: ابزار (TVN-0079 — موتور Plugin)
+
+### افزوده شد
+- **موتور Plugin (DOC-079)**: سیستم افزونهٔ ثالث با manifest (`plugin.json`)، امضای **Ed25519** (sodium) روی payload کانویک (ksort بازگشتی — `PluginVerifier::canonicalPayload` قرارداد مشترک با ابزار امضای فروشنده)، `trusted_vendors` در config
+- **plugins.lock**: hash SHA-256 تک‌تک فایل‌ها؛ تشخیص modified/missing/unexpected (`plugin.lock_tampered`)؛ نوشتن اتمیک (tmp+rename+LOCK_EX)
+- **PluginScanner (§5.1)**: اسکن توکنی eval/exec/system/passthru/shell_exec/popen/proc_open/assert/create_function/unserialize/file_get_contents/fopen/curl_exec + خانوادهٔ include/require — با رفع مثبت کاذب member-context (`->exec()`/`::system()`/تعریف متد پرچم نمی‌خورد)؛ `vendor/` مستثنی (یکپارچگی با lock hash)
+- **PluginSandbox (§5)**: autoload اختصاصی افزونه (append — هسته هرگز shadow نمی‌شود؛ locked_prefixes هسته غیرقابل override)، fallback loader برای مسیرهای خارج از basePath، vendor ایزوله با ترتیب append، registry زمان‌اجرای capabilities (`PluginCapabilities::assertNetwork/assertDatabase`)
+- **Hook (§6)**: declare-محور (module.json میزبان + `plugins.allowed_hooks`)؛ پلاگین فقط به hook اعلام‌شده متصل می‌شود؛ fire با ایزولاسیون Throwable (میزبان نمی‌شکند) + timeout/memory همکاری‌کننده (§9) + ثبت violations
+- **چرخهٔ عمر (§7)**: `plugin:install/enable/disable/update/uninstall/list/verify/scan` — install = verify→scan→copy→lock→load؛ update با backup در `storage/backups/plugins`؛ `loadEnabled` در بوت با خود‌غیرفعال‌سازی افزونهٔ خراب + رویداد `plugin.load_failed`
+- **Facade `Plugin`** (accessor `plugins`) + رویدادهای `plugin.installed/enabled/disabled/updated/uninstalled/load_failed`
+- **AC-PLG-09**: بدون امضا وقتی `require_signature=true` → `plugin.signature_missing` و نصب رد می‌شود
+- config `plugins.*` (path/enabled/require_signature/trusted_vendors/allow_vendor/allowed_hooks/sandbox/lock_file/hook_timeout_ms/hook_memory_limit/backup_path) + ترجمه‌های fa/en + `.gitignore` برای `plugins/*`
+- **۵۸ تست** (امضای واقعی با sodium زمان تست): T-01 امضا معتبر/تامپر/missing/untrusted، T-02 دستکاری+فایل افزوده، T-03 scan+force، T-04 database/shell/network-wildcard/filesystem-traversal رد + runtime assertNetwork، T-05 hook listener + undeclared رد، T-06 install/enable/disable/uninstall/update/loadEnabled، T-07 vendor ایزوله (shadow `Tavaan\Support\Str` خنثی شد)، T-08 وابستگی composer افزونه کار می‌کند
+
+### نتایج
+- ۱۱۷۲ تست / ۸۰۲۰ assertion سبز (دو اجرای پیاپی — قطعی) • gate ممنوعه‌ها پاک (۱۰۸۷ فایل) • lint ۱۲۴۹ فایل پاک • smoke کامل CLI: scan→install→list→verify→disable→enable→uninstall --purge
+
+## [Unreleased] — M8: ابزار (TVN-0077 — موتور Scaffold)
+
+### افزوده شد
+- **موتور Scaffold (DOC-077)**: StubRenderer خودنوشته (`{{var}}` + `{{#if}}/{{#unless}}/{{#each}}` با پارس خط‌محور و تودرتویی انواع متفاوت — بدون Twig/Handlebars/eval)؛ ۲۵ قالب در `resources/stubs/`؛ ۱۷ Generator + `GeneratorManager` (ثبت تنبل، کلید = `make:<key>`)
+- **۱۷ دستور `make:*`** (§2): module/controller/model/migration/request/policy/command/job/event/listener/seeder/factory/test/widget/resource/engine/middleware — با `--module` (فضای‌نام `Modules\<Pascal>`)، `--resource/--api`، `--fields=name,price:integer` (fillable + ستون‌های migration)، `--unit`، `--domain=hexagonal|layered`، `--model/--event`
+- **Idempotency/Overwrite (§7)**: فایل موجود → هشدار و رد؛ `--force` → پشتیبان `.bak` + بازنویسی
+- **امنیت (§8)**: اعتبارسنجی PascalCase/kebab/snake با regex + sandbox مسیر (`..`/مسیر مطلق → `ScaffoldException` با messageId `scaffold.path_traversal`)
+- **`tvn module:validate [name]`**: اعتبارسنجی semantic manifestها (نسخهٔ خالی/چرخه/فایل) — AC-SCF-02
+- **`Str::plural`** (افزودنی هسته): قواعد s/x/z/ch/sh→es، بی‌واکه+y→ies، وام‌واژه‌های رایج (person→people…)، حفظ بزرگی حرف اول — مبنای نام جدول (`Product → products`)
+- ترجمه‌های `scaffold.*` در `resources/lang/{fa,en}`؛ ۳۳ تست جدید (T-01..T-06 + `php -l` روی همهٔ فایل‌های تولیدشده — AC-SCF-01)
+
+### تغییر یافت
+- `TestCommand`: مسیرهای positional چندگانه (`tvn test tests/Unit engines/x/tests`)؛ ابهام‌زدایی filter/مسیر؛ `modules/*/tests` به مسیرهای پیش‌فرض کشف افزوده شد
+- `ConsoleKernel`: ثبت `ModuleValidateCommand` در builtins
+- `config/providers.php`: ثبت `ScaffoldServiceProvider`
+
+### نتایج
+- ۱۱۱۴ تست / ۷۹۱۶ assertion سبز • lint ۱۲۲۲ فایل پاک • gate ممنوعه‌ها پاک (۱۰۶۵ فایل) • smoke کامل §2 روی CLI: همهٔ خروجی‌ها `php -l` پاک و manifestها `module:validate` پاس
+
+## [Unreleased] — M8: ابزار (TVN-0084 — موتور Test کامل شد)
+
+### افزوده شد
+- **Mock صفر‌وابستگی بدون eval (DOC-084E §4.1)**: `Mock::of(X)->shouldReceive('m')->with(...)->andReturn(...)->once()->getMock()` — زنجیرهٔ دقیق سند؛ `ProxyGenerator` کلاس Proxy تایپ‌دار را به‌صورت فایل در `sys_get_temp_dir()/tvn-mocks` تولید می‌کند (بازتولید کامل امضا: Union/Intersection/DNF، variadic، by-ref، پیش‌فرض‌های Enum/ثابت/آرایه، `self/static/parent`، nullable صریح مطابق F-15)؛ verify خودکار انتظارات شمارشی در پایان هر تست (`Mock::verifyAll` در `runBare`)؛ کلاس final → رد با پیام راهنما
+- **HttpTest درون‌فرایندی (AC-TEST-02)**: trait `MakesHttpRequests` (get/post/put/patch/delete + واریانت‌های Json + `withHeaders` + `actingAs`) با بوت تنبل اپلیکیشن تست؛ session/log به‌صورت حافظه‌ای (CON-11)
+- **TestResponse (DOC-084E §8)**: assertOk/Status/Created/Unauthorized/Forbidden/NotFound/Successful، assertJson (زیرمجموعهٔ بازگشتی)، assertJsonStructure (چهار شکل: فهرست کلید، nested، فهرستِ فهرست، wildcard `*`)، assertJsonCount، assertJsonValidationErrors (سازگار با problem+json فریمورک: `context.fields` و `errors`)، assertRedirect/See/DontSee/Cookie/Header — همه با API روان
+- **DatabaseTest (AC-TEST-03)**: trait `RefreshDatabase` — `database.default → sqlite_memory` + اجرای Migrator (با retry کوتاه برای قفل migration در حالت موازی)
+- **Factory + `Model::factory()`**: کلاس پایهٔ `Factory` (definition/state/count/make/create — immutable با clone؛ unguard موقت)؛ hook افزودنی `Model::setFactoryResolver` (بدون وابستگی معکوس database→testing)؛ قرارداد نام `<NS><Model>Factory` + `public static string $factory` صریح
+- **Faker خودنوشتهٔ deterministic (AC-TEST-04)**: PRNG از نوع LCG با seed (پیش‌فرض ثابت → حتی بدون seed قطعی)؛ دادهٔ فارسی (نام/نام‌خانوادگی)، `mobile()` (09xxxxxxxxx)، `nationalCode()` با checksum رسمی، `jalaliDate()` (از موتور i18n)، `email()`/`text()`/`dateTime()`/`numberBetween()`/`randomElement()`/`boolean()`/`word()` و `unique()` (حالت بدون تکرار با سقف ۱۰۰۰ تلاش)
+- **Runner ارتقاءیافته (DOC-084E §7)**: `TestSuite` (کشف idempotent با پارس token — گروه‌های ضمنی `unit/feature/app/<engine-slug>` + Attribute تکرارپذیر `#[Group]`)، `TestResult` (قابل ادغام/سریال‌شدن)، تفکیک Failures از Errors، خلاصهٔ هم‌تراز سند (Tests/Passed/Failed/Errors)
+- **`tvn test` جدید**: `{paths*}` («tvn test engines/cache»)، `--group=`، `--filter=` (هر دو شکل positional و option)، `--coverage` (pcov/xdebug با تفکیک core/هر موتور؛ در نبود افزونه → هشدار و ادامه طبق §9)، `--parallel=N` (فرزندان subprocess با manifest/JSON و ادغام نتیجه؛ کد خروج و گزارش file:line حفظ می‌شود)
+- **AC-TEST-05**: `AssertionFailed` محل وقوع (فایل:خطِ اولین فریم بیرون از کد فریمورک) را ضبط می‌کند → گزارش شکست رنگی با `at path:line`
+- **۸۹ تست جدید برای خودِ موتور تست** (FakerTest/MockTest/TestResponseTest/TestSuiteTest/HttpTestingTest/DatabaseTestingTest + fixtures) و نمونهٔ اجراشدنی `examples/testing/test-framework.php`
+
+### اصلاح شد
+- **نشت state بین اجراها در ApiTest (throttle)**: تست‌های RateLimit با Clock فریزشدهٔ مطلق (۲۰۲۶-۰۶-۰۱) روی cache پیش‌فرض `file` می‌نوشتند → کلیدهای `throttle:*` در `storage/cache` باقی می‌ماندند و در اجرای بعدی (همان clock ثابت) «زنده» تلقی می‌شدند → 429 زودهنگام و شکست کاذب. `cache.default=array` در setUp (هم‌راستا با تست‌های Idempotency همان فایل) — اجرای مکرر suite اکنون کاملاً قطعی است (DoD §1.2)
+
+### تغییر یافت
+- `TestCase::runBare`: چرخهٔ عمر Mock (reset → setUp → test → verifyAll → tearDown → reset)؛ `assertThat` عمومی شد (برای TestResponse)
+- `TestCase::__construct` افزوده شد (ثبت یک‌بارهٔ resolver برای `Model::factory()`)
+- `Model`: افزودن `setFactoryResolver()/factory()` (additive — الگوی resolverهای موجود)
+- `TestCommand`: بازنویسی امضا (سازگار با فراخوانی‌های قبلی)
+
+### نتایج
+- ۱۰۸۱ تست / ۷۶۷۸ assertion سبز (۹۹۲ قبلی + ۸۹ جدید) • lint ۱۱۷۸ فایل پاک • gate ممنوعه‌ها پاک • `--parallel=4` کل مجموعه را سبز و با شمار یکسان جمع می‌زند
+
 ## [Unreleased] — ممیزی سلامت و یکپارچگی (M1–M4)
 
 ### اصلاح شد

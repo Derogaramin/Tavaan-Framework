@@ -1,0 +1,16 @@
+{
+  "id": "tavaan.engine.admin",
+  "type": "engine",
+  "name": "Admin",
+  "title_fa": "پیشخان و CRUD Generator",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Admin\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Admin\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Admin\\AdminServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["view", "rbac", "orm", "validation", "http"]},
+  "tables": [],
+  "commands": [],
+  "docs": "docs/03-engines/admin.md",
+  "facade": {"name": "Admin", "accessor": "admin"},
+  "notes": "M8/TVN-0078: CRUD generator declarative (۲۷ نوع فیلد، validation خودکار، jalali_date دوطرفه، sanitizer برای richtext)، منوی پویا (manifest + permission filter)، ویجت/نمودار SVG داشبورد، RTL، theme override در resources/views/vendor/admin."
+}

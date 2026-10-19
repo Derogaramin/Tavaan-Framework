@@ -1,0 +1,20 @@
+{
+  "id": "tavaan.engine.scaffold",
+  "type": "engine",
+  "name": "Scaffold",
+  "title_fa": "تولید کد (make:*)",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Scaffold\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Scaffold\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Scaffold\\ScaffoldServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["console", "filesystem"]},
+  "tables": [],
+  "commands": [
+    "make:module", "make:controller", "make:model", "make:migration", "make:request",
+    "make:policy", "make:command", "make:job", "make:event", "make:listener",
+    "make:seeder", "make:factory", "make:test", "make:widget", "make:resource",
+    "make:engine", "make:middleware"
+  ],
+  "docs": "docs/03-engines/scaffold.md",
+  "notes": "M8/TVN-0077: Stub engine خودنوشته ({{var}}/{{#if}}/{{#unless}}/{{#each}})، ۱۷ Generator، idempotent با --force + backup .bak، sandbox مسیر (path traversal → رد)."
+}

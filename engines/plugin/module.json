@@ -1,0 +1,16 @@
+{
+  "id": "tavaan.engine.plugin",
+  "type": "engine",
+  "name": "Plugin",
+  "title_fa": "افزونهٔ ثالث (sandbox + امضا)",
+  "version": "0.1.0",
+  "namespace": "Tavaan\\Engine\\Plugin\\",
+  "autoload": {"psr-4": {"Tavaan\\Engine\\Plugin\\": "src/"}},
+  "providers": ["Tavaan\\Engine\\Plugin\\PluginServiceProvider"],
+  "requires": {"php": ">=8.2", "engines": ["module", "filesystem", "crypt"]},
+  "tables": [],
+  "commands": ["plugin:install", "plugin:enable", "plugin:disable", "plugin:update", "plugin:uninstall", "plugin:list", "plugin:verify", "plugin:scan"],
+  "docs": "docs/03-engines/plugin.md",
+  "facade": {"name": "Plugin", "accessor": "plugins"},
+  "notes": "M8/TVN-0079: manifest + Ed25519 (sodium) + plugins.lock (SHA-256) + scanner توکنی + sandbox (autoload append/vendor ایزوله/capabilities) + Hook (اعلام‌شده‌محور + timeout/memory) + چرخهٔ عمر کامل."
+}
