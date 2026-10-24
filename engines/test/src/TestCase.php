@@ -233,6 +233,66 @@ abstract class TestCase
         self::assertThat($value > $threshold, $message ?: \sprintf('Failed asserting that %s > %s.', $value, $threshold));
     }
 
+    // ─── افزودنی‌های ممیزی M0–M8 (سازگاری PHPUnit) ───────────────────────
+
+    public static function assertGreaterThanOrEqual(int|float $threshold, int|float $value, string $message = ''): void
+    {
+        self::assertThat($value >= $threshold, $message ?: \sprintf('Failed asserting that %s >= %s.', $value, $threshold));
+    }
+
+    public static function assertLessThanOrEqual(int|float $threshold, int|float $value, string $message = ''): void
+    {
+        self::assertThat($value <= $threshold, $message ?: \sprintf('Failed asserting that %s <= %s.', $value, $threshold));
+    }
+
+    public static function assertIsArray(mixed $value, string $message = ''): void
+    {
+        self::assertThat(\is_array($value), $message ?: \sprintf('Failed asserting that %s is an array.', \get_debug_type($value)));
+    }
+
+    public static function assertIsString(mixed $value, string $message = ''): void
+    {
+        self::assertThat(\is_string($value), $message ?: \sprintf('Failed asserting that %s is a string.', \get_debug_type($value)));
+    }
+
+    public static function assertIsInt(mixed $value, string $message = ''): void
+    {
+        self::assertThat(\is_int($value), $message ?: \sprintf('Failed asserting that %s is an int.', \get_debug_type($value)));
+    }
+
+    public static function assertIsBool(mixed $value, string $message = ''): void
+    {
+        self::assertThat(\is_bool($value), $message ?: \sprintf('Failed asserting that %s is a bool.', \get_debug_type($value)));
+    }
+
+    public static function assertIsResource(mixed $value, string $message = ''): void
+    {
+        self::assertThat(\is_resource($value), $message ?: 'Failed asserting that value is a resource.');
+    }
+
+    public static function assertFileExists(string $path, string $message = ''): void
+    {
+        self::assertThat(\is_file($path), $message ?: \sprintf('Failed asserting that file [%s] exists.', $path));
+    }
+
+    public static function assertFileDoesNotExist(string $path, string $message = ''): void
+    {
+        self::assertThat(!\file_exists($path), $message ?: \sprintf('Failed asserting that file [%s] does not exist.', $path));
+    }
+
+    /** @param iterable<array-key, mixed> $haystack */
+    public static function assertNotContains(mixed $needle, iterable $haystack, string $message = ''): void
+    {
+        foreach ($haystack as $item) {
+            if ($item === $needle) {
+                self::assertThat(false, $message ?: 'Failed asserting that iterable does not contain value.');
+
+                return;
+            }
+        }
+        self::assertThat(true);
+    }
+
     public static function assertLessThan(int|float $threshold, int|float $value, string $message = ''): void
     {
         self::assertThat($value < $threshold, $message ?: \sprintf('Failed asserting that %s < %s.', $value, $threshold));

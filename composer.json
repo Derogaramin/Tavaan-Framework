@@ -6,15 +6,33 @@
     "require": {
         "php": ">=8.2.0"
     },
+    "require-dev": {
+        "phpstan/phpstan": "^2.1",
+        "friendsofphp/php-cs-fixer": "^3.64"
+    },
     "autoload": {},
     "autoload-dev": {},
     "scripts": {
-        "lint": "find core engines tests -name '*.php' -print0 | xargs -0 -n1 php -l",
-        "test": "php bin/tvn test"
+        "lint": "php bin/tvn lint:php",
+        "test": "php bin/tvn test",
+        "arch": "php bin/tvn arch:check",
+        "security": "php bin/tvn security:scan",
+        "env:check": "php bin/tvn env:check",
+        "bench": "php bin/tvn bench:all --fail-on-regression",
+        "cs": "php-cs-fixer fix --config=.php-cs-fixer.dist.php",
+        "cs:check": "php-cs-fixer fix --dry-run --diff --config=.php-cs-fixer.dist.php",
+        "stan": "phpstan analyse --configuration=phpstan.neon",
+        "qa": [
+            "@lint",
+            "@arch",
+            "@security",
+            "@test"
+        ]
     },
     "config": {
         "optimize-autoloader": false,
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "allow-plugins": false
     },
     "minimum-stability": "stable"
 }

@@ -1,0 +1,36 @@
+# تَوان | Tavaan — PHPStan (DoD §1.1: level max)
+#
+# اجرا: composer stan  (نیازمند composer install — فقط dev)
+# 🔒 ممیزی M0–M8: افزوده شد تا گیت تحلیل ایستای DoD قابل اجرا باشد.
+# نکته: در محیط بدون vendor قابل اجرا نیست — صحت پیکربندی با اولین
+# `composer install` راستی‌آزمایی می‌شود.
+
+parameters:
+    level: max
+    phpVersion: 80200
+    paths:
+        - core
+        - engines
+        - app
+        - config
+        - routes
+        - bin
+        - public
+    excludePaths:
+        analyse:
+            - engines/*/tests/*
+            - engines/*/benchmarks/*
+            - engines/database/src/ORM/Testing/*
+            - engines/database/src/Testing/*
+            - tests/*
+        analyseAndScan:
+            - storage/*
+    bootstrapFiles:
+        - core/bootstrap.php
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        # fixtureهای تستی چند کلاس در یک فایل (مجاز per DOC-080)
+        -
+            message: '#Class [A-Za-z0-9\\_]+ has no namespace#'
+            path: engines/*/tests/*

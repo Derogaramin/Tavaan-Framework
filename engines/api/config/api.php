@@ -46,7 +46,7 @@ return [
         'version' => '1.0.0',
         // 'description' => '…',
         'servers' => [
-            ['url' => env_string('APP_URL', 'http://localhost') . '/api/v1', 'description' => 'v1'],
+            ['url' => env_string('TVN_APP_URL', 'http://localhost') . '/api/v1', 'description' => 'v1'],
         ],
     ],
 ];

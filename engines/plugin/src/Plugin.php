@@ -118,7 +118,7 @@ final readonly class Plugin
         return \is_file($this->path . '/vendor/autoload.php');
     }
 
-    /** سازگاری نسخهٔ 선언‌شدهٔ `tavaan` با نسخهٔ جاری فریمورک (constraint ساده). */
+    /** سازگاری نسخهٔ اعلام‌شدهٔ `tavaan` با نسخهٔ جاری فریمورک (constraint ساده). */
     public function supportsFramework(string $frameworkVersion): bool
     {
         $constraint = \trim((string) ($this->manifest['tavaan'] ?? '*'));

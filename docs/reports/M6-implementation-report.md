@@ -66,7 +66,7 @@
 - **Stemming** با ۱۸ پسوند رایج در **دو فرم فارسی و عربی** (چون متن پیش از stem نرمال می‌شود — این جزئیتهای در حین پیاده‌سازی با تست کشف و رفع شد) + محافظ طول ریشه (`len > suffix+2`) تا «نان»/«گل» over-stem نشوند.
 - **BM25** طبق فرمول سند (idf = log((N+1)/(df+0.5))، k1=1.2) با **boost فیلد** (`title^3`)؛ رتبه‌بندی واژهٔ نادر در تست تأیید شد (AC-SEARCH-08).
 - **Facet** فقط روی فیلدهای `filterable` (🔒 ضد نشت داده)، **Sort** فقط `sortable`، فیلترها با عملگرهای eq/ne/lt/lte/gt/gte/in/nin.
-- **Highlight با escape-then-mark** (🔒 AC-SEARCH-05): ابتدا کل متن `htmlspecialchars`، سپس فقط تگ‌های sanitize‌شدهٔ `<mark>` — حتی تگ‌های سفارشی نامعتبر به جفت پیش‌فرض برمی‌گردند؛ تطبیق در سطح واژه با normalize+stem (نیم‌فاصله/اعراب در متن اصلی 보존 می‌شود).
+- **Highlight با escape-then-mark** (🔒 AC-SEARCH-05): ابتدا کل متن `htmlspecialchars`، سپس فقط تگ‌های sanitize‌شدهٔ `<mark>` — حتی تگ‌های سفارشی نامعتبر به جفت پیش‌فرض برمی‌گردند؛ تطبیق در سطح واژه با normalize+stem (نیم‌فاصله/اعراب در متن اصلی حفظ می‌شود).
 - **Suggest**: prefix + substring + mb-Levenshtein≤1 (خودنوشته UTF-8) با display-map (فرم خام واژه)؛ «آیا منظور شما…» هنگام نتیجهٔ خالی — در تست «سامسونق»→«سامسونگ» تأیید شد.
 - **پایستگی اتمیک JSON** (tmp+rename) در `storage/search/`؛ 🔒 محافظ DoS: طول کوئری (۵۰۰)، تعداد توکن (۶۴)، طول Levenshtein (۲۴)؛ 🔒 نام ایندکس regex-validated (ضد path traversal).
 

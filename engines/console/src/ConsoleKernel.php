@@ -159,6 +159,18 @@ final class ConsoleKernel implements KernelInterface
             Commands\ModuleValidateCommand::class,
             Commands\EventListCommand::class,
             Commands\TestCommand::class,
+            // ممیزی M0–M8 (R2/R3) — ابزارهای QA وعده‌داده‌شده در DOC-083/DOC-121:
+            Commands\ArchCheckCommand::class,
+            Commands\SecurityScanCommand::class,
+            Commands\LintPhpCommand::class,
+            Commands\BenchAllCommand::class,
+            Commands\StyleCheckCommand::class,
+            Commands\EngineValidateCommand::class,
+            Commands\EnvCheckCommand::class,
+            Commands\DownCommand::class,
+            Commands\UpCommand::class,
+            Commands\ModuleEnableCommand::class,
+            Commands\ModuleDisableCommand::class,
         ];
 
         foreach ($builtins as $class) {

@@ -45,6 +45,12 @@ final class TestCase
     self::assertGreaterThan(5, $n);
     self::assertEqualsWithDelta(1.0, $actual, 0.001);
     self::assertEmpty($v); self::assertNotEmpty($v);
+    // افزودنی‌های ممیزی M0–M8 (سازگاری PHPUnit):
+    self::assertGreaterThanOrEqual(5, $n); self::assertLessThanOrEqual(5, $n);
+    self::assertIsArray($v); self::assertIsString($v); self::assertIsInt($v);
+    self::assertIsBool($v); self::assertIsResource($v);
+    self::assertFileExists($path); self::assertFileDoesNotExist($path);
+    self::assertNotContains($needle, $haystack);
 
     // Exception
     $this->expectException(FooException::class);

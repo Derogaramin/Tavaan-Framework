@@ -130,6 +130,18 @@ final class HttpServiceProvider extends ServiceProvider
             return new \Tavaan\Engine\Http\Cors\CorsMiddleware($config);
         });
 
+        $app->singleton(\Tavaan\Engine\Http\Cookie\CookieJar::class, static function (ContainerInterface $c): \Tavaan\Engine\Http\Cookie\CookieJar {
+            $config = $c->bound('config') ? (array) $c->make('config')->get('cookie', []) : [];
+
+            return new \Tavaan\Engine\Http\Cookie\CookieJar(
+                $c->bound(\Tavaan\Engine\Crypt\Crypt::class) ? $c->make(\Tavaan\Engine\Crypt\Crypt::class) : null,
+                (bool) ($config['secure'] ?? false),
+                isset($config['domain']) ? (string) $config['domain'] : null,
+                (string) ($config['same_site'] ?? 'Lax'),
+            );
+        });
+        $app->alias(\Tavaan\Engine\Http\Cookie\CookieJar::class, 'cookie');
+
         $app->singleton(\Tavaan\Engine\Http\Cookie\EncryptCookiesMiddleware::class, static function (ContainerInterface $c): \Tavaan\Engine\Http\Cookie\EncryptCookiesMiddleware {
             $except = $c->bound('config') ? (array) $c->make('config')->get('cookie.except', ['XSRF-TOKEN']) : ['XSRF-TOKEN'];
 
@@ -190,6 +202,6 @@ final class HttpServiceProvider extends ServiceProvider
     /** @return list<string> */
     public function provides(): array
     {
-        return ['router', 'url', 'redirect', 'http.kernel', HttpKernel::class, Router::class, UrlGenerator::class, RequestStack::class];
+        return ['router', 'url', 'redirect', 'http.kernel', 'cookie', HttpKernel::class, Router::class, UrlGenerator::class, RequestStack::class, \Tavaan\Engine\Http\Cookie\CookieJar::class];
     }
 }

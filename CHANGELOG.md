@@ -2,9 +2,36 @@
 
 فرمت: Keep a Changelog — نسخه‌گذاری: SemVer.
 
-## [Unreleased] — M8: ابزار (TVN-0081 — موتور Upgrade) — ✅ فاز M8 کامل شد
+## [0.8.0] - 2026-10-19 — فاز M8: ابزار + ممیزی جامع M0–M8
 
-### افزوده شد
+### ممیزی جامع M0–M8 (این نگارش — نقشه و جزئیات: `docs/reports/M0-M8-audit-report.md`)
+
+#### افزوده شد
+- **Facadeهای مفقود (یافتهٔ H1)**: `Crypt` (→`encrypter`)، `Lang` (→`translator`)، `Cookie` (→`cookie`) — وعدهٔ module.json و DOC-042/054/069 بودند ولی کلاس نداشتند؛ + binding/alias ظرف `cookie` برای `CookieJar` در HttpServiceProvider (با defaultهای config)
+- **ابزارهای QA وعده‌داده‌شده (یافتهٔ H2 — گام ۹ DOC-121 §8 و DoD §1)**: `tvn arch:check` (قواعد config-driven از `config/architecture.php`: مرزهای namespace + توابع/الگوهای ممنوعه با allowlist مستند، `--json`) • `tvn security:scan` (token-based ضد false-positive: eval/shell/unserialize/rand/SQL-الحاقی/secret/superglobal + severity و allowlist مشترک با arch:check، `--json`، `--level=high`) • `tvn lint:php` (php -l سراسری cross-platform — جایگزین `composer lint` مبتنی بر find/xargs) • `tvn bench:all` (اجرا+جمع‌بندی همهٔ benchها با `--fail-on-regression` برای CI) • `tvn style:check [--fix]` (wrapper صادقانهٔ PHP-CS-Fixer — در نبود ابزار exit 2 با راهنمای نصب، نه سکوت سبز) • `tvn engine:validate` (اعتبارسنجی عمیق manifest موتورها + تطبیق با docs/manifest.json — DoD §2) • `tvn env:check` (drift کلیدهای env در برابر .env.example/.env + میکرواسکن bootstrap، `--strict`)
+- **دستورات مستندِ جامانده (یافتهٔ H3)**: `tvn down [--message --retry --until]` / `tvn up` (حالت تعمیر — همان فایل `storage/framework/down` که Upgrader مصرف می‌کند) • `tvn module:enable` / `tvn module:disable` (با ترجمهٔ پیام‌ها و راهنما)
+- **`composer.json`**: ‏require-dev (phpstan ^2.1، php-cs-fixer ^3.64) + اسکریپت‌های `arch/security/cs/cs:check/stan/bench/qa` + **`phpstan.neon`** (level max، excludeهای tests/benchmarks/fixtures) — گیت‌های DoD §1.1 اکنون قابل اجرا با `composer install`
+- **`INDEX.html`**: داشبورد انسانی خودایستا (entry_point در docs/manifest.json — یافتهٔ M4)
+- **`.env.example`**: بخش M8 (پلاگین/ادمین/ارتقا) + کلیدهای سرویس‌ها گروه‌بندی‌شده (AWS/FTP/SMS/…) — drift یافتهٔ M3 به صفر نزدیک شد
+- **TestCase (موتور Test)**: assertionهای استاندارد PHPUnit-compat — `assertIsArray/String/Int/Bool/Resource`، `assertFileExists/DoesNotExist`، `assertGreaterThanOrEqual`، `assertLessThanOrEqual`، `assertNotContains` (+ به‌روزرسانی DOC-084E)
+- **۱۶ تست جدید**: `QaToolsTest` (۱۰ تست end-to-end از CLI واقعی برای همهٔ ابزارهای جدید) • `FacadeCompletenessTest` (۳) • `WithCountAliasGuardTest` (۳)
+
+#### اصلاح شد
+- **🐛 باگ ORM (عملکردی)**: `withCount(['posts as alias'])` (فرم لیستیِ مستند در Laravel/DOC-050) — alias به relation name آلوده می‌شد و withCount **بی‌صدا هیچ ستونی تولید نمی‌کرد**؛ اکنون `' as '` در فرم لیستی هم پارس می‌شود
+- **🔒 hardening امنیتی**: alias در `withCount` چون در selectRaw correlated درون‌یابی می‌شود (binding‌پذیر نیست) با گارد شناسه `^[A-Za-z_][A-Za-z0-9_]*$` محافظت شد → خلاف آن `UnsafeQueryException` (یافتهٔ security:scan)
+- **🐛 نقض معماری (ARCH-006)**: ‏`core/Context/RequestStack` به `Engine\Http\Request` تایپ شده بود → اکنون بر پایهٔ contract هسته (`RequestInterface`)؛ مصرف‌کننده‌ها (HttpKernel/Auth/Audit) از قبل سازگار بودند
+- **🐛 دادهٔ manifest**: ‏`docs/manifest.json` برای موتور view مقدار namespace برابر ``path` `` داشت (خطای copy/paste از M2!) → `Tavaan\Engine\View\` • `pagination` اکنون `sub_engine_of: database` دارد (شفاف‌سازی یافتهٔ L4) • framework.version هم‌تراز شد
+- **🧹 نویز غیرفارسی**: نویسه‌های CJK/Korean جاخوش‌کرده در کامنت‌ها رفع شد — `ViewFactory` («状態»→«وضعیت»)، `Plugin.php` («선언»→«اعلام»)، گزارش M6 («보존»→«حفظ»)؛ اسکن کامل مخزن اکنون **صفر** نویسهٔ CJK است (یافتهٔ M5 + ۲ مورد جدید)
+- **🐛 Facade Route**: ‏`use Engine\Http\Routing\Route` واقعی نبود (فقط docblock) — FQCN درون @methodها inline شد تا هسته بدون موتور کامپایل بماند
+- **`config/architecture.php`**: ساختار `forbidden_functions_allow` (allowlist صریح و مستند per-function) + except برای `Core\Contracts` (بدهی فنی TECH-DEBT-ARCH-01: تایپ contractها با VOهای موتور تا انتقال VOها به هسته)
+- **CHANGELOG**: ترمیم خرابی ساختاری — بولت Tenancy در 0.7.1 وسط‌خط بریده و سرآیند فایل در آن paste شده بود + بخش 0.7.1 زیر هدر اشتباه «Unreleased M1–M4» تکرار شده بود (بازسازی کامل)
+
+#### نتایج ممیزی
+- ۱۲۳۵ تست پایه + ۱۶ تست جدید سبز • `arch:check` پاک (۱۰۵۸ فایل) • `security:scan`: صفر high (۸ med = checksumهای مشروع مرور و تأییدشده) • `engine:validate`: ۵۲ موتور بدون خطا • `lint:php`: ۱۴۰۳ فایل پاک • ترجمه‌ها: ۱۸۲ messageId مصرفی، **صفر** مفقود fa/en (یافتهٔ M1 ممیزی = مثبت کاذب ابزار بود) • HTTP smoke: ‏`/` ۲۰۰، `/time` جلالی ۱۴۰۵ ✓، `/admin` ۳۰۲→login، ۴۰۴ fallback ✓ • benchها: اهداف سخت‌افزار-وابسته روی ماسه‌دان مرزی (overhead/حافظه/render سبز)
+
+### TVN-0081 — موتور Upgrade ✅
+
+#### افزوده شد
 - **موتور Upgrade (DOC-081E)**: جریان کامل ارتقا — `pre-check → backup اجباری → maintenance(down) → مسیر گام‌به‌گام نسخه‌ها → [schema migrations + data patches + config migrations + cache clear] → verify(health) → up` با **rollback خودکار** از backup در شکست میانی
 - **DataPatch + PatchRunner**: patchهای `upgrades/<version>/patch_*.php` (anonymous class) — idempotent با جدول `tvn_upgrades` (اجرای مجدد → skip)؛ version داخل patch باید با دایرکتوری بخواند؛ خطای patch → `upgrade.patch_failed` با دلیل کامل
 - **ConfigMigrator (§4)**: rename/remove/default/transform روی `.env` — ویرایش خط‌به‌خط (کامنت‌ها حفظ)، نوشتن اتمیک
@@ -14,12 +41,12 @@
 - `UpgradeRepository` (tvn_upgrades + tvn_upgrade_meta با ساخت خودکار)، `BackupRunnerInterface` + adapter روی موتور Backup (تست‌پذیر با Mock)، maintenance با همان `storage/framework/down` موتور HTTP، `config/upgrade.php` + ترجمه‌های fa/en
 - **۲۴ تست** (T-01..T-06): جریان کامل با BackupRunner موک‌شده (Mock موتور Test — dogfooding M8)، rollback خودکار در patch ناموفق، idempotency بین دو Upgrader، pre-check مسدودکننده، maintenance toggle، config migration واقعی روی .env
 
-### نتایج
+#### نتایج
 - ۱۲۳۵ تست / ۸۲۸۹ assertion سبز (دو اجرای پیاپی) • gate ممنوعه‌ها پاک • lint ۱۲۹۳ فایل پاک • **M8: ۵/۵ تیکت انجام‌شده** (TVN-0084 Test ✅ TVN-0077 Scaffold ✅ TVN-0079 Plugin ✅ TVN-0078 Admin ✅ TVN-0081 Upgrade ✅)
 
-## [Unreleased] — M8: ابزار (TVN-0078 — موتور Admin)
+### TVN-0078 — موتور Admin ✅
 
-### افزوده شد
+#### افزوده شد
 - **موتور Admin (DOC-078)**: پیشخوان CRUD-generator — `Admin::resource(Model::class, fn(Resource $r) => …)` بدون کد اضافی ۱۰ route عمومی می‌سازد (AC-ADM-01): dashboard + index/create/store/show/edit/update/destroy + single/bulk actions
 - **Form با هر ۲۷ نوع فیلد §6** (text…tags، شامل `jalali_date`، `richtext`، `relation`، `repeater`) + قواعد validation خودکار از تعریف فرم (required/nullable خودکار/in از options/regex جلالی/min/max) — validate روی ورودی خام سپس تبدیل (ترتیب درست برای regex جلالی)
 - **امنیت (§7)**: همهٔ عملیات پشت `AuthenticateMiddleware` + `Gate` (`<perm>.view/create/update/delete` — AC-ADM-02)؛ whitelist فیلدهای فرم برای Mass Assignment؛ richtext با `HtmlSanitizer` پروفایل `rich_text` (T-04)؛ CSRF از middleware سراسری؛ guest→401/redirect و بدون‌مجوز→403
@@ -31,15 +58,15 @@
 - Actions تک/گروهی (`Action::make/bulk` + permission + handler + confirm + style؛ bulk delete پیش‌فرض)، search/filter/sort با whitelist، **pagination قطعی** (default order = کلید اصلی — بدون آن LIMIT/OFFSET در SQLite نامعین است)، slug خودکار از فیلد مبدأ، hash پسورد (خالی = دست‌نخورده)
 - Facade `Admin` (accessor `admin`)، `config/admin.php` (prefix/guard/per_page/menu)، ۳۹ تست (Feature درون‌فرایندی کامل + Unit اجزا)
 
-### اصلاح شد
+#### اصلاح شد
 - **🐛 باگ نهفتهٔ موتور View (M2)**: `ViewFactory` singleton بخش‌های `@section` را بین رندرهای متوالی انباشت می‌کرد (`stopSection` = append و بدون reset) → در فرایند مقیم/چنددرخواستی (تست‌ها، queue worker، websocket) محتوای رندر قبلی در رندر بعدی نشت می‌کرد. `beginViewRender()/endViewRender()` در مرز چرخهٔ رندر: reset sections/pushes/slots/extends + بستن بافرهای خروجیِ نشتی‌کرده از رندر ناموفق + ۲۵ تست View بدون رگرسیون سبز
 
-### نتایج
+#### نتایج
 - ۱۲۱۱ تست / ۸۲۱۷ assertion سبز (دو اجرای پیاپی) • gate ممنوعه‌ها پاک • lint ۱۲۷۴ فایل پاک
 
-## [Unreleased] — M8: ابزار (TVN-0079 — موتور Plugin)
+### TVN-0079 — موتور Plugin ✅
 
-### افزوده شد
+#### افزوده شد
 - **موتور Plugin (DOC-079)**: سیستم افزونهٔ ثالث با manifest (`plugin.json`)، امضای **Ed25519** (sodium) روی payload کانویک (ksort بازگشتی — `PluginVerifier::canonicalPayload` قرارداد مشترک با ابزار امضای فروشنده)، `trusted_vendors` در config
 - **plugins.lock**: hash SHA-256 تک‌تک فایل‌ها؛ تشخیص modified/missing/unexpected (`plugin.lock_tampered`)؛ نوشتن اتمیک (tmp+rename+LOCK_EX)
 - **PluginScanner (§5.1)**: اسکن توکنی eval/exec/system/passthru/shell_exec/popen/proc_open/assert/create_function/unserialize/file_get_contents/fopen/curl_exec + خانوادهٔ include/require — با رفع مثبت کاذب member-context (`->exec()`/`::system()`/تعریف متد پرچم نمی‌خورد)؛ `vendor/` مستثنی (یکپارچگی با lock hash)
@@ -51,12 +78,12 @@
 - config `plugins.*` (path/enabled/require_signature/trusted_vendors/allow_vendor/allowed_hooks/sandbox/lock_file/hook_timeout_ms/hook_memory_limit/backup_path) + ترجمه‌های fa/en + `.gitignore` برای `plugins/*`
 - **۵۸ تست** (امضای واقعی با sodium زمان تست): T-01 امضا معتبر/تامپر/missing/untrusted، T-02 دستکاری+فایل افزوده، T-03 scan+force، T-04 database/shell/network-wildcard/filesystem-traversal رد + runtime assertNetwork، T-05 hook listener + undeclared رد، T-06 install/enable/disable/uninstall/update/loadEnabled، T-07 vendor ایزوله (shadow `Tavaan\Support\Str` خنثی شد)، T-08 وابستگی composer افزونه کار می‌کند
 
-### نتایج
+#### نتایج
 - ۱۱۷۲ تست / ۸۰۲۰ assertion سبز (دو اجرای پیاپی — قطعی) • gate ممنوعه‌ها پاک (۱۰۸۷ فایل) • lint ۱۲۴۹ فایل پاک • smoke کامل CLI: scan→install→list→verify→disable→enable→uninstall --purge
 
-## [Unreleased] — M8: ابزار (TVN-0077 — موتور Scaffold)
+### TVN-0077 — موتور Scaffold ✅
 
-### افزوده شد
+#### افزوده شد
 - **موتور Scaffold (DOC-077)**: StubRenderer خودنوشته (`{{var}}` + `{{#if}}/{{#unless}}/{{#each}}` با پارس خط‌محور و تودرتویی انواع متفاوت — بدون Twig/Handlebars/eval)؛ ۲۵ قالب در `resources/stubs/`؛ ۱۷ Generator + `GeneratorManager` (ثبت تنبل، کلید = `make:<key>`)
 - **۱۷ دستور `make:*`** (§2): module/controller/model/migration/request/policy/command/job/event/listener/seeder/factory/test/widget/resource/engine/middleware — با `--module` (فضای‌نام `Modules\<Pascal>`)، `--resource/--api`، `--fields=name,price:integer` (fillable + ستون‌های migration)، `--unit`، `--domain=hexagonal|layered`، `--model/--event`
 - **Idempotency/Overwrite (§7)**: فایل موجود → هشدار و رد؛ `--force` → پشتیبان `.bak` + بازنویسی
@@ -65,17 +92,17 @@
 - **`Str::plural`** (افزودنی هسته): قواعد s/x/z/ch/sh→es، بی‌واکه+y→ies، وام‌واژه‌های رایج (person→people…)، حفظ بزرگی حرف اول — مبنای نام جدول (`Product → products`)
 - ترجمه‌های `scaffold.*` در `resources/lang/{fa,en}`؛ ۳۳ تست جدید (T-01..T-06 + `php -l` روی همهٔ فایل‌های تولیدشده — AC-SCF-01)
 
-### تغییر یافت
+#### تغییر یافت
 - `TestCommand`: مسیرهای positional چندگانه (`tvn test tests/Unit engines/x/tests`)؛ ابهام‌زدایی filter/مسیر؛ `modules/*/tests` به مسیرهای پیش‌فرض کشف افزوده شد
 - `ConsoleKernel`: ثبت `ModuleValidateCommand` در builtins
 - `config/providers.php`: ثبت `ScaffoldServiceProvider`
 
-### نتایج
+#### نتایج
 - ۱۱۱۴ تست / ۷۹۱۶ assertion سبز • lint ۱۲۲۲ فایل پاک • gate ممنوعه‌ها پاک (۱۰۶۵ فایل) • smoke کامل §2 روی CLI: همهٔ خروجی‌ها `php -l` پاک و manifestها `module:validate` پاس
 
-## [Unreleased] — M8: ابزار (TVN-0084 — موتور Test کامل شد)
+### TVN-0084 — موتور Test کامل شد ✅
 
-### افزوده شد
+#### افزوده شد
 - **Mock صفر‌وابستگی بدون eval (DOC-084E §4.1)**: `Mock::of(X)->shouldReceive('m')->with(...)->andReturn(...)->once()->getMock()` — زنجیرهٔ دقیق سند؛ `ProxyGenerator` کلاس Proxy تایپ‌دار را به‌صورت فایل در `sys_get_temp_dir()/tvn-mocks` تولید می‌کند (بازتولید کامل امضا: Union/Intersection/DNF، variadic، by-ref، پیش‌فرض‌های Enum/ثابت/آرایه، `self/static/parent`، nullable صریح مطابق F-15)؛ verify خودکار انتظارات شمارشی در پایان هر تست (`Mock::verifyAll` در `runBare`)؛ کلاس final → رد با پیام راهنما
 - **HttpTest درون‌فرایندی (AC-TEST-02)**: trait `MakesHttpRequests` (get/post/put/patch/delete + واریانت‌های Json + `withHeaders` + `actingAs`) با بوت تنبل اپلیکیشن تست؛ session/log به‌صورت حافظه‌ای (CON-11)
 - **TestResponse (DOC-084E §8)**: assertOk/Status/Created/Unauthorized/Forbidden/NotFound/Successful، assertJson (زیرمجموعهٔ بازگشتی)، assertJsonStructure (چهار شکل: فهرست کلید، nested، فهرستِ فهرست، wildcard `*`)، assertJsonCount، assertJsonValidationErrors (سازگار با problem+json فریمورک: `context.fields` و `errors`)، assertRedirect/See/DontSee/Cookie/Header — همه با API روان
@@ -87,21 +114,21 @@
 - **AC-TEST-05**: `AssertionFailed` محل وقوع (فایل:خطِ اولین فریم بیرون از کد فریمورک) را ضبط می‌کند → گزارش شکست رنگی با `at path:line`
 - **۸۹ تست جدید برای خودِ موتور تست** (FakerTest/MockTest/TestResponseTest/TestSuiteTest/HttpTestingTest/DatabaseTestingTest + fixtures) و نمونهٔ اجراشدنی `examples/testing/test-framework.php`
 
-### اصلاح شد
+#### اصلاح شد
 - **نشت state بین اجراها در ApiTest (throttle)**: تست‌های RateLimit با Clock فریزشدهٔ مطلق (۲۰۲۶-۰۶-۰۱) روی cache پیش‌فرض `file` می‌نوشتند → کلیدهای `throttle:*` در `storage/cache` باقی می‌ماندند و در اجرای بعدی (همان clock ثابت) «زنده» تلقی می‌شدند → 429 زودهنگام و شکست کاذب. `cache.default=array` در setUp (هم‌راستا با تست‌های Idempotency همان فایل) — اجرای مکرر suite اکنون کاملاً قطعی است (DoD §1.2)
 
-### تغییر یافت
+#### تغییر یافت
 - `TestCase::runBare`: چرخهٔ عمر Mock (reset → setUp → test → verifyAll → tearDown → reset)؛ `assertThat` عمومی شد (برای TestResponse)
 - `TestCase::__construct` افزوده شد (ثبت یک‌بارهٔ resolver برای `Model::factory()`)
 - `Model`: افزودن `setFactoryResolver()/factory()` (additive — الگوی resolverهای موجود)
 - `TestCommand`: بازنویسی امضا (سازگار با فراخوانی‌های قبلی)
 
-### نتایج
+#### نتایج
 - ۱۰۸۱ تست / ۷۶۷۸ assertion سبز (۹۹۲ قبلی + ۸۹ جدید) • lint ۱۱۷۸ فایل پاک • gate ممنوعه‌ها پاک • `--parallel=4` کل مجموعه را سبز و با شمار یکسان جمع می‌زند
 
-## [Unreleased] — ممیزی سلامت و یکپارچگی (M1–M4)
+### ممیزی سلامت و یکپارچگی (M1–M4) — پیش از M8 (commit be27239)
 
-### اصلاح شد
+#### اصلاح شد
 - **Router/TrieNode (DOC-040 §12)**: بازنویسی حافظه‌بهینهٔ Route/Trie — segments فشرده (`string|RouteSegment` به‌جای آرایه‌های کلیددار)، methods به‌صورت بیت‌ماسک، پارس تنبل segments، یال‌های پارامتریک `ParamEdge`، هندلرهای برگ `HandlerEntry` (≤۲ مورد inline)، تک‌فرزند static به‌صورت inline، memo نرمال‌سازی کلیدها؛ حافظهٔ ۱۰۰۰ روت از ~۴٫۹MB (اندازهٔ واقعی؛ bench قدیمی ۱۴MB خطا گزارش می‌کرد) به **~۱٫۷MB ≤ ۲MB** کاهش یافت
 - **باگ `TrieNode::staticChild`**: فرزند سوم static وقتی map دو عضوی بود در slot تک‌فرزند جا می‌ماند و با lookup جدید پنهان می‌شد (۴۰۴) — invariant «map پر ⟹ single تهی» اکنون در هر دو مسیر برقرار است + ۲ تست رگرسیون
 - **باگ `Route::head` نبود**: `RouteRegistrar` متد `head` را forward می‌کرد ولی `Router::head()` وجود نداشت (fatal در زمان ثبت) — افزوده شد
@@ -115,12 +142,12 @@
 - **Docblockهای کهنه**: `EarlyErrorManager::isFatal`، `TokenManager::refresh`، `SchemaGrammar::foreignKeySql`، `Session::setFingerprint` (parameter.notFound)
 - **ساختار `storage/`** مطابق DOC-040 §7 ایجاد شد (app/cache/framework/logs/backups/temp + `.gitignore` و مجوزهای مستند)
 
-### تغییر یافت
+#### تغییر یافت
 - `CacheLock` با تایپ `StoreInterface` (به‌جای object-shape) — Contract-First
 - `ModelQueryBuilder` با `@method`های صریح برای متدهای fluent فورواردشده (تحلیل ایستا/IDE)
 - `Ulid`/`Base32`: `(int) bindec(...)` قطعی (حذف offsetAccess float|int)
 
-### نتایج
+#### نتایج
 - ۵۴۶ تست / ۲۷۴۶ assertion سبز • ۶۷۹ فایل lint پاک • gate ممنوعه‌ها سبز • حافظهٔ ۱۰۰۰ روت ~۱٫۷MB ✅ • boot warm ~۷٫۵–۷٫۸ms ✅ / cold ~۱۸–۲۰ms ✅ • PHPStan level max: همهٔ خطاهای کلاس fatal صفر (باقی: بدهی مستندسازی نوعِ الگوی DI)
 
 ## [0.7.1] - 2026-10-17 — سازگاری کامل ویندوز (پس از گزارش اجرای `tvn test` روی Windows)
@@ -130,35 +157,7 @@
 - **🔧 api:docs**: محافظ مسیر خروجی روی ویندوز شکست می‌خورد (مقایسهٔ `/` با خروجی backslashِ `realpath`) → PathGuard + تشخیص درست مسیر مطلق
 - **🔧 ResponseFactory::assertSafePath**: containment **پیش از** وجودسنجی — مسیر بیرونیِ وجود‌نداشته (مثل `/etc/passwd` در ویندوز) حالا `PathTraversalException` می‌دهد نه `FileNotFoundException` (رفتار امنیتی درست‌تر + انتظار تست)؛ `ReportExporter` هم برای یکدستی به PathGuard منتقل شد
 - **🔧 Backup**: `collectFiles` مسیر `C:\…` را نسبی فرض و به base الحاق می‌کرد → **صفر فایل** در آرشیو و restore ناقص؛ تشخیص مطلق cross-platform + `safeAbsolute` ویندوزی + `isExcluded` با relative درست برای مسیرهای خارج از base
-- **🔧 Tenancy (Strategy B)**: charset محافظ مسیر sqlite (`^[A-Za-z0-9_/.-]+# Changelog — تَوان | Tavaan
-
-فرمت: Keep a Changelog — نسخه‌گذاری: SemVer.
-
-## [Unreleased] — ممیزی سلامت و یکپارچگی (M1–M4)
-
-### اصلاح شد
-- **Router/TrieNode (DOC-040 §12)**: بازنویسی حافظه‌بهینهٔ Route/Trie — segments فشرده (`string|RouteSegment` به‌جای آرایه‌های کلیددار)، methods به‌صورت بیت‌ماسک، پارس تنبل segments، یال‌های پارامتریک `ParamEdge`، هندلرهای برگ `HandlerEntry` (≤۲ مورد inline)، تک‌فرزند static به‌صورت inline، memo نرمال‌سازی کلیدها؛ حافظهٔ ۱۰۰۰ روت از ~۴٫۹MB (اندازهٔ واقعی؛ bench قدیمی ۱۴MB خطا گزارش می‌کرد) به **~۱٫۷MB ≤ ۲MB** کاهش یافت
-- **باگ `TrieNode::staticChild`**: فرزند سوم static وقتی map دو عضوی بود در slot تک‌فرزند جا می‌ماند و با lookup جدید پنهان می‌شد (۴۰۴) — invariant «map پر ⟹ single تهی» اکنون در هر دو مسیر برقرار است + ۲ تست رگرسیون
-- **باگ `Route::head` نبود**: `RouteRegistrar` متد `head` را forward می‌کرد ولی `Router::head()` وجود نداشت (fatal در زمان ثبت) — افزوده شد
-- **باگ latent Enum در ControllerResolver**: `from()` روی enum غیر-backed (unit enum) و رشتهٔ عددی برای enum با backing=int → اکنون فقط `BackedEnum` resolve می‌شود با cast مناسب (سبک Laravel)
-- **Contract-First (DOC-013)**: متدهای مورداستفادهٔ کد به قراردادهای موجود افزوده شد — `StoreInterface::add` (مبنای CacheLock)، `QueryBuilderInterface::updateOrInsert/orderByDesc`، `ContainerInterface::beginScope/endScope/currentScope/flushScoped` (+ delegate در `Application`)، `RequestInterface::cookies`، `ResponseInterface::hasHeader`، `UploadedFileInterface::extension`، `EncrypterInterface::encryptJson/decryptJson`، `KernelInterface::commands/resolve`
-- **`key:generate`**: تأییدیهٔ بازنویسی فقط وقتی کلید قبلیِ غیرخالی وجود دارد (راه‌اندازی اولیه/CI غیرتعاملی نمی‌شکند) + اصلاح غلط تایپی توضیح («تعداد»→«تولید»)
-- **`migrate:rollback --force`**: هم‌تراز با `migrate:fresh/refresh` (اجرای غیرتعاملی/CI)
-- **`.env` دیگر مرده نیست**: `TVN_AUTOLOAD_CACHE` با میکرواسکن زودهنگام در `core/bootstrap.php` (مرغ‌و‌تخم classmap↔env) و `TVN_CONFIG_CACHE` از `EnvRepository` خوانده می‌شود (پیش‌تر فقط `$_SERVER` واقعی — مقدار `.env` هرگز اثر نمی‌کرد)
-- **`phpstan.neon.dist` مطابق DOC-111 §2**: `bootstrapFiles`/`scanDirectories`/`universalObjectCratesClasses`/الگوی صحیح exclude (`*/tests/*`) — خطاهای `class.notFound` و همهٔ خطاهای کلاس «fatal» (`method/property/staticMethod/offsetAccess/function.notFound`) صفر شد
-- **Benchهای صادق‌تر**: router.bench حافظهٔ افزایشی واقعی روت‌ها را می‌سنجد (نه کل فرایند منهای ۲MB ثابت)؛ kernel.bench هدف cold (≤۲۵ms بدون opcache) را از warm (≤۸ms با opcache) تفکیک می‌کند (PERF-BOOT-01/02)؛ render.bench هدف DOC (متن معمولی ۱KB) را از سناریوی hostile (اطلاع‌رسانی) جدا کرد
-- **Docblockهای کهنه**: `EarlyErrorManager::isFatal`، `TokenManager::refresh`، `SchemaGrammar::foreignKeySql`، `Session::setFingerprint` (parameter.notFound)
-- **ساختار `storage/`** مطابق DOC-040 §7 ایجاد شد (app/cache/framework/logs/backups/temp + `.gitignore` و مجوزهای مستند)
-
-### تغییر یافت
-- `CacheLock` با تایپ `StoreInterface` (به‌جای object-shape) — Contract-First
-- `ModelQueryBuilder` با `@method`های صریح برای متدهای fluent فورواردشده (تحلیل ایستا/IDE)
-- `Ulid`/`Base32`: `(int) bindec(...)` قطعی (حذف offsetAccess float|int)
-
-### نتایج
-- ۵۴۶ تست / ۲۷۴۶ assertion سبز • ۶۷۹ فایل lint پاک • gate ممنوعه‌ها سبز • حافظهٔ ۱۰۰۰ روت ~۱٫۷MB ✅ • boot warm ~۷٫۵–۷٫۸ms ✅ / cold ~۱۸–۲۰ms ✅ • PHPStan level max: همهٔ خطاهای کلاس fatal صفر (باقی: بدهی مستندسازی نوعِ الگوی DI)
-
-) backslash و حرف درایو را رد می‌کرد → `tenancy.unsafe_identifier` در ویندوز؛ charset ویندوزی فقط روی ویندوز فعال می‌شود (`..` همچنان همه‌جا رد است)
+- **🔧 Tenancy (Strategy B)**: charset محافظ مسیر sqlite (`^[A-Za-z0-9_/.-]+$`) backslash و حرف درایو را رد می‌کرد → `tenancy.unsafe_identifier` در ویندوز؛ charset ویندوزی فقط روی ویندوز فعال می‌شود (`..` همچنان همه‌جا رد است)
 - **🔧 MediaTest fixture**: base64 «کوچک‌ترین JPEG» با libjpeg سخت‌گیر (gd ویندوز **و** دیبیان) ناسازگار بود («Bogus Huffman table definition» — باگ latent از M6)؛ fixture اکنون با خودِ gd در زمان اجرا تولید می‌شود → **MediaTest برای اولین بار در این محیط‌ها سبز**
 - **🔧 تست‌های capability-based**: ‏`stream_socket_pair` در ویندوز پشتیبانی نمی‌شود (۳ تست Mail + ۱ تست WebSocket — guard موجود فقط `function_exists` بود که در ویندوز true است)؛ symlink بدون ادمین/Developer Mode ممکن نیست (۲ تست Filesystem — با probe عملی)؛ visibility مبتنی بر POSIX perms در NTFS بی‌معنی است (۱ تست) — همه با skip مستند به قرارداد early-return مخزن
 - **🔧 ConsoleTest**: انتظار `PHP_EOL` به‌جای `\n` ثابت (خروجی کنسول در ویندوز `\r\n` است)

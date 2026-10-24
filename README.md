@@ -3,8 +3,8 @@
 فریمورک PHP 8.2+ **صفر‌وابستگی**، فارسی‌اول و ماژولار — بدون یک پکیج خارجی در زمان اجرا.
 
 > پیاده‌سازی بر اساس مستندات رسمی: [Tavaan-Doc](https://github.com/Derogaramin/Tavaan-Doc)
-> وضعیت فعلی: **فاز‌های M1–M7 تکمیل و سبز** ✅ — نگارش `0.7.1` • ۴۸/۴۸ موتور فعال • ۹۹۲ تست / ۶۷۰۴ assertion • سازگار با Linux/macOS/**Windows**
-> آخرین فاز: **M7 (دامنه)** — گردش‌کار/BPM، گزارش‌ساز با xlsx خودنوشته و درگاه‌های پرداخت ایرانی
+> وضعیت فعلی: **فاز‌های M1–M8 تکمیل و سبز** ✅ — نگارش `0.8.0` • ۵۲/۵۲ موتور فعال • ۱۲۵۱ تست / ۸۳۵۷ assertion • سازگار با Linux/macOS/**Windows**
+> آخرین فاز: **M8 (ابزار)** — موتور تست بومی، Scaffold (make:*)، سیستم پلاگین امضاشده (Ed25519)، پیشخوان Admin و ارتقای گام‌به‌گام + ممیزی جامع M0–M8
 
 ---
 
@@ -51,9 +51,10 @@ php bin/tvn migrate               # جداول موتورها (queue/tenancy/wor
 | **M5** | ارتباطی/زیرساخت (queue, schedule, console, filesystem, media, mail, notification, http-client, backup) | ✅ **انجام شد** |
 | **M6** | سرویس‌ها (api, observability, search, tenancy, feature-flag, realtime) | ✅ **انجام شد** |
 | **M7** | دامنه (workflow, report, payment) | ✅ **انجام شد** — [گزارش](docs/reports/M7-implementation-report.md) |
-| M8..M9 | ابزار (scaffold/admin/plugin/test/upgrade) + اپلیکیشن‌ها و انتشار 1.0 | — |
+| **M8** | ابزار (test, scaffold, plugin, admin, upgrade) | ✅ **انجام شد** — [گزارش](docs/reports/M8-implementation-report.md) + [ممیزی M0–M8](docs/reports/M0-M8-audit-report.md) |
+| M9 | کیت‌های اپلیکیشن (blog/shop/forum/… ×۸) + انتشار 1.0 | — |
 
-> گزارش‌های پیاده‌سازی: [M5](docs/reports/M5-implementation-report.md) • [M6](docs/reports/M6-implementation-report.md) • [M7](docs/reports/M7-implementation-report.md) • [سازگاری ویندوز 0.7.1](docs/reports/windows-compatibility-fixes.md)
+> گزارش‌های پیاده‌سازی: [M5](docs/reports/M5-implementation-report.md) • [M6](docs/reports/M6-implementation-report.md) • [M7](docs/reports/M7-implementation-report.md) • [M8](docs/reports/M8-implementation-report.md) • [سازگاری ویندوز 0.7.1](docs/reports/windows-compatibility-fixes.md) • [ممیزی M0–M8](docs/reports/M0-M8-audit-report.md)
 
 ### معیارهای پذیرش M7 (نتایج اندازه‌گیری‌شده)
 
@@ -205,4 +206,4 @@ php engines/workflow/benchmarks/workflow.bench.php
 
 ## پروانه
 
-MIT — نگارش 0.7.1 (پیش از 1.0؛ API ممکن است بر اساس ADRها تکامل یابد)
+MIT — نگارش 0.8.0 (پیش از 1.0؛ API ممکن است بر اساس ADRها تکامل یابد)

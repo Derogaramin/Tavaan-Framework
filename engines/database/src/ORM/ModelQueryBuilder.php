@@ -94,7 +94,15 @@ final class ModelQueryBuilder
     {
         foreach (\is_string($relations) ? [$relations] : $relations as $key => $value) {
             if (\is_int($key)) {
-                $this->withCounts[$value . '_count'] = [$value, null];
+                // 🔧 ممیزی M0–M8: فرم لیستی `'posts as alias'` هم پارس شود
+                // (پیش‌تر alias به relation name آلوده و بی‌اثر می‌شد).
+                $spec = (string) $value;
+                if (\str_contains($spec, ' as ')) {
+                    [$relationName, $alias] = \explode(' as ', $spec, 2);
+                    $this->withCounts[\trim($alias)] = [\trim($relationName), null];
+                } else {
+                    $this->withCounts[$spec . '_count'] = [$spec, null];
+                }
             } else {
                 $this->withCounts[\str_contains($key, ' as ') ? \substr($key, (int) \strpos($key, ' as ') + 4) : $key . '_count'] = [
                     \str_contains($key, ' as ') ? \substr($key, 0, (int) \strpos($key, ' as ')) : $key,
@@ -409,6 +417,14 @@ final class ModelQueryBuilder
     private function applyWithCountSubQueries(): void
     {
         foreach ($this->withCounts as $alias => [$relationName]) {
+            // 🔒 ممیزی M0–M8 (security:scan): alias در SQL درون‌یابی می‌شود و
+            // binding‌پذیر نیست — شناسه باید کاملاً محافظه‌کارانه باشد.
+            if (\preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', (string) $alias) !== 1) {
+                throw new \Tavaan\Engine\Database\Exceptions\UnsafeQueryException(
+                    ['alias' => (string) $alias, 'where' => 'withCount'],
+                    'alias در withCount فقط می‌تواند شناسهٔ [A-Za-z_][A-Za-z0-9_]* باشد.',
+                );
+            }
             $relation = $this->model->newRelation((string) $relationName);
             if ($relation === null) {
                 continue;

@@ -8,27 +8,29 @@
         <p style="color:#94a3b8">فریمورک PHP 8.2 صفر‌وابستگی — فارسی‌اول</p>
         <p>
             نگارش <b style="color:#f59e0b">{{ TVN_VERSION }}</b>
-            — فاز <b>M7 (دامنه)</b> کامل شد ✅
+            — فاز <b>M8 (ابزار)</b> کامل شد ✅
             <span style="color:#64748b">({{ jalali(null, 'Y/m/d') }})</span>
         </p>
         <p style="color:#94a3b8;font-size:13px">
-            ۴۸/۴۸ موتور فعال • ۹۹۲ تست سبز • بدون یک پکیج خارجی
+            ۵۲/۵۲ موتور فعال • ۱۲۵۱ تست سبز • بدون یک پکیج خارجی
         </p>
     </div>
 
     <div class="card">
         <h3 style="margin-top:0">🆕 تازه در {{ TVN_VERSION }}</h3>
         <ul style="line-height:2">
-            <li>🔁 <b>Workflow (BPM)</b> — State Machine با DSL و JSON، دروازهٔ انحصاری/موازی (Fork-Join با Token)، کار انسانی (claim/complete/delegate)، تایمر، زیرفرایند، تاریخچه و نمودار DOT/Mermaid</li>
-            <li>📊 <b>Report</b> — گزارش‌ساز با فیلتر/گروه‌بندی/Pivot و خروجی <b>xlsx کاملاً خودنوشته</b>، CSV ضد-injection با BOM، HTML/JSON/PDF</li>
-            <li>💳 <b>Payment</b> — ۱۰ درگاه (زرین‌پال، آیدی‌پی، پی‌پینگ، سامان، به‌پرداخت، پارسیان، سداد، ملی، Stripe، کیف پول) با verify امن (مبلغ محلی + idempotency + IPN امضادار)</li>
-            <li>🔧 سازگاری کامل <b>ویندوز</b> (PathGuard، Backup، Tenancy، Media) — نگارش 0.7.1</li>
+            <li>🧪 <b>Test</b> — موتور تست بومی (بدون PHPUnit): Mock بدون eval با بازتولید کامل امضا، HttpTest، RefreshDatabase، Factory+Faker قطعی، coverage (pcov) و <code>--parallel</code></li>
+            <li>🏗️ <b>Scaffold</b> — ۱۷ دستور <code>make:*</code> (model/controller/migration/module/plugin/kit/…) با stub و نوشتن idempotent</li>
+            <li>🔌 <b>Plugin</b> — نصب/فعال‌سازی پلاگین با <b>امضای Ed25519</b>، اسکنر کد مخرب، sandbox و Hook با policy قابلیت‌ها</li>
+            <li>🖥️ <b>Admin</b> — پیشخوان CRUD-ساز RTL با ۲۷ نوع فیلد، Gate، نمودار SVG بدون JS و theme override</li>
+            <li>⬆️ <b>Upgrade</b> — ارتقای گام‌به‌گام نسخه با backup اجباری، data patch، config migration و rollback خودکار</li>
+            <li>🛡️ <b>ابزارهای QA ممیزی</b> — <code>arch:check</code> / <code>security:scan</code> / <code>lint:php</code> / <code>bench:all</code> / <code>env:check</code> / <code>engine:validate</code> / <code>down|up</code></li>
         </ul>
-        <p style="color:#64748b;font-size:12px">جزئیات: <code>CHANGELOG.md</code> و <code>docs/reports/M7-implementation-report.md</code></p>
+        <p style="color:#64748b;font-size:12px">جزئیات: <code>CHANGELOG.md</code> و <code>docs/reports/M8-implementation-report.md</code> + <code>docs/reports/M0-M8-audit-report.md</code></p>
     </div>
 
     <div class="card">
-        <h3 style="margin-top:0">🧩 قابلیت‌های فعال (M1–M7)</h3>
+        <h3 style="margin-top:0">🧩 قابلیت‌های فعال (M1–M8)</h3>
         <ul style="line-height:2">
             <li>Container با Auto-Wiring، Contextual Binding و Union/DNF قطعی</li>
             <li>Router با <b>Compiled Trie</b> — <code>route('hello', ['name' => '…'])</code></li>
@@ -39,6 +41,8 @@
             <li>امنیت: Crypt/Hash/Auth (JWT/OTP/2FA)/RBAC/Audit با hash chain</li>
             <li>زیرساخت: Queue/Schedule/Console/Filesystem/Media/Mail/Notification/Backup</li>
             <li>سرویس‌ها: API (OpenAPI 3.1)/Observability/Search فارسی/Tenancy/FeatureFlag/Realtime</li>
+            <li>دامنه: Workflow (BPM)/Report (xlsx خودنوشته)/Payment (۱۰ درگاه)</li>
+            <li>ابزار: Test/Scaffold/Plugin امضاشده/Admin/Upgrade + گیت‌های arch/security/lint/bench</li>
         </ul>
     </div>
 

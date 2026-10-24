@@ -44,6 +44,33 @@ tvn migrate --module=shop --force
 
 ## ۲. فهرست کامل دستورات (۱۰۵ دستور در ۱۶ دسته)
 
+> **وضعیت در نگارش 0.8.0** (افزودهٔ ممیزی M0–M8 — گزارش: `docs/reports/M0-M8-audit-report.md`):
+> این سند «مرجع spec» همهٔ ۱۰۵+ دستور است؛ همه پیاده‌سازی نشده‌اند.
+> وضعیت قطعی با `tvn list` (۱۰۴ دستور فعال در 0.8.0) قابل استعلام است.
+>
+> **✅ پیاده‌شده تا 0.8.0:** همهٔ دستورات فهرست‌شده در `tvn list` — شامل
+> اطلاعات/سلامت (`about/doctor/version/env/list`)، serve، optimize/config-cache/autoload-cache،
+> migrate (up/down/status/fresh/rollback)، `make:*` (۱۷ دستور — DOC-077)،
+> module (list/validate/enable/disable)، plugin:* (۸ دستور — DOC-079)، upgrade* (۵ دستور — DOC-081E)،
+> backup:* (run/restore/prune/list/verify)، queue/schedule، auth/rbac/security، tenancy، search:reindex،
+> media/storage:link، event (list/outbox-relay)، realtime:websocket، workflow:list، payment:list،
+> cache:clear/config:clear/route:clear/view:clear، api:docs، key:generate، seed و **ابزارهای QA**:
+> `test [--group --filter --parallel --coverage]`، `arch:check`، `security:scan`، `lint:php`،
+> `bench:all`، `style:check [--fix]`، `engine:validate`، `env:check`، `down`/`up`.
+>
+> **⛔ مستند ولی پیاده‌نشده (برنامه‌ریزی‌شده برای M9+/کیت‌ها — تا آن زمان از این مرجع حذف نمی‌شوند):**
+> `health:check`، `container:compile`، `container:graph`، `assets:build`، `assets:manifest`،
+> `db:show`، `db:wipe`، `schema:diff`، `preload:generate`، `tinker`، `middleware:list`،
+> `view:directives`، `ide:generate`، `error:simulate`، `profile`، `lang:check`، `log:tail/find/stats/rotate/clear/trace`،
+> `session:clear`، `key:rotate`، `auth:logout-all`، `rbac:check/export/orphans/review/stale`،
+> `route:check`، `route:tree`، `tenant:migrate-strategy`، `security:sbom`، `event:cache`،
+> `module:install/uninstall/extract/publish/update/deps`، `engine:publish`، `kit:install`،
+> `upgrade:layered`، `serve:realtime`، `outbox:relay`، `maintenance:on/off`، `db:seed` و میان‌برهای `s/m/mk/c:clear`.
+>
+> **تطبیق نام‌های معادل (مستند ↔ پیاده‌شده):** `outbox:relay` ↔ `event:outbox-relay` •
+> `serve:realtime` ↔ `realtime:websocket` • `c:clear` ↔ `cache:clear`/`optimize:clear` •
+> `maintenance:on/off` ↔ `down`/`up` • `style:fix` ↔ `style:check --fix` • `make`/`mk` ↔ `make:*` مستقیم.
+
 ### ۲٫۱ اطلاعات و سلامت (Info & Health)
 | دستور | توضیح | موتور | سند |
 |---|---|---|---|
@@ -51,7 +78,7 @@ tvn migrate --module=shop --force
 | `tvn --version`, `tvn version` | نسخهٔ فریمورک | console | DOC-076 |
 | `tvn doctor` | تشخیص سلامت (افزونه‌ها، Fallback، مجوزها، config) | compat | DOC-083E |
 | `tvn health:check [--json]` | بررسی liveness/readiness | observability | DOC-067 |
-| `tvn env:check` | کلیدهای گمشده نسبت به `.env.example` | config | DOC-032 |
+| `tvn env:check [--json] [--strict]` ✅ | کلیدهای گمشده نسبت به `.env.example` | config | DOC-032 |
 
 ### ۲٫۲ سرویس و اجرا (Serve)
 | دستور | توضیح | موتور |
@@ -167,7 +194,7 @@ tvn migrate --module=shop --force
 | `tvn key:rotate` | چرخش کلید + بازرمزنگاری | DOC-054 |
 | `tvn auth:logout-all` | خروج همهٔ نشست‌ها | DOC-056 |
 | `tvn session:clear` | پاک‌کردن نشست‌ها | DOC-041 |
-| `tvn security:scan` | اسکن آسیب‌پذیری (AST) | DOC-059 |
+| `tvn security:scan` ✅ | اسکن آسیب‌پذیری (token-based — §2.14) | DOC-059 |
 | `tvn security:sbom` | تولید SBOM | DOC-016 |
 
 ### ۲٫۱۱ نقش و دسترسی (RBAC & Audit)
@@ -207,13 +234,16 @@ tvn migrate --module=shop --force
 ### ۲٫۱۴ کیفیت و تست (Quality & Test)
 | دستور | توضیح | سند |
 |---|---|---|
-| `tvn test [--unit\|--group=\|--filter=\|--coverage\|--parallel=]` | اجرای تست‌ها | DOC-084E |
-| `tvn bench:all [--fail-on-regression]` | بنچمارک‌ها | DOC-112 |
-| `tvn arch:check` | بررسی قوانین معماری | DOC-021 |
-| `tvn lint:php` | `php -l` روی همهٔ فایل‌ها | DOC-111 |
-| `tvn style:check` / `style:fix` | سبک کد (CS-Fixer) | DOC-011 |
-| `tvn lang:check` | کلیدهای ترجمهٔ گمشده/اضافی | DOC-069 |
-| `tvn profile <url>` | پروفایل یک درخواست | DOC-067 |
+| `tvn test [paths*] [--group=] [--filter=] [--coverage] [--parallel=N]` ✅ | اجرای تست‌ها (موتور بومی — DOC-084E) | DOC-084E |
+| `tvn bench:all [--fail-on-regression] [--filter=] [--json]` ✅ | بنچمارک‌ها (جمع‌بندی همهٔ benchها) | DOC-112 |
+| `tvn security:scan [paths*] [--json] [--level=high]` ✅ | اسکن آسیب‌پذیری token-based (high → exit 1) | DOC-059 |
+| `tvn engine:validate [name] [--json]` ✅ | اعتبارسنجی عمیق manifest موتورها + تطبیق با docs/manifest.json | DOC-080 |
+| `tvn env:check [--json] [--strict]` ✅ | drift کلیدهای env در برابر `.env.example`/`.env` | DOC-032 |
+| `tvn arch:check [--json]` ✅ | قوانین معماری (config-driven از `config/architecture.php`) | DOC-021 |
+| `tvn lint:php [paths*] [--json]` ✅ | `php -l` روی همهٔ فایل‌ها (cross-platform) | DOC-111 |
+| `tvn style:check [--fix]` ✅ | سبک کد (wrapper صادقانهٔ CS-Fixer؛ نبود ابزار → exit 2) | DOC-011 |
+| `tvn lang:check` ⛔ | کلیدهای ترجمهٔ گمشده/اضافی | DOC-069 |
+| `tvn profile <url>` ⛔ | پروفایل یک درخواست | DOC-067 |
 
 ### ۲٫۱۵ ابزار توسعه (Dev Tools)
 | دستور | توضیح | سند |

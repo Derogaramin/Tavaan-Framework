@@ -3,7 +3,7 @@
   "framework": {
     "name": "Tavaan",
     "name_fa": "تَوان",
-    "version": "1.0.0",
+    "version": "0.8.0",
     "php_min": "8.2.0",
     "dependency_policy": "zero-external",
     "architectures": [
@@ -331,7 +331,8 @@
       "namespace": "Tavaan\\Engine\\Database\\Pagination",
       "priority": "P0",
       "phase": "M3",
-      "doc": "docs/03-engines/pagination.md"
+      "doc": "docs/03-engines/pagination.md",
+      "sub_engine_of": "database"
     },
     {
       "engine_id": "tavaan.engine.payment",
@@ -480,7 +481,7 @@
     {
       "engine_id": "tavaan.engine.view",
       "slug": "view",
-      "namespace": "path`",
+      "namespace": "Tavaan\\Engine\\View\\",
       "priority": "P0",
       "phase": "M2",
       "doc": "docs/03-engines/view.md"

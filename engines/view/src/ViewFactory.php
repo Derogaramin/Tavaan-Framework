@@ -57,7 +57,7 @@ final class ViewFactory
 
     private int $renderDepth = 0;
 
-    /** عمق چرخهٔ رندر سطح-ویو (View::render) — برای reset狀態 sectionها */
+    /** عمق چرخهٔ رندر سطح-ویو (View::render) — برای بازنشانی وضعیت sectionها */
     private int $viewRenderDepth = 0;
 
     private string $compiledPath;

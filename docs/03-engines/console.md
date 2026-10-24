@@ -170,12 +170,16 @@ final class CommandRegistry
 | **Make** | `make:module`, `make:controller`, `make:model`, `make:migration`, `make:middleware`, `make:request`, `make:policy`, `make:command`, `make:job`, `make:event`, `make:listener`, `make:seeder`, `make:factory`, `make:test`, `make:engine`, `make:widget`, `make:resource` |
 | **Queue** | `queue:work`, `queue:listen`, `queue:retry`, `queue:failed`, `queue:flush`, `queue:restart`, `queue:monitor` |
 | **Schedule** | `schedule:run`, `schedule:list` |
-| **Module** | `module:list`, `module:install`, `module:uninstall`, `module:enable`, `module:disable`, `module:update`, `module:validate`, `module:extract` |
+| **Module** | `module:list` ✅, `module:enable` ✅, `module:disable` ✅, `module:validate` ✅, `module:install` ⛔, `module:uninstall` ⛔, `module:update` ⛔, `module:extract` ⛔ |
 | **Cache/Log** | `cache:clear`, `cache:stats`, `log:tail`, `log:find`, `log:trace`, `log:clear` |
 | **Auth** | `key:generate`, `key:rotate`, `auth:logout-all` |
-| **Security** | `security:scan`, `security:sbom` |
-| **Quality** | `test`, `bench:all`, `arch:check`, `lint:php`, `style:check/fix` |
-| **Misc** | `tinker`, `route:list`, `route:match`, `middleware:list`, `event:list`, `lang:check`, `down`, `up` |
+| **Security** | `security:scan` ✅, `security:sbom` ⛔ |
+| **Quality** | `test` ✅, `bench:all` ✅, `arch:check` ✅, `lint:php` ✅, `style:check [--fix]` ✅, `engine:validate` ✅, `env:check` ✅ |
+| **Misc** | `route:list` ✅, `event:list` ✅, `down` ✅, `up` ✅, `tinker` ⛔, `route:match` ⛔, `middleware:list` ⛔, `lang:check` ⛔ |
+
+> ✅ = پیاده‌شده در نگارش 0.8.0 (ممیزی M0–M8 — ابزارهای QA وعده‌داده‌شده در DOC-121 §8 و DoD §1 ساخته شدند)؛
+> ⛔ = spec باقی می‌ماند ولی پیاده‌سازی نشده (برنامهٔ M9+). وضعیت قطعی: `tvn list` و
+> `docs/04-structure/cli-reference.md` §2.0.
 
 ## ۸. کد خروج استاندارد
 ```php
