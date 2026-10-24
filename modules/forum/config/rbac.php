@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * ماژول انجمن — نگاشت Policyهای RBAC (ادغام در rbac.policies).
+ *
+ * 🔒 اعلامی به‌جای Gate::policy در boot — Gate با اولین مصرف ساخته می‌شود
+ * و اتصال DB کهنه capture نمی‌شود (سازگار با RefreshDatabase تست‌ها).
+ */
+
+return [
+    'policies' => [
+        \Modules\Forum\Domain\Entities\Thread::class => \Modules\Forum\Policies\ThreadPolicy::class,
+        \Modules\Forum\Domain\Entities\Post::class => \Modules\Forum\Policies\PostPolicy::class,
+        \Modules\Forum\Domain\Entities\Forum::class => \Modules\Forum\Policies\ForumPolicy::class,
+    ],
+];

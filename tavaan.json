@@ -1,74 +1,75 @@
 {
-  "$schema": "https://docs.tavaan.dev/schemas/project.v1.json",
-  "name": "tavaan",
-  "title_fa": "تَوان",
-  "version": "0.11.0",
-  "tavaan": "^1.0",
-  "php": ">=8.2.0",
-  "environment": {
-    "default": "production",
-    "debug": false,
-    "timezone": "Asia/Tehran",
-    "locale": "fa",
-    "fallback_locale": "en"
-  },
-  "architecture": "modular-monolith",
-  "paths": {
-    "core": "core",
-    "engines": "engines",
-    "config": "config",
-    "app": "app",
-    "modules": "modules",
-    "kits": "kits",
-    "plugins": "plugins",
-    "storage": "storage",
-    "public": "public",
-    "views": "resources/views",
-    "lang": "resources/lang",
-    "routes": "routes"
-  },
-  "engines": {
-    "required": [
-      "container",
-      "config",
-      "event",
-      "error",
-      "log",
-      "console"
+    "$schema": "https://docs.tavaan.dev/schemas/project.v1.json",
+    "name": "tavaan",
+    "title_fa": "تَوان",
+    "version": "0.12.0",
+    "tavaan": "^1.0",
+    "php": ">=8.2.0",
+    "environment": {
+        "default": "production",
+        "debug": false,
+        "timezone": "Asia/Tehran",
+        "locale": "fa",
+        "fallback_locale": "en"
+    },
+    "architecture": "modular-monolith",
+    "paths": {
+        "core": "core",
+        "engines": "engines",
+        "config": "config",
+        "app": "app",
+        "modules": "modules",
+        "kits": "kits",
+        "plugins": "plugins",
+        "storage": "storage",
+        "public": "public",
+        "views": "resources/views",
+        "lang": "resources/lang",
+        "routes": "routes"
+    },
+    "engines": {
+        "required": [
+            "container",
+            "config",
+            "event",
+            "error",
+            "log",
+            "console"
+        ],
+        "optional": [
+            "pipeline",
+            "compat",
+            "optimizer",
+            "module",
+            "test"
+        ]
+    },
+    "modules": {
+        "enabled": [],
+        "disabled": []
+    },
+    "kits": [
+        "tavaan.kit.blog",
+        "tavaan.kit.news",
+        "tavaan.kit.shop",
+        "tavaan.kit.forum"
     ],
-    "optional": [
-      "pipeline",
-      "compat",
-      "optimizer",
-      "module",
-      "test"
-    ]
-  },
-  "modules": {
-    "enabled": [],
-    "disabled": []
-  },
-  "kits": [
-    "tavaan.kit.blog",
-    "tavaan.kit.news",
-    "tavaan.kit.shop"
-  ],
-  "providers": "config/providers.php",
-  "scripts": {
-    "dev": [
-      "tvn serve --host=127.0.0.1 --port=8000"
-    ]
-  },
-  "build": {
-    "optimizer": [
-      "config",
-      "autoload"
-    ]
-  },
-  "security": {
-    "plugins_signature_required": true,
-    "allowed_plugin_vendors": [
-      "tavaan"
-    ]
-  }
+    "providers": "config/providers.php",
+    "scripts": {
+        "dev": [
+            "tvn serve --host=127.0.0.1 --port=8000"
+        ]
+    },
+    "build": {
+        "optimizer": [
+            "config",
+            "autoload"
+        ]
+    },
+    "security": {
+        "plugins_signature_required": true,
+        "allowed_plugin_vendors": [
+            "tavaan"
+        ]
+    }
 }

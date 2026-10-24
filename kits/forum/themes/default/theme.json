@@ -1,0 +1,11 @@
+{
+  "id": "default",
+  "name": "پوستهٔ پیش‌فرض کیت انجمن",
+  "rtl": true,
+  "font": "Vazirmatn",
+  "colors": {"primary": "#4f46e5", "secondary": "#1e1b4b", "accent": "#22c55e"},
+  "slots": ["header", "sidebar", "footer"],
+  "breakpoints": {"sm": 640, "md": 768, "lg": 1024, "xl": 1280},
+  "overrides": "views/",
+  "assets": "assets/"
+}

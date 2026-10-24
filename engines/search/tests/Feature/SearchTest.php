@@ -362,6 +362,28 @@ final class SearchTest extends TestCase
         $this->assertContains('لپ', $suggestions);
     }
 
+    public function testSuggestWithNumericTermsDoesNotCrash(): void
+    {
+        // 🔒 رگرسیون M9/forum: termهای رقمی پس از json round-trip کلید int
+        // می‌شوند — suggest() باید cast به string کند (str_starts_with TypeError).
+        $this->search->index('products', [
+            'id' => 'p-1405',
+            'title' => 'تقویم ۱۴۰۵',
+            'summary' => 'نسخه 2026 ویرایش دوم',
+            'category_id' => 3,
+            'price' => 1000,
+            'brand' => 'تقویم',
+        ], 'p-1405');
+
+        // کوئری بی‌نتیجه → مسیر suggest («آیا منظور شما…») با term رقمی در df
+        $result = $this->search->search('products', 'zzzzqqqq');
+        $this->assertSame(0, $result->total());
+        $this->assertIsArray($result->suggestions());
+
+        // suggest مستقیم هم نباید بمیرد
+        $this->assertIsArray($this->search->suggest('products', '14', 5));
+    }
+
     public function testDidYouMeanOnNoResults(): void
     {
         $this->seedProducts();

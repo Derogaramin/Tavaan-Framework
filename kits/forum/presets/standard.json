@@ -1,0 +1,19 @@
+{
+  "title_fa": "استاندارد",
+  "description": "پیش‌فرض DOC-094: flood ۳۰s/۱۰ پست، realtime و mention و اعلان‌ها روشن، karma استاندارد.",
+  "config": {
+    "forum": {
+      "per_page": 20,
+      "posts_per_page": 20,
+      "flood": {"enabled": true, "min_seconds": 30, "window_seconds": 300, "max_posts": 10},
+      "spam": {"max_links": 3, "honeypot_field": "website"},
+      "karma": {"enabled": true, "upvote_received": 2, "downvote_received": -1, "solution_author": 15, "thread_created": 1, "post_created": 1},
+      "mentions": {"enabled": true, "max_per_post": 10},
+      "realtime": {"enabled": true, "channel": "forum", "thread_channel_prefix": "forum.thread."},
+      "moderation": {"hide_on_resolve": true, "auto_hide_threshold": 0, "flag_once_per_user": true},
+      "notifications": {"reply_to_author": true, "reply_to_subscribers": true, "mention": true, "solution": true, "flagged_to_moderators": true, "thread_created_to_moderators": true, "moderator_roles": ["moderator", "admin"]},
+      "search": {"enabled": true, "threads_index": "forum_threads", "posts_index": "forum_posts"},
+      "cache": {"enabled": true, "ttl": 60, "tag": "forum"}
+    }
+  }
+}

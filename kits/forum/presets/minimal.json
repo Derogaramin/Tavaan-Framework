@@ -1,0 +1,16 @@
+{
+  "title_fa": "کمینه",
+  "description": "سبک: flood سخت‌گیرانه‌تر، بدون realtime، جست‌وجو فقط DB.",
+  "config": {
+    "forum": {
+      "per_page": 15,
+      "posts_per_page": 15,
+      "flood": {"enabled": true, "min_seconds": 60, "window_seconds": 300, "max_posts": 5},
+      "realtime": {"enabled": false},
+      "search": {"enabled": false},
+      "cache": {"enabled": true, "ttl": 120},
+      "mentions": {"enabled": false},
+      "notifications": {"reply_to_subscribers": false, "thread_created_to_moderators": false}
+    }
+  }
+}

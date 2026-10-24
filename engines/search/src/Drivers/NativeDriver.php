@@ -267,6 +267,9 @@ final class NativeDriver implements SearchDriverInterface
         $candidates = [];
         foreach ($queryTokens as $qt) {
             foreach (\array_keys($df) as $term) {
+                // 🔒 کلیدهای عددی (termهای رقمی) پس از json round-trip int
+                // می‌شوند — cast به string برای توابع رشته‌ای (M9/forum).
+                $term = (string) $term;
                 $score = 0;
                 if (\str_starts_with($term, $qt)) {
                     $score = 1000 - \mb_strlen($term);        // prefix: قوی‌تر

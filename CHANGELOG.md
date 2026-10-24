@@ -2,6 +2,19 @@
 
 فرمت: Keep a Changelog — نسخه‌گذاری: SemVer.
 
+## [0.12.0] - 2026-10-24 — فاز M9 (گام ۴): کیت انجمن 💬
+
+### افزوده شد
+- **ماژول `tavaan.forum`** (DOC-094 کامل): تالار تو‌در‌تو با شمارنده‌های همگام • موضوع/پست ULID با Markdown escape-first→sanitize دو‌لایه • **رأی ±۱ با toggle** (یکتایی post+user) و **Reputation/Karma** (upvote ۲+/downvote ۱−/solution ۱۵+/فعالیت ۱+، delta = f(new)−f(old)) • **پاسخ برگزیده Q&A** (نویسندهٔ موضوع یا moderator، یک solution در هر موضوع + thread.is_solved) • **نقل‌قول** (?quote= prefill + `GET /posts/{id}/quote` JSON) • **@username mention** (MentionExtractor فارسی/لاتین بدون code-block) با اعلان mail+database • **اشتراک موضوع** (دنبال‌کنندگان + اشتراک خودکار نویسنده) • **صف Moderation با flag** (pending→resolve(hide)/dismiss + auto_hide_threshold) • **ban کاربر** (banned_until با انقضای خودکار، انسداد مسیر نوشتن) • **ضداسپم سه‌لایه**: Throttle روت + FloodControl (min_interval+پنجرهٔ لغزان — دامنهٔ خالص) + honeypot + SpamFilter • **جست‌وجوی فارسی** (ایندکس رویدادمحور forum_threads/forum_posts + fallback LIKE با واریانت رقم فارسی/لاتین) • **Realtime/SSE بدون ext** (کانال‌های `forum` و `forum.thread.{ULID}` + کلاینت EventSource در صفحهٔ موضوع) • پروفایل عمومی عضو (username/karma/آمار) • پنل `/admin/forum/*` (تالارها/موضوعات: قفل+سنجاق+جابجایی+حذف/صف moderation+ban) • `tvn forum:sync-counters` • ۷ جدول `forum_*` • ۱۹ مجوز RBAC + ThreadPolicy/PostPolicy/ForumPolicy (config/rbac.php اعلامی) • seed دمو (تالارهای تو‌در‌تو + Q&A حل‌شده + صف moderation)
+- **کیت `tavaan.kit.forum`**: kit.json + ۳ preset (minimal سخت‌گیرانه/standard DOC-094/enterprise با auto-hide) + theme RTL indigo (vendor override) + roles.json (member/moderator/admin) + demo (انتصاب نقش) + راهنمای کاربر/ادمین
+- **۴۲ تست جدید** (۱۴۶۸ کل / ۹۴۹۱ assertion): ۲۴ Unit (FloodControl/SpamFilter/MentionExtractor/QuoteBuilder/ReputationCalculator/Username/Post entity) + ۱۸ Feature شامل **E2E-01..07 DOC-094 §8** (موضوع+پاسخ+اعلان، رأی/toggle/score/karma، پاسخ برگزیده+۴۰۳، flag→صف→hidden، جست‌وجوی فارسی+۱۴۰۵، broadcast+SSE، flood) + matrix نقش‌ها + ban + honeypot + XSS + mention + quote
+
+### اصلاح شد
+- **موتور search** (`NativeDriver::suggest`): termهای رقمی پس از json round-trip کلید int می‌شدند → `str_starts_with` TypeError در مسیر «آیا منظور شما…» — cast به string + تست رگرسیون (کشف توسط E2E-05 انجمن)
+
+### مستندات
+- DOC-094 §10 (وضعیت + بلوک ماشین‌خوان) • `docs/reports/M9-forum-implementation-report.md` • بک‌لاگ: TVN-0094 → done (M9: ۴ مانده/۴ انجام) • README ماژول/کیت
+
 ## [0.11.0] - 2026-10-24 — فاز M9 (گام ۳): کیت فروشگاه 🛒
 
 ### افزوده شد

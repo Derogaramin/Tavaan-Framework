@@ -1,0 +1,78 @@
+{
+  "$schema": "https://docs.tavaan.dev/schemas/module.v1.json",
+  "id": "tavaan.forum",
+  "type": "module",
+  "name": "Forum",
+  "title_fa": "انجمن",
+  "title_en": "Forum",
+  "version": "0.1.0",
+  "description": "انجمن گفت‌وجو: تالار تو‌در‌تو، موضوع، پست با نقل‌قول، رأی (+1/-1) با Reputation/Karma، پاسخ برگزیده (Q&A)، اشتراک موضوع، Moderation queue با flag، ضداسپم (rate limit + honeypot + flood control)، ذکر @username با اعلان، جست‌وجوی فارسی و Realtime/SSE (DOC-094).",
+  "namespace": "Modules\\Forum\\",
+  "autoload": {"psr-4": {"Modules\\Forum\\": "src/"}},
+  "providers": ["Modules\\Forum\\Providers\\ForumServiceProvider"],
+  "requires": {
+    "tavaan": "^1.0",
+    "php": ">=8.2",
+    "engines": ["view", "i18n", "search", "cache", "notification", "database", "rbac", "security", "media", "schedule", "realtime"],
+    "modules": ["tavaan.core-user", "tavaan.content", "tavaan.comment", "tavaan.media"]
+  },
+  "tables": ["forum_forums", "forum_threads", "forum_posts", "forum_votes", "forum_subscriptions", "forum_flags", "forum_profiles"],
+  "commands": ["Modules\\Forum\\Console\\Commands\\SyncCountersCommand"],
+  "routes": {
+    "web": "routes/web.php",
+    "admin": "routes/admin.php"
+  },
+  "views": {"namespace": "forum", "path": "views"},
+  "lang": {"path": "lang"},
+  "migrations": {"path": "migrations"},
+  "seeds": {"demo": "seeds/demo.php"},
+  "events": {
+    "published": [
+      {"name": "forum.thread.created", "class": "Modules\\Forum\\Domain\\Events\\ThreadWasCreated", "version": 1},
+      {"name": "forum.thread.updated", "class": "Modules\\Forum\\Domain\\Events\\ThreadWasUpdated", "version": 1},
+      {"name": "forum.post.created", "class": "Modules\\Forum\\Domain\\Events\\PostWasCreated", "version": 1},
+      {"name": "forum.post.updated", "class": "Modules\\Forum\\Domain\\Events\\PostWasUpdated", "version": 1},
+      {"name": "forum.post.hidden", "class": "Modules\\Forum\\Domain\\Events\\PostWasHidden", "version": 1},
+      {"name": "forum.post.deleted", "class": "Modules\\Forum\\Domain\\Events\\PostWasDeleted", "version": 1},
+      {"name": "forum.post.voted", "class": "Modules\\Forum\\Domain\\Events\\PostWasVoted", "version": 1},
+      {"name": "forum.post.flagged", "class": "Modules\\Forum\\Domain\\Events\\PostWasFlagged", "version": 1},
+      {"name": "forum.post.solved", "class": "Modules\\Forum\\Domain\\Events\\PostWasMarkedSolution", "version": 1}
+    ]
+  },
+  "permissions": {
+    "group": {"id": "forum", "title_fa": "انجمن"},
+    "items": [
+      {"key": "forum.forum.view", "title_fa": "مشاهدهٔ تالارها (مدیریت)", "title_en": "View forums (admin)"},
+      {"key": "forum.forum.manage", "title_fa": "مدیریت تالارها", "title_en": "Manage forums"},
+      {"key": "forum.thread.view", "title_fa": "مشاهدهٔ موضوعات (مدیریت)", "title_en": "View threads (admin)"},
+      {"key": "forum.thread.create", "title_fa": "ساخت موضوع", "title_en": "Create threads"},
+      {"key": "forum.thread.update", "title_fa": "ویرایش موضوع (همه)", "title_en": "Update any thread"},
+      {"key": "forum.thread.delete", "title_fa": "حذف موضوع", "title_en": "Delete threads"},
+      {"key": "forum.thread.lock", "title_fa": "قفل/بازکردن موضوع", "title_en": "Lock/unlock threads"},
+      {"key": "forum.thread.pin", "title_fa": "سنجاق‌کردن موضوع", "title_en": "Pin threads"},
+      {"key": "forum.thread.move", "title_fa": "جابجایی موضوع", "title_en": "Move threads"},
+      {"key": "forum.post.create", "title_fa": "ارسال پاسخ", "title_en": "Create posts"},
+      {"key": "forum.post.update", "title_fa": "ویرایش پست (همه)", "title_en": "Update any post"},
+      {"key": "forum.post.delete", "title_fa": "حذف پست", "title_en": "Delete posts"},
+      {"key": "forum.post.hide", "title_fa": "پنهان‌کردن پست", "title_en": "Hide posts"},
+      {"key": "forum.post.vote", "title_fa": "رأی‌دادن", "title_en": "Vote on posts"},
+      {"key": "forum.post.solution", "title_fa": "انتخاب پاسخ برگزیده (همه)", "title_en": "Mark any solution"},
+      {"key": "forum.flag.create", "title_fa": "گزارش پست (flag)", "title_en": "Flag posts"},
+      {"key": "forum.flag.manage", "title_fa": "مدیریت صف moderation", "title_en": "Manage moderation queue"},
+      {"key": "forum.profile.manage", "title_fa": "مدیریت پروفایل انجمن", "title_en": "Manage forum profile"},
+      {"key": "forum.user.ban", "title_fa": "ban کاربر", "title_en": "Ban users"}
+    ]
+  },
+  "navigation": [
+    {"title": "تالارها", "title_fa": "تالارها", "uri": "/admin/forum/forums", "icon": "💬", "permission": "forum.forum.view", "order": 30},
+    {"title": "موضوعات", "title_fa": "موضوعات", "uri": "/admin/forum/threads", "icon": "🗨️", "permission": "forum.thread.view", "order": 31},
+    {"title": "صف Moderation", "title_fa": "صف Moderation", "uri": "/admin/forum/moderation", "icon": "🚩", "permission": "forum.flag.manage", "order": 32}
+  ],
+  "database": {
+    "table_prefix": "forum_",
+    "tables": ["forum_forums", "forum_threads", "forum_posts", "forum_votes", "forum_subscriptions", "forum_flags", "forum_profiles"],
+    "seed_on_install": true
+  },
+  "docs": "modules/forum/README.md",
+  "notes": "کیت انجمن (kits/forum) این ماژول را با theme/preset/roles/demo نصب می‌کند — DOC-094/TVN-0094."
+}

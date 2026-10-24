@@ -126,3 +126,45 @@ GET  /forums/search?q=                جست‌وجو
 ## ۹. معیار پذیرش 🧪
 - AC-FORUM-01..07.
 - AC-FORUM-08: Realtime بدون ext (SSE) کار می‌کند.
+
+---
+
+## ۱۰. وضعیت پیاده‌سازی (M9 — TVN-0094) ✅
+
+| بخش | محل |
+|---|---|
+| ماژول دامنه | `modules/forum/` (tavaan.forum — hexagonal) |
+| کیت | `kits/forum/` (kit.json + ۳ preset + theme indigo + roles.json + demo + docs) |
+| نصب | `php bin/tvn kit:install forum --with-demo` |
+| جداول | `forum_forums` (parent_id) / `forum_threads` / `forum_posts` / `forum_votes` (uk post+user) / `forum_subscriptions` / `forum_flags` / `forum_profiles` (username یکتا + karma + ban) |
+| Aggregateها | Forum / Thread / Post / Flag / ForumProfile (+ ردیف‌های Vote/Subscription) — ULID برای Thread/Post |
+| نقش‌ها | member / moderator / admin (kits/forum/seed/roles.json + ۱۹ مجوز manifest + ThreadPolicy/PostPolicy/ForumPolicy اعلامی) |
+| ضداسپم | ThrottleMiddleware (روت) + FloodControl (min_interval+پنجرهٔ لغزان) + honeypot + SpamFilter (لینک/واژه) |
+| Reputation | ReputationCalculator (upvote ۲+ / downvote ۱− / solution ۱۵+ / فعالیت ۱+، کف صفر) روی forum_profiles.karma |
+| Realtime | ForumBroadcaster → کانال‌های `forum` و `forum.thread.{ULID}` + کلاینت SSE در صفحهٔ موضوع (`/events/stream` موتور — AC-FORUM-08) |
+| جست‌وجو | ایندکس `forum_threads`/`forum_posts` (رویدادمحور) + fallback LIKE با واریانت رقم فارسی/لاتین |
+| Moderation | flag → forum_flags (pending) → پنل `/admin/forum/moderation` → resolve(hide)/dismiss + auto_hide_threshold + ban کاربر (انقضای خودکار) |
+| Mention | MentionExtractor (فارسی/لاتین، بدون code-block، سقف) → اعلان mail+database |
+| نگهداری | `tvn forum:sync-counters [--dry-run]` |
+| تست | `modules/forum/tests/` — ۴۲ تست (۲۴ Unit + ۱۸ Feature: E2E-01..07 + matrix نقش‌ها/ban/honeypot/XSS/mention/quote/SSE) |
+
+انطباق: E2E-01 (موضوع+پاسخ+اشتراک+اعلان) ✅ • E2E-02 (رأی/toggle/score/karma) ✅ •
+E2E-03 (پاسخ برگزیده: نویسندهٔ موضوع/moderator + ۴۰۳ غریبه) ✅ • E2E-04 (flag →
+صف → resolve → hidden + جای‌نما برای moderator) ✅ • E2E-05 (جست‌وجوی فارسی +
+رقم فارسی ۱۴۰۵↔1405) ✅ • E2E-06 (broadcast روی کانال موضوع + SSE endpoint
+بدون ext) ✅ • E2E-07 (flood control — پاسخ سریع دوم رد شد) ✅ • AC-FORUM-08
+(SSE موتور realtime بدون ext — StreamedResponse + EventSource کلاینت) ✅
+
+```yaml
+# machine-readable: tavaan.kit.forum.v1 (وضعیت M9)
+kit:
+  id: tavaan.kit.forum
+  status: implemented
+  ticket: TVN-0094
+  modules: [tavaan.core-user, tavaan.content, tavaan.comment, tavaan.media, tavaan.forum]
+  routes_public: [/forums, /forums/search, /forums/{slug}, /forums/{slug}/new, /threads, /threads/{slug}, /threads/{id}/posts, /threads/{id}/subscribe, /threads/{id}/unsubscribe, /posts/{id}/vote, /posts/{id}/mark-solution, /posts/{id}/flag, /posts/{id}/quote, /posts/{id}/edit, /members/{username}]
+  routes_admin: [/admin/forum/forums, /admin/forum/threads, /admin/forum/moderation, /admin/forum/posts/{id}/hide, /admin/forum/users/{id}/ban]
+  events: [forum.thread.created, forum.thread.updated, forum.post.created, forum.post.updated, forum.post.hidden, forum.post.deleted, forum.post.voted, forum.post.flagged, forum.post.solved]
+  channels: [forum, forum.thread.{threadId}]
+  tests: {unit: modules/forum/tests/Unit, feature: modules/forum/tests/Feature}
+```

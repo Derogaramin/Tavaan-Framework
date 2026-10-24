@@ -1,0 +1,23 @@
+{
+  "roles": [
+    {"key": "member", "title_fa": "عضو", "title_en": "Member",
+     "permissions": ["forum.thread.create", "forum.post.create", "forum.post.vote",
+                      "forum.flag.create", "forum.profile.manage"]},
+    {"key": "moderator", "title_fa": "ناظم", "title_en": "Moderator",
+     "permissions": ["forum.thread.create", "forum.post.create", "forum.post.vote",
+                      "forum.flag.create", "forum.profile.manage",
+                      "forum.thread.view", "forum.thread.update", "forum.thread.lock",
+                      "forum.thread.pin", "forum.thread.move",
+                      "forum.post.update", "forum.post.hide", "forum.post.solution",
+                      "forum.flag.manage"]},
+    {"key": "admin", "title_fa": "مدیر", "title_en": "Admin",
+     "permissions": ["forum.forum.view", "forum.forum.manage",
+                      "forum.thread.view", "forum.thread.create", "forum.thread.update",
+                      "forum.thread.delete", "forum.thread.lock", "forum.thread.pin", "forum.thread.move",
+                      "forum.post.create", "forum.post.update", "forum.post.delete", "forum.post.hide",
+                      "forum.post.vote", "forum.post.solution",
+                      "forum.flag.create", "forum.flag.manage",
+                      "forum.profile.manage", "forum.user.ban",
+                      "user.view", "user.create", "user.update", "user.delete"]}
+  ]
+}

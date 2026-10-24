@@ -1,0 +1,19 @@
+{
+  "title_fa": "سازمانی",
+  "description": "انجمن پرحجم: auto-hide با ۳ گزارش، flood محافظه‌کارانه‌تر، کش کوتاه‌تر، اعلان صف moderation به همهٔ نقش‌های مدیریتی.",
+  "config": {
+    "forum": {
+      "per_page": 25,
+      "posts_per_page": 25,
+      "flood": {"enabled": true, "min_seconds": 20, "window_seconds": 600, "max_posts": 30},
+      "spam": {"max_links": 2, "honeypot_field": "website"},
+      "karma": {"enabled": true, "upvote_received": 2, "downvote_received": -2, "solution_author": 20, "thread_created": 1, "post_created": 1},
+      "mentions": {"enabled": true, "max_per_post": 20},
+      "realtime": {"enabled": true, "channel": "forum", "thread_channel_prefix": "forum.thread."},
+      "moderation": {"hide_on_resolve": true, "auto_hide_threshold": 3, "flag_once_per_user": true},
+      "notifications": {"reply_to_author": true, "reply_to_subscribers": true, "mention": true, "solution": true, "flagged_to_moderators": true, "thread_created_to_moderators": true, "moderator_roles": ["moderator", "admin", "chief-editor"]},
+      "search": {"enabled": true, "threads_index": "forum_threads", "posts_index": "forum_posts"},
+      "cache": {"enabled": true, "ttl": 30, "tag": "forum"}
+    }
+  }
+}
