@@ -1,0 +1,21 @@
+{
+  "roles": [
+    {"key": "customer", "title_fa": "مشتری", "title_en": "Customer", "permissions": []},
+    {"key": "shop-operator", "title_fa": "اپراتور فروشگاه", "title_en": "Shop Operator",
+     "permissions": ["shop.product.view", "shop.product.create", "shop.product.update",
+                      "shop.order.view", "shop.comment.view"]},
+    {"key": "shop-manager", "title_fa": "مدیر فروشگاه", "title_en": "Shop Manager",
+     "permissions": ["shop.product.view", "shop.product.create", "shop.product.update", "shop.product.delete",
+                      "shop.order.view", "shop.order.update", "shop.order.refund", "shop.order.delete",
+                      "shop.inventory.manage", "shop.discount.manage", "shop.report.view",
+                      "shop.comment.view", "shop.comment.approve", "shop.comment.delete"]},
+    {"key": "inventory-keeper", "title_fa": "انباردار", "title_en": "Inventory Keeper",
+     "permissions": ["shop.product.view", "shop.inventory.manage"]},
+    {"key": "admin", "title_fa": "مدیر کل", "title_en": "Admin",
+     "permissions": ["shop.product.view", "shop.product.create", "shop.product.update", "shop.product.delete",
+                      "shop.order.view", "shop.order.update", "shop.order.refund", "shop.order.delete",
+                      "shop.inventory.manage", "shop.discount.manage", "shop.report.view",
+                      "shop.comment.view", "shop.comment.approve", "shop.comment.delete",
+                      "user.view", "user.create", "user.update", "user.delete"]}
+  ]
+}

@@ -341,3 +341,52 @@ POST   /api/v1/shop/orders/{id}/cancel    لغو
 - AC-SHOP-04: جست‌وجوی فارسی با نرمال‌سازی.
 - AC-SHOP-05: گزارش فروش با report engine.
 - AC-SHOP-06: ۰ نقض مرز ماژول (`arch:check`).
+
+---
+
+## ۱۲. وضعیت پیاده‌سازی (M9 — TVN-0093) ✅
+
+| بخش | محل |
+|---|---|
+| ماژول دامنه | `modules/shop/` (tavaan.shop — ساختار §2: Domain/Application/Infrastructure/Http/Policies) |
+| کیت | `kits/shop/` (kit.json + ۳ preset + theme + roles.json + demo + docs) |
+| نصب | `php bin/tvn kit:install shop --preset=standard --with-demo` |
+| جداول | `shop_products` / `shop_product_variants` / `shop_categories` / `shop_carts` / `shop_cart_items` / `shop_orders` / `shop_order_items` / `shop_coupons` / `shop_comments` / `shop_stock_movements` |
+| پول | **int minor-unit (ADR-0013)** به‌جای DECIMAL(18,4) §3 — انطباق در گزارش M9 گام ۳ |
+| PlaceOrder | تراکنش DB + refresh قیمت از کاتالوگ + کوپن + مالیات/ارسال + `InventoryService.reserve` (UPDATE اتمیک شرطی — همه-یا-هیچ) + Outbox رویداد |
+| پرداخت | پورت ماژولی `PaymentGatewayPort` با دو آداپتر: `sandbox` (شبیه‌ساز قطعی `/shop/pay/sandbox/{authority}`) و `engine` (درگاه‌های واقعی موتور payment — verify server-to-server با مبلغ سفارش محلی) |
+| workflow | OrderStatus شش‌وضعیتی با ماتریس انتقال (pending→paid→shipped→delivered + canceled/refunded) • لغو = آزادسازی موجودی + refund خودکار |
+| موجودی | حرکت‌نامهٔ `shop_stock_movements` (reserve/release/adjust) + رویداد `shop.stock.low` |
+| کوپن | درصدی (با سقف) / ثابت + min_cart + انقضا + ظرفیت مصرف + consume پس از سفارش |
+| مالیات/ارسال | PricingService (percent + shipping_taxable + flat/free_threshold) — نرخ‌ها از preset |
+| نقش‌ها | customer / shop-operator / shop-manager / inventory-keeper / admin (kits/shop/seed/roles.json + ۱۴ مجوز manifest) |
+| API | `/api/v1/shop/*` — §7 کامل (products/categories/cart/checkout/orders/cancel) |
+| جست‌وجو | ایندکس فارسی `shop_products` (رویداد → Search) + fallback LIKE + ارقام فارسی |
+| نقد/بررسی | پورت ماژول comment روی `shop_comments` + moderation + sanitize پروفایل plain |
+| گزارش فروش | `salesStats` (کارت‌های داشبورد) + `GET /admin/shop/orders/sales.csv` (مجوز shop.report.view) |
+| تست | `modules/shop/tests/` — ۵۶ تست / ۳۷۶ assertion (Unit دامنه + Feature E2E-01..08) |
+
+انطباق: E2E-01 (مرور→سبد→checkout→پرداخت موفق→تأیید+اعلان) ✅ • E2E-02 (موجودی
+ناکافی→reserve خطا+rollback) ✅ • E2E-03 (پرداخت ناموفق→pending+retry) ✅ •
+E2E-04 (لغو→بازگشت موجودی+refund) ✅ • E2E-05 (کوپن+سقف+انقضا) ✅ • E2E-06
+(مالیات/ارسال در total + آستانهٔ رایگان) ✅ • E2E-07 (جست‌وجوی فارسی با رقم
+فارسی) ✅ • E2E-08 (همزمانی آخرین موجودی + اتمیک بودن reserve) ✅ •
+AC-SHOP-02 (درگاه واقعی: آداپتر engine + پیکربندی preset=enterprise؛ اجرای
+sandbox شبکه‌ای واقعی محیط این مایلستون خارج از CI است) • AC-SHOP-05
+(آمار فروش + CSV؛ اتصال ReportBuilder به read model در گام گزارش‌ها تکمیل
+می‌شود) • AC-SHOP-06 (arch:check — ۰ نقض) ✅.
+
+```yaml
+# machine-readable: tavaan.kit.shop.v1 (وضعیت M9)
+kit:
+  id: tavaan.kit.shop
+  status: implemented
+  ticket: TVN-0093
+  modules: [tavaan.core-user, tavaan.content, tavaan.comment, tavaan.media, tavaan.shop]
+  routes_public: [/shop, /shop/search, /shop/categories/{slug}, /shop/products/{slug}, /shop/cart, /shop/checkout, /shop/pay/{orderNumber}, /shop/pay/sandbox/{authority}, /shop/pay/callback, /shop/orders]
+  routes_api: [/api/v1/shop/products, /api/v1/shop/cart, /api/v1/shop/checkout, /api/v1/shop/orders]
+  routes_admin: [/admin/shop/products, /admin/shop/categories, /admin/shop/orders, /admin/shop/coupons, /admin/shop/comments]
+  events: [shop.product.updated, shop.cart.updated, shop.order.placed, shop.order.paid, shop.order.shipped, shop.order.canceled, shop.order.refunded, shop.stock.low]
+  money: int-minor-unit (ADR-0013; جایگزین DECIMAL §3)
+  tests: {unit: modules/shop/tests/Unit, feature: modules/shop/tests/Feature}
+```

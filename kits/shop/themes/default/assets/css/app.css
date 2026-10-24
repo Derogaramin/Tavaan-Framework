@@ -1,0 +1,23 @@
+/*
+ * کیت فروشگاه — assets پوستهٔ پیش‌فرض
+ * پس از kit:install در public/assets/kits/shop/app.css قرار می‌گیرد.
+ * layout کیت استایل‌ها را inline دارد (بدون وابستگی شبکه)؛ این فایل برای
+ * سفارشی‌سازی سریع فروشگاه‌ساز است: متغیرهای CSS را override کنید.
+ */
+:root {
+    --primary: #0d9488;
+    --primary-dark: #0f766e;
+    --accent: #f59e0b;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --danger: #dc2626;
+    --success: #16a34a;
+    --radius: 12px;
+}
+
+/* نمونهٔ شخصی‌سازی: حالت شب
+body.dark { --bg: #0f172a; --card: #1e293b; --text: #e2e8f0; --border: #334155; }
+*/

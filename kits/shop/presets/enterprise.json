@@ -1,0 +1,16 @@
+{
+  "title_fa": "سازمانی",
+  "description": "درگاه واقعی موتور payment، مالیات بر ارسال، کش تهاجمی‌تر، همهٔ اعلان‌ها.",
+  "config": {
+    "shop": {
+      "per_page": 24,
+      "cache": {"enabled": true, "list_ttl": 120},
+      "tax": {"percent": 10.0, "shipping_taxable": true},
+      "shipping": {"flat": 800000, "free_threshold": 100000000},
+      "payment": {"driver": "engine", "gateway": "", "callback_url": "/shop/pay/callback"},
+      "reviews": {"enabled": true, "guest_allowed": false},
+      "notifications": {"order_paid": true, "order_shipped": true, "order_canceled": true},
+      "search": {"enabled": true, "index": "shop_products"}
+    }
+  }
+}

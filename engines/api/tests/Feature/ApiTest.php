@@ -616,8 +616,12 @@ final class ApiTest extends TestCase
         $v1 = $generator->routesForVersion('v1', 'api');
         $v2 = $generator->routesForVersion('v2', 'api');
 
-        // routes/api.php نمونه هم بارگذاری می‌شود — فقط روت‌های products این تست را می‌شماریم
-        $v1Products = \array_filter($v1, static fn ($r): bool => \str_contains($r->uri(), 'products'));
+        // routes/api.php نمونه هم بارگذاری می‌شود — فقط روت‌های products این تست را می‌شماریم.
+        // روت‌های ماژول‌ها (مثلاً /api/v1/shop/products از ماژول فروشگاه M9) مستثنا هستند.
+        $v1Products = \array_filter(
+            $v1,
+            static fn ($r): bool => \str_contains($r->uri(), 'products') && !\str_contains($r->uri(), 'shop'),
+        );
         $this->assertCount(3, $v1Products);
         $this->assertCount(1, $v2);
         $this->assertStringContainsString('v2', $v2[0]->uri());

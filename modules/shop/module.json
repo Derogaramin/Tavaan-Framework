@@ -1,0 +1,74 @@
+{
+  "$schema": "https://docs.tavaan.dev/schemas/module.v1.json",
+  "id": "tavaan.shop",
+  "type": "module",
+  "name": "Shop",
+  "title_fa": "فروشگاه",
+  "title_en": "Shop",
+  "version": "0.1.0",
+  "description": "فروشگاه اینترنتی کامل (DOC-093): کاتالوگ محصول/variant/دسته، سبد (مهمان+کاربر)، کوپن تخفیف، مالیات/ارسال، checkout با درگاه (sandbox/engine)، سفارش با workflow، موجودی race-safe با history، نقد و بررسی، جست‌وجوی فارسی و API (مجموعهٔ §7).",
+  "namespace": "Modules\\Shop\\",
+  "autoload": {"psr-4": {"Modules\\Shop\\": "src/"}},
+  "providers": ["Modules\\Shop\\Providers\\ShopServiceProvider"],
+  "requires": {
+    "tavaan": "^1.0",
+    "php": ">=8.2",
+    "engines": ["view", "i18n", "search", "cache", "notification", "database", "rbac", "security", "media", "payment", "session"],
+    "modules": ["tavaan.core-user", "tavaan.content", "tavaan.comment", "tavaan.media"]
+  },
+  "tables": ["shop_products", "shop_product_variants", "shop_categories", "shop_carts", "shop_cart_items", "shop_orders", "shop_order_items", "shop_coupons", "shop_comments", "shop_stock_movements"],
+  "commands": [],
+  "routes": {
+    "web": "routes/web.php",
+    "api": "routes/api.php",
+    "admin": "routes/admin.php"
+  },
+  "views": {"namespace": "shop", "path": "views"},
+  "lang": {"path": "lang"},
+  "migrations": {"path": "migrations"},
+  "seeds": {"demo": "seeds/demo.php"},
+  "events": {
+    "published": [
+      {"name": "shop.product.updated", "class": "Modules\\Shop\\Domain\\Events\\ProductWasUpdated", "version": 1},
+      {"name": "shop.cart.updated", "class": "Modules\\Shop\\Domain\\Events\\CartWasUpdated", "version": 1},
+      {"name": "shop.order.placed", "class": "Modules\\Shop\\Domain\\Events\\OrderWasPlaced", "version": 1},
+      {"name": "shop.order.paid", "class": "Modules\\Shop\\Domain\\Events\\OrderWasPaid", "version": 1},
+      {"name": "shop.order.shipped", "class": "Modules\\Shop\\Domain\\Events\\OrderWasShipped", "version": 1},
+      {"name": "shop.order.canceled", "class": "Modules\\Shop\\Domain\\Events\\OrderWasCanceled", "version": 1},
+      {"name": "shop.order.refunded", "class": "Modules\\Shop\\Domain\\Events\\OrderWasRefunded", "version": 1},
+      {"name": "shop.stock.low", "class": "Modules\\Shop\\Domain\\Events\\StockWasLow", "version": 1}
+    ]
+  },
+  "permissions": {
+    "group": {"id": "shop", "title_fa": "فروشگاه"},
+    "items": [
+      {"key": "shop.product.view", "title_fa": "مشاهدهٔ محصولات (مدیریت)", "title_en": "View products (admin)"},
+      {"key": "shop.product.create", "title_fa": "ساخت محصول", "title_en": "Create products"},
+      {"key": "shop.product.update", "title_fa": "ویرایش محصول", "title_en": "Update products"},
+      {"key": "shop.product.delete", "title_fa": "حذف محصول", "title_en": "Delete products"},
+      {"key": "shop.order.view", "title_fa": "مشاهدهٔ سفارش‌ها", "title_en": "View orders"},
+      {"key": "shop.order.update", "title_fa": "تغییر وضعیت سفارش", "title_en": "Update order status"},
+      {"key": "shop.order.refund", "title_fa": "استرداد سفارش", "title_en": "Refund orders"},
+      {"key": "shop.order.delete", "title_fa": "حذف سفارش", "title_en": "Delete orders"},
+      {"key": "shop.inventory.manage", "title_fa": "مدیریت موجودی", "title_en": "Manage inventory"},
+      {"key": "shop.discount.manage", "title_fa": "مدیریت تخفیف‌ها", "title_en": "Manage coupons"},
+      {"key": "shop.report.view", "title_fa": "گزارش فروش", "title_en": "View sales report"},
+      {"key": "shop.comment.view", "title_fa": "مشاهدهٔ نقد و بررسی‌ها", "title_en": "View reviews"},
+      {"key": "shop.comment.approve", "title_fa": "تأیید نقد و بررسی", "title_en": "Approve reviews"},
+      {"key": "shop.comment.delete", "title_fa": "حذف نقد و بررسی", "title_en": "Delete reviews"}
+    ]
+  },
+  "navigation": [
+    {"title": "محصولات", "title_fa": "محصولات", "uri": "/admin/shop/products", "icon": "📦", "permission": "shop.product.view", "order": 30},
+    {"title": "سفارش‌ها", "title_fa": "سفارش‌ها", "uri": "/admin/shop/orders", "icon": "🧾", "permission": "shop.order.view", "order": 31},
+    {"title": "تخفیف‌ها", "title_fa": "کوپن‌ها", "uri": "/admin/shop/coupons", "icon": "🎟️", "permission": "shop.discount.manage", "order": 32},
+    {"title": "نقدها", "title_fa": "نقد و بررسی", "uri": "/admin/shop/comments", "icon": "⭐", "permission": "shop.comment.view", "order": 33}
+  ],
+  "database": {
+    "table_prefix": "shop_",
+    "tables": ["shop_products", "shop_product_variants", "shop_categories", "shop_carts", "shop_cart_items", "shop_orders", "shop_order_items", "shop_coupons", "shop_comments", "shop_stock_movements"],
+    "seed_on_install": true
+  },
+  "docs": "modules/shop/README.md",
+  "notes": "مبالغ int minor-unit (ADR-0013) — انطباق با DECIMAL مستند DOC-093 در گزارش M9 ثبت شد. کیت: kits/shop."
+}

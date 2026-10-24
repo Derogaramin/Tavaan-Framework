@@ -1,0 +1,16 @@
+{
+  "title_fa": "استاندارد",
+  "description": "پیش‌فرض DOC-093: مالیات ۹٪، ارسال تخت با آستانهٔ رایگان، کش فهرست، اعلان‌های کامل.",
+  "config": {
+    "shop": {
+      "per_page": 12,
+      "cache": {"enabled": true, "list_ttl": 60},
+      "tax": {"percent": 9.0, "shipping_taxable": false},
+      "shipping": {"flat": 500000, "free_threshold": 50000000},
+      "payment": {"driver": "sandbox"},
+      "reviews": {"enabled": true, "guest_allowed": true},
+      "notifications": {"order_paid": true, "order_shipped": true, "order_canceled": true},
+      "search": {"enabled": true, "index": "shop_products"}
+    }
+  }
+}

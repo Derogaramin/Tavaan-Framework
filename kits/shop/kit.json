@@ -1,0 +1,45 @@
+{
+  "id": "tavaan.kit.shop",
+  "title_fa": "کیت فروشگاه",
+  "title_en": "Shop Kit",
+  "version": "1.0.0",
+  "tavaan": "^1.0",
+  "architecture": "modular",
+  "description": "فروشگاه اینترنتی کامل: کاتالوگ با variant، سبد مهمان/کاربر، کوپن تخفیف، مالیات و ارسال، checkout با درگاه پرداخت (sandbox/engine)، workflow سفارش، موجودی race-safe با حرکت‌نامه، نقد و بررسی با moderation، جست‌وجوی فارسی، پنل مدیریت و API (DOC-093).",
+
+  "modules": [
+    {"id": "tavaan.core-user", "required": true},
+    {"id": "tavaan.content",   "required": true},
+    {"id": "tavaan.comment",   "required": true},
+    {"id": "tavaan.media",     "required": true},
+    {"id": "tavaan.shop",      "required": true},
+    {"id": "tavaan.blog",      "required": false, "note": "وبلاگ/محتوای بازاریابی — اختیاری"},
+    {"id": "tavaan.news",      "required": false, "note": "اعلامیه‌های فروشگاه — اختیاری"}
+  ],
+
+  "engines": {
+    "required": ["view", "i18n", "search", "cache", "notification", "media", "payment", "session", "rbac", "security", "database"],
+    "recommended": ["queue", "report", "audit", "schedule"]
+  },
+
+  "theme": "themes/default",
+  "default_preset": "standard",
+
+  "roles": ["customer", "shop-operator", "shop-manager", "inventory-keeper", "admin"],
+  "demo_data": "seed/demo",
+
+  "requirements": {
+    "php": ">=8.2",
+    "extensions": ["pdo", "mbstring"],
+    "storage_mb": 500,
+    "memory_mb": 128
+  },
+
+  "install": {
+    "steps": ["env", "key:generate", "migrate", "rbac:sync", "seed:demo", "optimize"],
+    "wizard": false
+  },
+
+  "health_check": "/shop",
+  "docs": "kits/shop/README.md"
+}

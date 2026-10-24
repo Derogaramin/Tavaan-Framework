@@ -2,6 +2,19 @@
 
 فرمت: Keep a Changelog — نسخه‌گذاری: SemVer.
 
+## [0.11.0] - 2026-10-24 — فاز M9 (گام ۳): کیت فروشگاه 🛒
+
+### افزوده شد
+- **ماژول `tavaan.shop`** (DOC-093 کامل — بزرگ‌ترین کیت M9): کاتالوگ (محصول/variant/دستهٔ تو‌در‌تو/ویژگی‌های پویا/تصویر شاخص) • سبد خرید مهمان+کاربر با ادغام قلم و snapshot قیمت • **PlaceOrder در تراکنش DB** (refresh قیمت از کاتالوگ معتبر → کوپن → مالیات/ارسال → reserve موجودی → ذخیره → تخلیهٔ سبد → رویدادها) • **موجودی race-safe** با UPDATE اتمیک شرطی (`stock >= q`) + همه-یا-هیچ + حرکت‌نامهٔ `shop_stock_movements` + رویداد `shop.stock.low` • workflow شش‌وضعیتی سفارش با ماتریس انتقال (ship/deliver/cancel/refund — لغو = بازگشت موجودی + refund خودکار) • کوپن درصدی/ثابت با سقف/انقضا/ظرفیت/min_cart • PricingService (مالیات ٪ + shipping_taxable + ارسال تخت/آستانهٔ رایگان) • **پورت پرداخت ماژولی** با دو آداپتر: Sandbox (شبیه‌ساز قطعی با صفحهٔ `/shop/pay/sandbox/{authority}` و verify با مبلغ سفارش محلی) و Engine (درگاه‌های واقعی موتور payment از راه Facade) • نقد و بررسی با moderation + sanitize پروفایل plain • جست‌وجوی فارسی (ایندکس رویدادمحور + fallback + ارقام فارسی) • کش tag-based کاتالوگ + invalidate • اعلان‌های mail+database (پرداخت/ارسال/لغو) • API کامل §7 (`/api/v1/shop/*`) • پنل `/admin/shop/*` (محصولات+variant+موجودی، سفارش‌ها+آمار+CSV، کوپن‌ها، دسته‌ها، نقدها) • ۱۰ جدول `shop_*` • ۱۴ مجوز RBAC + ProductPolicy/OrderPolicy (config/rbac.php) • seed دمو (۳ دسته/۶ محصول/variant/۲ کوپن)
+- **کیت `tavaan.kit.shop`**: kit.json + ۳ preset (minimal/standard مالیات ۹٪/enterprise با درگاه واقعی) + theme RTL (نوار اعلان + برند از config) + roles.json (۵ نقش DOC-093 §5) + demo (انتصاب نقش + کوپن WELCOME1405) + راهنمای کاربر/ادمین
+- **۵۶ تست جدید** (۱۴۲۵ کل): ۲۸ Unit دامنه (Money/ماتریس OrderStatus/invariant مالی Order/Cart/Coupon/Pricing) + ۲۸ Feature شامل **E2E-01..08 DOC-093 §10** (مرور→پرداخت موفق، موجودی ناکافی، پرداخت ناموفق+retry، لغو+refund، کوپن+سقف، مالیات/ارسال، جست‌وجوی فارسی، همزمانی آخرین موجودی) + API/RBAC/workflow/moderation
+
+### اصلاح شد
+- **تست موتور api** (`testRoutesForVersionFiltering`): فیلتر شمارش روت‌ها ماژول‌ها را مستثنا کرد — فرض ضمنی «تنها روت‌های products نمونه» با `/api/v1/shop/products` ماژول فروشگاه نقض شده بود
+
+### مستندات
+- DOC-093 §12 (وضعیت + بلوک ماشین‌خوان) • `docs/reports/M9-shop-implementation-report.md` • بک‌لاگ: TVN-0093 → done • README ماژول/کیت
+
 ## [0.10.0] - 2026-10-24 — فاز M9 (گام ۲): کیت خبرگزاری 📰
 
 ### افزوده شد

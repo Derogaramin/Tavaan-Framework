@@ -1,0 +1,15 @@
+{
+  "title_fa": "مینیمال",
+  "description": "کمترین منابع: کش خاموش، بدون مالیات، ارسال تخت ساده — مناسب توسعه/دمو.",
+  "config": {
+    "shop": {
+      "per_page": 12,
+      "cache": {"enabled": false},
+      "tax": {"percent": 0.0, "shipping_taxable": false},
+      "shipping": {"flat": 300000, "free_threshold": null},
+      "payment": {"driver": "sandbox"},
+      "reviews": {"enabled": true, "guest_allowed": true},
+      "notifications": {"order_paid": true, "order_shipped": false, "order_canceled": false}
+    }
+  }
+}
