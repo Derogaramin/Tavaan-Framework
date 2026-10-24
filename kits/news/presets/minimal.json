@@ -1,0 +1,12 @@
+{
+  "title_fa": "کمینه",
+  "description": "سبک: کش کوتاه‌تر، بدون realtime، نظرات فقط کاربران.",
+  "config": {
+    "news": {
+      "per_page": 8,
+      "cache": {"enabled": true, "list_ttl": 30, "article_ttl": 120, "breaking_ttl": 10},
+      "realtime": {"enabled": false},
+      "comments": {"guest_allowed": false, "notify_author": false}
+    }
+  }
+}

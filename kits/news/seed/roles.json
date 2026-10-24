@@ -1,0 +1,25 @@
+{
+  "roles": [
+    {"key": "reader", "title_fa": "خواننده", "title_en": "Reader", "permissions": []},
+    {"key": "reporter", "title_fa": "خبرنگار", "title_en": "Reporter",
+     "permissions": ["news.article.view", "news.article.create", "news.article.submit"]},
+    {"key": "editor", "title_fa": "ویراستار", "title_en": "Editor",
+     "permissions": ["news.article.view", "news.article.create", "news.article.submit",
+                      "news.article.update", "news.article.review", "news.article.approve",
+                      "news.comment.view", "news.comment.approve", "news.comment.delete",
+                      "news.category.view"]},
+    {"key": "chief-editor", "title_fa": "سردبیر", "title_en": "Chief Editor",
+     "permissions": ["news.article.view", "news.article.create", "news.article.submit",
+                      "news.article.update", "news.article.review", "news.article.approve",
+                      "news.article.publish", "news.article.breaking", "news.article.delete",
+                      "news.category.view", "news.category.manage",
+                      "news.comment.view", "news.comment.approve", "news.comment.delete"]},
+    {"key": "admin", "title_fa": "مدیر", "title_en": "Admin",
+     "permissions": ["news.article.view", "news.article.create", "news.article.submit",
+                      "news.article.update", "news.article.review", "news.article.approve",
+                      "news.article.publish", "news.article.delete", "news.article.breaking",
+                      "news.category.view", "news.category.manage",
+                      "news.comment.view", "news.comment.approve", "news.comment.delete",
+                      "user.view", "user.create", "user.update", "user.delete"]}
+  ]
+}

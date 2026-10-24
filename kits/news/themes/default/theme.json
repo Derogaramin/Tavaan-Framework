@@ -1,0 +1,11 @@
+{
+  "id": "default",
+  "name": "پوستهٔ پیش‌فرض کیت خبرگزاری",
+  "rtl": true,
+  "font": "Vazirmatn",
+  "colors": {"primary": "#b91c1c", "secondary": "#111827", "accent": "#f59e0b"},
+  "slots": ["header", "breaking-bar", "sidebar", "footer"],
+  "breakpoints": {"sm": 640, "md": 768, "lg": 1024, "xl": 1280},
+  "overrides": "views/",
+  "assets": "assets/"
+}

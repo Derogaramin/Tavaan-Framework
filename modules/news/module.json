@@ -1,0 +1,72 @@
+{
+  "$schema": "https://docs.tavaan.dev/schemas/module.v1.json",
+  "id": "tavaan.news",
+  "type": "module",
+  "name": "News",
+  "title_fa": "خبرگزاری",
+  "title_en": "News Portal",
+  "version": "0.1.0",
+  "description": "پرتال خبری/مجله: workflow انتشار (draft→review→approved→published)، خبر فوری (breaking) با realtime، زمان‌بندی انتشار، گالری، کش تگ‌محور + ETag، AMP/JSON-LD/RSS، جست‌وجوی فارسی، نظرات با moderation و دسته‌های تو‌در‌تو (DOC-092).",
+  "namespace": "Modules\\News\\",
+  "autoload": {"psr-4": {"Modules\\News\\": "src/"}},
+  "providers": ["Modules\\News\\Providers\\NewsServiceProvider"],
+  "requires": {
+    "tavaan": "^1.0",
+    "php": ">=8.2",
+    "engines": ["view", "i18n", "search", "cache", "notification", "database", "rbac", "security", "media", "schedule", "realtime"],
+    "modules": ["tavaan.core-user", "tavaan.content", "tavaan.comment", "tavaan.media"]
+  },
+  "tables": ["news_articles", "news_categories", "news_tags", "news_article_tag", "news_comments"],
+  "commands": ["Modules\\News\\Console\\Commands\\PublishScheduledArticlesCommand"],
+  "routes": {
+    "web": "routes/web.php",
+    "admin": "routes/admin.php"
+  },
+  "views": {"namespace": "news", "path": "views"},
+  "lang": {"path": "lang"},
+  "migrations": {"path": "migrations"},
+  "seeds": {"demo": "seeds/demo.php"},
+  "events": {
+    "published": [
+      {"name": "news.article.submitted", "class": "Modules\\News\\Domain\\Events\\ArticleWasSubmitted", "version": 1},
+      {"name": "news.article.approved", "class": "Modules\\News\\Domain\\Events\\ArticleWasApproved", "version": 1},
+      {"name": "news.article.rejected", "class": "Modules\\News\\Domain\\Events\\ArticleWasRejected", "version": 1},
+      {"name": "news.article.published", "class": "Modules\\News\\Domain\\Events\\ArticleWasPublished", "version": 1},
+      {"name": "news.article.updated", "class": "Modules\\News\\Domain\\Events\\ArticleWasUpdated", "version": 1},
+      {"name": "news.breaking.published", "class": "Modules\\News\\Domain\\Events\\BreakingNewsWasPublished", "version": 1},
+      {"name": "news.comment.submitted", "class": "Modules\\News\\Domain\\Events\\NewsCommentWasSubmitted", "version": 1},
+      {"name": "news.comment.approved", "class": "Modules\\News\\Domain\\Events\\NewsCommentWasApproved", "version": 1}
+    ]
+  },
+  "permissions": {
+    "group": {"id": "news", "title_fa": "خبرگزاری"},
+    "items": [
+      {"key": "news.article.view", "title_fa": "مشاهدهٔ اخبار (مدیریت)", "title_en": "View articles (admin)"},
+      {"key": "news.article.create", "title_fa": "نوشتن خبر", "title_en": "Create articles"},
+      {"key": "news.article.update", "title_fa": "ویرایش خبر (همه)", "title_en": "Update any article"},
+      {"key": "news.article.delete", "title_fa": "حذف خبر", "title_en": "Delete articles"},
+      {"key": "news.article.submit", "title_fa": "ارسال برای بازبینی", "title_en": "Submit for review"},
+      {"key": "news.article.review", "title_fa": "بازبینی خبر", "title_en": "Review articles"},
+      {"key": "news.article.approve", "title_fa": "تأیید خبر", "title_en": "Approve articles"},
+      {"key": "news.article.publish", "title_fa": "انتشار خبر", "title_en": "Publish articles"},
+      {"key": "news.article.breaking", "title_fa": "خبر فوری", "title_en": "Mark breaking news"},
+      {"key": "news.category.view", "title_fa": "مشاهدهٔ دسته‌ها (مدیریت)", "title_en": "View categories"},
+      {"key": "news.category.manage", "title_fa": "مدیریت دسته‌ها", "title_en": "Manage categories"},
+      {"key": "news.comment.view", "title_fa": "مشاهدهٔ نظرات (مدیریت)", "title_en": "View comments"},
+      {"key": "news.comment.approve", "title_fa": "تأیید نظر", "title_en": "Approve comments"},
+      {"key": "news.comment.delete", "title_fa": "حذف نظر", "title_en": "Delete comments"}
+    ]
+  },
+  "navigation": [
+    {"title": "اخبار", "title_fa": "اخبار", "uri": "/admin/news/articles", "icon": "📰", "permission": "news.article.view", "order": 22},
+    {"title": "دسته‌های خبری", "title_fa": "دسته‌های خبری", "uri": "/admin/news/categories", "icon": "🗂️", "permission": "news.category.view", "order": 23},
+    {"title": "نظرات خبری", "title_fa": "نظرات خبری", "uri": "/admin/news/comments", "icon": "💬", "permission": "news.comment.view", "order": 24}
+  ],
+  "database": {
+    "table_prefix": "news_",
+    "tables": ["news_articles", "news_categories", "news_tags", "news_article_tag", "news_comments"],
+    "seed_on_install": true
+  },
+  "docs": "modules/news/README.md",
+  "notes": "کیت خبرگزاری (kits/news) این ماژول را با theme/preset/roles/demo نصب می‌کند — DOC-092/TVN-0092."
+}

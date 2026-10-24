@@ -1,0 +1,13 @@
+{
+  "title_fa": "استاندارد",
+  "description": "پیش‌فرض DOC-092: کش ۶۰/۳۰۰/۱۰ ثانیه، realtime و اعلان‌ها روشن.",
+  "config": {
+    "news": {
+      "per_page": 12,
+      "cache": {"enabled": true, "list_ttl": 60, "article_ttl": 300, "breaking_ttl": 10},
+      "realtime": {"enabled": true, "channel": "news"},
+      "breaking": {"limit": 5, "banner": true},
+      "comments": {"enabled": true, "guest_allowed": true, "notify_author": true}
+    }
+  }
+}

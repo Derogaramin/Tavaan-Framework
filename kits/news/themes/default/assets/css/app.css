@@ -1,0 +1,10 @@
+/* پوستهٔ پیش‌فرض کیت خبرگزاری — RTL با CSS logical properties (DOC-090 §7). */
+:root { --kit-primary: #b91c1c; --kit-dark: #111827; --kit-accent: #f59e0b; }
+body { background: #f3f4f6; }
+.news-header { background: linear-gradient(180deg, #1f2937 0%, #111827 100%); border-block-end: 4px solid var(--kit-primary); }
+.breaking-bar { background: #450a0a; border-block-end: 2px solid var(--kit-accent); }
+.breaking-bar .label { background: var(--kit-accent); color: #111827; }
+.breaking-bar a { color: #fee2e2; }
+.news-card { border-radius: 12px; box-shadow: 0 1px 4px rgb(17 24 39 / 8%); }
+.news-card h2 a { color: var(--kit-dark); }
+.news-card h2 a:hover { color: var(--kit-primary); }

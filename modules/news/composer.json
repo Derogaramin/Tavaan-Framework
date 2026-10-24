@@ -1,0 +1,14 @@
+{
+  "name": "tavaan-modules/news",
+  "description": "ماژول News برای فریمورک تَوان",
+  "type": "tavaan-module",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Modules\\News\\": "src/"
+    }
+  }
+}

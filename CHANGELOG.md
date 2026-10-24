@@ -2,6 +2,20 @@
 
 فرمت: Keep a Changelog — نسخه‌گذاری: SemVer.
 
+## [0.10.0] - 2026-10-24 — فاز M9 (گام ۲): کیت خبرگزاری 📰
+
+### افزوده شد
+- **ماژول `tavaan.news`** (DOC-092 کامل): workflow انتشار پنج‌وضعیتی (draft→review→approved→published + reject با دلیل) با ردیابی editor_id • خبر فوری (بنر + `GET /news/breaking` JSON + Broadcast کانال `news`) • زمان‌بندی انتشار (`scheduled_at` + `tvn news:publish-scheduled` با ثبت خودکار هر دقیقه روی schedule:run) • **کش tag-based** (فهرست ۶۰s/خبر ۳۰۰s/فوری ۱۰s + invalidate در هر نوشتن) + **ETag/304** صفحهٔ خبر • **AMP** (`/news/{slug}/amp` با boilerplate/canonical/amp-img) • **JSON-LD NewsArticle** + OG + canonical + sitemap خودکار • دسته‌های تو‌در‌تو (صفحهٔ دسته شامل زیردسته‌ها) • گالری (JSON از ULIDهای tvn_media) • related news (هم‌برچسب→هم‌دسته) • آرشیو جلالی • RSS/Atom • نظرات با moderation • اعلان‌های workflow به نویسنده • ArticlePolicy (reporter/editor/chief-editor/admin) • ۸ کنترلر + پنل `/admin/news/*` • مهاجرت ۵ جدول `news_*` • seed دمو
+- **کیت `tavaan.kit.news`**: kit.json + ۳ preset (TTLهای کش متفاوت) + theme خبری RTL + roles.json (۵ نقش) + demo + docs (راهنمای ادمین/کاربر) — نصب با `tvn kit:install news --with-demo`
+- **۲۷ تست جدید** (۱۳۶۹ کل / ۸۹۲۸ assertion): E2E-01..06 + ماتریس ۴۰۳ نقش‌ها + workflow/JSON-LD/breaking/کش+304
+
+### اصلاح شد
+- **bind سراسری `CommentStoreInterface`** حذف شد — blog و news هر کدام store اختصاصی خودشان را تزریق می‌کنند (هم‌زیستی دو کیت بدون تداخل)
+- **ثبت schedule ماژول در حالت testing** گارد شد (تست‌های موتور schedule قطعی بمانند) — کشف: `$this->app` در Providerها Container است نه Application
+
+### مستندات
+- DOC-092 §10 (وضعیت + بلوک ماشین‌خوان) • `docs/reports/M9-news-implementation-report.md` • بک‌لاگ: TVN-0092 → done • README ماژول/کیت
+
 ## [0.9.0] - 2026-10-24 — فاز M9 (گام ۱): زیرساخت کیت‌ها + کیت وبلاگ ✍️
 
 ### افزوده شد

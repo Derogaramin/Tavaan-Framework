@@ -18,7 +18,6 @@ use Modules\Blog\Infrastructure\Persistence\DatabaseCommentStore;
 use Modules\Blog\Infrastructure\Persistence\DatabasePostRepository;
 use Modules\Blog\Infrastructure\Persistence\DatabaseTagRepository;
 use Modules\Blog\Infrastructure\Search\PostSearchIndexer;
-use Modules\Comment\Contracts\CommentStoreInterface;
 use Modules\Comment\Domain\Services\CommentModerator;
 use Modules\Comment\Domain\Services\CommentThreadBuilder;
 use Modules\Content\Domain\Services\ExcerptGenerator;
@@ -48,8 +47,9 @@ final class BlogServiceProvider extends ServiceProvider
         $this->app->singleton(PostRepositoryInterface::class, static fn (): PostRepositoryInterface => new DatabasePostRepository());
         $this->app->singleton(CategoryRepositoryInterface::class, static fn (): CategoryRepositoryInterface => new DatabaseCategoryRepository());
         $this->app->singleton(TagRepositoryInterface::class, static fn (): TagRepositoryInterface => new DatabaseTagRepository());
+        // 🔒 CommentStoreInterface را global bind نمی‌کنیم — هر ماژول
+        // مصرف‌کننده store اختصاصی خودش را تزریق می‌کند (blog و news هم‌زیست).
         $this->app->singleton(DatabaseCommentStore::class, static fn (): DatabaseCommentStore => new DatabaseCommentStore());
-        $this->app->singleton(CommentStoreInterface::class, static fn (ContainerInterface $c): CommentStoreInterface => $c->make(DatabaseCommentStore::class));
 
         // ── Application: سرویس‌های UseCase ───────────────────────────────
         $this->app->singleton(PostWriteService::class, static function (ContainerInterface $c): PostWriteService {
@@ -67,7 +67,7 @@ final class BlogServiceProvider extends ServiceProvider
             return new PostReadService(
                 posts: $c->make(PostRepositoryInterface::class),
                 tags: $c->make(TagRepositoryInterface::class),
-                comments: $c->make(CommentStoreInterface::class),
+                comments: $c->make(DatabaseCommentStore::class),
                 threadBuilder: $c->make(CommentThreadBuilder::class),
                 users: $c->make(UserReaderInterface::class),
                 config: $c->bound('config') ? (array) $c->make('config')->get('blog', []) : [],
@@ -76,7 +76,7 @@ final class BlogServiceProvider extends ServiceProvider
 
         $this->app->singleton(CommentService::class, static function (ContainerInterface $c): CommentService {
             return new CommentService(
-                comments: $c->make(CommentStoreInterface::class),
+                comments: $c->make(DatabaseCommentStore::class),
                 moderator: $c->make(CommentModerator::class),
                 config: $c->bound('config') ? (array) $c->make('config')->get('blog.comments', []) : [],
             );
@@ -135,7 +135,6 @@ final class BlogServiceProvider extends ServiceProvider
             PostRepositoryInterface::class,
             CategoryRepositoryInterface::class,
             TagRepositoryInterface::class,
-            CommentStoreInterface::class,
             PostWriteService::class,
             PostReadService::class,
             CommentService::class,

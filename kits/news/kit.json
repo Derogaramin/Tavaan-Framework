@@ -1,0 +1,44 @@
+{
+  "id": "tavaan.kit.news",
+  "title_fa": "کیت خبرگزاری",
+  "title_en": "News Portal Kit",
+  "version": "1.0.0",
+  "tavaan": "^1.0",
+  "architecture": "hmvc",
+  "description": "پرتال خبری/مجله کامل: workflow ویراستاری (reporter→editor→chief)، خبر فوری با realtime، زمان‌بندی انتشار، کش تگ‌محور + ETag، AMP/JSON-LD/RSS، دسته‌های تو‌در‌تو، گالری، جست‌وجوی فارسی و نظرات با moderation (DOC-092).",
+
+  "modules": [
+    {"id": "tavaan.core-user", "required": true},
+    {"id": "tavaan.content",   "required": true},
+    {"id": "tavaan.comment",   "required": true},
+    {"id": "tavaan.media",     "required": true},
+    {"id": "tavaan.news",      "required": true},
+    {"id": "tavaan.blog",      "required": false, "note": "بخش یادداشت/وبلاگ — اختیاری"}
+  ],
+
+  "engines": {
+    "required": ["view", "i18n", "search", "cache", "notification", "media", "schedule", "realtime"],
+    "recommended": ["observability", "queue"]
+  },
+
+  "theme": "themes/default",
+  "default_preset": "standard",
+
+  "roles": ["reader", "reporter", "editor", "chief-editor", "admin"],
+  "demo_data": "seed/demo",
+
+  "requirements": {
+    "php": ">=8.2",
+    "extensions": ["pdo", "mbstring"],
+    "storage_mb": 300,
+    "memory_mb": 128
+  },
+
+  "install": {
+    "steps": ["env", "key:generate", "migrate", "rbac:sync", "seed:demo", "optimize"],
+    "wizard": false
+  },
+
+  "health_check": "/news",
+  "docs": "kits/news/README.md"
+}

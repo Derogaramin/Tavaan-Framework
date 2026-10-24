@@ -1,0 +1,17 @@
+{
+  "title_fa": "سازمانی",
+  "description": "ترافیک بالا: کش تهاجمی‌تر، فید بزرگ، moderation سخت‌گیرانه.",
+  "config": {
+    "news": {
+      "per_page": 20,
+      "cache": {"enabled": true, "list_ttl": 120, "article_ttl": 600, "breaking_ttl": 5},
+      "feed": {"limit": 50},
+      "breaking": {"limit": 8},
+      "realtime": {"enabled": true, "channel": "news"},
+      "comments": {"enabled": true, "guest_allowed": true, "notify_author": true}
+    },
+    "comment": {
+      "moderation": {"auto_approve_trusted": false, "max_links": 1}
+    }
+  }
+}
