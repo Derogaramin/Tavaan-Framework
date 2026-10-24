@@ -1,0 +1,17 @@
+{
+  "title_fa": "استاندارد",
+  "description": "حالت پیش‌فرض DOC-091: نظرات مهمان با moderation، جست‌وجوی فارسی، اعلان‌ها روشن.",
+  "config": {
+    "blog": {
+      "per_page": 10,
+      "comments": {
+        "enabled": true,
+        "guest_allowed": true,
+        "notify_author": true,
+        "notify_commenter": true
+      },
+      "search": {"enabled": true},
+      "seo": {"sitemap_enabled": true}
+    }
+  }
+}

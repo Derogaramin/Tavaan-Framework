@@ -1,0 +1,16 @@
+{
+  "title_fa": "کمینه",
+  "description": "سبک‌ترین حالت: بدون جست‌وجو/اعلان، نظرات فقط کاربران واردشده.",
+  "config": {
+    "blog": {
+      "per_page": 5,
+      "comments": {
+        "guest_allowed": false,
+        "notify_author": false,
+        "notify_commenter": false
+      },
+      "search": {"enabled": false},
+      "seo": {"sitemap_enabled": true}
+    }
+  }
+}

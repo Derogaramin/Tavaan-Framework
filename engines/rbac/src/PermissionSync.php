@@ -35,11 +35,12 @@ final class PermissionSync
     /**
      * همگام‌سازی یک مجموعه مجوز اعلام‌شده برای یک ماژول.
      *
-     * @param list<string> $declared کلیدهای مجوز (module.resource.action)
+     * @param list<string>                        $declared کلیدهای مجوز (module.resource.action)
+     * @param array<string, array{0?: string, 1?: string, fa?: string, en?: string}> $titles کلید → عنوان‌ها (اختیاری)
      *
      * @return array{added: list<string>, removed: list<string>}
      */
-    public function sync(string $moduleKey, array $declared): array
+    public function sync(string $moduleKey, array $declared, array $titles = []): array
     {
         $existingRows = $this->db->table($this->permissionsTable())
             ->where('module', $moduleKey)
@@ -50,7 +51,13 @@ final class PermissionSync
         $toRemove = \array_values(\array_diff($existing, $declared));
 
         foreach ($toAdd as $key) {
-            $this->roles->createPermission($key, $moduleKey);
+            $title = $titles[$key] ?? [];
+            $this->roles->createPermission(
+                $key,
+                $moduleKey,
+                (string) ($title['fa'] ?? ''),
+                (string) ($title['en'] ?? ''),
+            );
         }
 
         if ($toRemove !== []) {
@@ -91,13 +98,19 @@ final class PermissionSync
             if ($manifest === null) {
                 continue;
             }
-            $results[$manifest['id']] = $this->sync($manifest['id'], $manifest['permissions']);
+            $results[$manifest['id']] = $this->sync($manifest['id'], $manifest['permissions'], $manifest['titles'] ?? []);
         }
 
         return $results;
     }
 
-    /** @return array{id: string, permissions: list<string>}|null */
+    /**
+     * خواندن manifest — دو قالب permissions پشتیبانی می‌شود (M9):
+     * 1. فهرست مسطح: `"permissions": ["user.view", …]`
+     * 2. قالب schema (module.v1.json): `"permissions": {"group": {…}, "items": [{"key": "user.view", "title_fa": …}]}`
+     *
+     * @return array{id: string, permissions: list<string>, titles: array<string, array{fa?: string, en?: string}>}|null
+     */
     private function readManifest(string $path): ?array
     {
         $raw = \file_get_contents($path);
@@ -116,12 +129,25 @@ final class PermissionSync
         }
 
         $permissions = [];
-        foreach ((array) ($decoded['permissions'] ?? []) as $permission) {
-            if (\is_string($permission) && $permission !== '') {
-                $permissions[] = $permission;
+        $titles = [];
+        foreach ((array) ($decoded['permissions'] ?? []) as $key => $value) {
+            if ($key === 'items' && \is_array($value)) {
+                foreach ($value as $item) {
+                    if (\is_array($item) && isset($item['key']) && \is_string($item['key']) && $item['key'] !== '') {
+                        $permissions[] = $item['key'];
+                        $titles[$item['key']] = \array_filter([
+                            'fa' => isset($item['title_fa']) ? (string) $item['title_fa'] : null,
+                            'en' => isset($item['title_en']) ? (string) $item['title_en'] : null,
+                        ]);
+                    }
+                }
+                continue;
+            }
+            if (\is_string($value) && $value !== '') {
+                $permissions[] = $value;
             }
         }
 
-        return ['id' => (string) $decoded['id'], 'permissions' => $permissions];
+        return ['id' => (string) $decoded['id'], 'permissions' => $permissions, 'titles' => $titles];
     }
 }

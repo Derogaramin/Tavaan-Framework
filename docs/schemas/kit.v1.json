@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docs.tavaan.dev/schemas/kit.v1.json",
+  "title": "Tavaan Application Kit Manifest",
+  "description": "Schema for kits/<kit>/kit.json — see docs/05-applications/README.md (DOC-090 §2.1)",
+  "type": "object",
+  "required": ["id", "version", "modules"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+(?:\\.[a-z0-9-]+)+$",
+      "description": "Unique id, e.g. tavaan.kit.blog — slug = last segment"
+    },
+    "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "title_fa": { "type": "string" },
+    "title_en": { "type": "string" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.-]+)?$" },
+    "tavaan": { "type": "string", "description": "Version constraint of the framework" },
+    "architecture": { "type": "string", "enum": ["mvc", "hmvc", "modular", "hexagonal"] },
+    "description": { "type": "string" },
+    "modules": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "type": "string" },
+          {
+            "type": "object",
+            "required": ["id"],
+            "properties": {
+              "id": { "type": "string" },
+              "required": { "type": "boolean", "default": true },
+              "note": { "type": "string" }
+            }
+          }
+        ]
+      }
+    },
+    "engines": {
+      "type": "object",
+      "properties": {
+        "required": { "type": "array", "items": { "type": "string" } },
+        "recommended": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "theme": { "type": "string", "description": "Relative path inside the kit, e.g. themes/default" },
+    "default_preset": { "type": "string", "default": "standard" },
+    "roles": { "type": "array", "items": { "type": "string" } },
+    "navigation": { "type": "string" },
+    "demo_data": { "type": "string", "description": "Directory of demo seeders relative to kit, e.g. seed/demo" },
+    "requirements": {
+      "type": "object",
+      "properties": {
+        "php": { "type": "string" },
+        "extensions": { "type": "array", "items": { "type": "string" } },
+        "storage_mb": { "type": "integer", "minimum": 0 },
+        "memory_mb": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "install": {
+      "type": "object",
+      "properties": {
+        "steps": { "type": "array", "items": { "type": "string" } },
+        "wizard": { "type": "boolean", "default": false },
+        "post_install": { "type": "string" }
+      }
+    },
+    "health_check": { "type": "string" },
+    "docs": { "type": "string" }
+  }
+}

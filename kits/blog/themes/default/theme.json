@@ -1,0 +1,11 @@
+{
+  "id": "default",
+  "name": "پوستهٔ پیش‌فرض کیت وبلاگ",
+  "rtl": true,
+  "font": "Vazirmatn",
+  "colors": {"primary": "#0ea5e9", "secondary": "#64748b", "accent": "#f59e0b"},
+  "slots": ["header", "sidebar", "footer"],
+  "breakpoints": {"sm": 640, "md": 768, "lg": 1024, "xl": 1280},
+  "overrides": "views/",
+  "assets": "assets/"
+}

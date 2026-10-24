@@ -45,11 +45,18 @@ final class ModuleServiceProvider extends ServiceProvider
             );
         });
         $this->app->alias(ModuleManager::class, 'module.manager');
+
+        // KitManager — نصب/کشف کیت‌های اپلیکیشنی (M9، DOC-090 §8)
+        $this->app->singleton(Kit\KitManager::class, static fn (ContainerInterface $c): Kit\KitManager => new Kit\KitManager(
+            $c,
+            \defined('TVN_BASE_PATH') ? (string) \TVN_BASE_PATH : \dirname(__DIR__, 3),
+        ));
+        $this->app->alias(Kit\KitManager::class, 'kits');
     }
 
     /** @return list<string> */
     public function provides(): array
     {
-        return [ModuleRegistry::class, ModuleManager::class, 'modules', 'module.manager'];
+        return [ModuleRegistry::class, ModuleManager::class, 'modules', 'module.manager', Kit\KitManager::class, 'kits'];
     }
 }

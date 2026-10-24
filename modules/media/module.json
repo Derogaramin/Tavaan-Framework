@@ -1,0 +1,18 @@
+{
+  "$schema": "https://docs.tavaan.dev/schemas/module.v1.json",
+  "id": "tavaan.media",
+  "type": "module",
+  "name": "Media",
+  "title_fa": "رسانه",
+  "title_en": "Media",
+  "version": "0.1.0",
+  "description": "لایهٔ قرارداد رسانه برای ماژول‌های دامنه: MediaAttachableInterface + پورت MediaGateway روی موتور media (تصویر شاخص/variants — DOC-090 §6 / DOC-091 §6).",
+  "namespace": "Modules\\Media\\",
+  "autoload": {"psr-4": {"Modules\\Media\\": "src/"}},
+  "providers": ["Modules\\Media\\Providers\\MediaServiceProvider"],
+  "requires": {"tavaan": "^1.0", "php": ">=8.2", "engines": ["media"], "modules": []},
+  "tables": [],
+  "commands": [],
+  "docs": "modules/media/README.md",
+  "notes": "جدول tvn_media متعلق به موتور media است؛ این ماژول فقط قرارداد/آداپتر است."
+}

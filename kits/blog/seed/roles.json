@@ -1,0 +1,14 @@
+{
+  "roles": [
+    {"key": "reader", "title_fa": "خواننده", "title_en": "Reader", "permissions": []},
+    {"key": "author", "title_fa": "نویسنده", "title_en": "Author",
+     "permissions": ["blog.post.view", "blog.post.create"]},
+    {"key": "editor", "title_fa": "ویراستار", "title_en": "Editor",
+     "permissions": ["blog.post.view", "blog.post.create", "blog.post.update", "blog.post.delete",
+                      "blog.post.publish", "blog.comment.view", "blog.comment.approve", "blog.comment.delete"]},
+    {"key": "admin", "title_fa": "مدیر", "title_en": "Admin",
+     "permissions": ["blog.post.view", "blog.post.create", "blog.post.update", "blog.post.delete",
+                      "blog.post.publish", "blog.comment.view", "blog.comment.approve", "blog.comment.delete",
+                      "user.view", "user.create", "user.update", "user.delete"]}
+  ]
+}

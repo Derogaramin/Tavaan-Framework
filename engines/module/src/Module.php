@@ -49,10 +49,13 @@ final class Module
         return $this->manifest;
     }
 
-    /** @return list<string> وابستگی‌های موتور/ماژول (شناسهٔ کوتاه) */
+    /** @return list<string> وابستگی‌های موتور (نام کوتاه) + ماژول (شناسهٔ کوتاه/کامل) */
     public function dependencies(): array
     {
-        return $this->manifest->engineDependencies();
+        return \array_values(\array_unique([
+            ...$this->manifest->engineDependencies(),
+            ...$this->manifest->moduleDependencies(),
+        ]));
     }
 
     public function enabled(): bool

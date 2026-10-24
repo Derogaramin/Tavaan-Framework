@@ -104,3 +104,36 @@ GET  /admin/blog/posts            مدیریت
 - AC-BLOG-02: SEO (meta/sitemap) کامل.
 - AC-BLOG-03: XSS در نظرات/بدنه با Sanitizer دفع می‌شود.
 - AC-BLOG-04: RSS با فرمت معتبر.
+
+---
+
+## ۹. وضعیت پیاده‌سازی (M9 — TVN-0091) ✅
+
+| بخش | محل |
+|---|---|
+| ماژول دامنه | `modules/blog/` (tavaan.blog — hexagonal: Domain/Application/Infrastructure/Http) |
+| ماژول‌های مشترک | `modules/core-user/` • `modules/content/` • `modules/comment/` • `modules/media/` |
+| کیت | `kits/blog/` (kit.json + presets + theme + roles.json + demo) |
+| نصب | `php bin/tvn kit:install blog --with-demo` |
+| جداول | `blog_posts` / `blog_categories` / `blog_tags` / `blog_post_tag` / `blog_comments` (مهاجرت ماژول) |
+| رویدادها | `blog.post.published|updated|deleted` + `blog.comment.submitted|approved|deleted` (نام‌محور + payload) |
+| مصرف‌کنندهٔ رویدادها | search (ایندکس فارسی) • notification (نویسنده/نظردهنده) |
+| نقش‌ها/مجوزها | `kits/blog/seed/roles.json` + manifest permissions → `tvn rbac:sync` |
+| تست | `modules/blog/tests/` — Unit (دامنه) + Feature (E2E-01..05 سبز) |
+
+انطباق با معیارهای پذیرش: AC-BLOG-01 (E2E §7 ✅ در `BlogE2ETest`)،
+AC-BLOG-02 (meta/OG/sitemap ✅)، AC-BLOG-03 (escape-first Markdown +
+Sanitizer + escape نظرات ✅)، AC-BLOG-04 (RSS/Atom با simplexml ✅).
+
+```yaml
+# machine-readable: tavaan.kit.blog.v1 (وضعیت M9)
+kit:
+  id: tavaan.kit.blog
+  status: implemented
+  ticket: TVN-0091
+  modules: [tavaan.core-user, tavaan.content, tavaan.comment, tavaan.media, tavaan.blog]
+  routes_public: [/blog, /blog/category/{slug}, /blog/tag/{slug}, /blog/archive/{year}/{month}, /blog/{slug}, /blog/feed, /blog/sitemap.xml]
+  routes_admin: [/admin/blog/posts, /admin/blog/comments]
+  events: [blog.post.published, blog.post.updated, blog.post.deleted, blog.comment.submitted, blog.comment.approved, blog.comment.deleted]
+  tests: {unit: modules/blog/tests/Unit, feature: modules/blog/tests/Feature}
+```

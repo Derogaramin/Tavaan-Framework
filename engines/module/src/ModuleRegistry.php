@@ -57,7 +57,9 @@ final class ModuleRegistry
 
                 $module = new Module($manifest, $enabled);
                 $this->modules[$manifest->id] = $module;
-                $this->shortIds[$this->shortId($manifest->id)] = $manifest->id;
+                // first-wins: در هم‌نامی کوتاه (موتور media / ماژول tavaan.media)
+                // موتور — که زودتر کشف می‌شود — برنده است (ارجاع کوتاه بدون ابهام).
+                $this->shortIds[$this->shortId($manifest->id)] ??= $manifest->id;
             }
         }
     }
@@ -100,7 +102,8 @@ final class ModuleRegistry
         $active = [];
         foreach ($this->all() as $module) {
             if ($module->enabled()) {
-                $active[$this->shortId($module->id())] = $module;
+                // کلید = شناسهٔ کامل → بدون برخورد بین موتور و ماژول هم‌نام (M9)
+                $active[$module->id()] = $module;
             }
         }
 
@@ -119,9 +122,15 @@ final class ModuleRegistry
         $this->discover();
         $short = $this->shortId($this->get($id)->id());
 
+        $full = $this->get($id)->id();
+
         $dependents = [];
         foreach ($this->modules as $otherId => $module) {
-            if ($module->id() !== $this->get($id)->id() && \in_array($short, $module->dependencies(), true)) {
+            if ($module->id() === $full) {
+                continue;
+            }
+            $deps = $module->dependencies();
+            if (\in_array($short, $deps, true) || \in_array($full, $deps, true)) {
                 $dependents[] = $otherId;
             }
         }

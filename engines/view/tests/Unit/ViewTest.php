@@ -309,6 +309,56 @@ final class ViewTest extends TestCase
         $this->factory()->render('../../../etc/passwd');
     }
 
+    /**
+     * رگرسیون (M9/TVN-0091): `@include` درون section نباید پشتهٔ extends
+     * قالب والد را مصرف کند — پیش‌تر کل خروجی صفحه به ۱ بایت سقوط می‌کرد.
+     */
+    public function testIncludeInsideSectionKeepsParentExtends(): void
+    {
+        $this->put('layouts.l', '<html>@yield("content")</html>');
+        $this->put('partialinc', '<nav>INC</nav>');
+        $this->put(
+            'page',
+            '@extends("layouts.l")' . "\n"
+            . '@section("content")' . "\n"
+            . '<h1>PAGE</h1>' . "\n"
+            . '@include("partialinc")' . "\n"
+            . '@endsection',
+        );
+
+        $out = $this->factory()->render('page');
+
+        $this->assertStringContainsString('<html>', $out);
+        $this->assertStringContainsString('PAGE', $out);
+        $this->assertStringContainsString('INC', $out);
+    }
+
+    /** include با extends مستقل خودش — چرخهٔ والد دست‌نخورده می‌ماند. */
+    public function testIncludeWithOwnExtendsDoesNotLeak(): void
+    {
+        $this->put('layouts.outer', 'OUTER[@yield("content")]');
+        $this->put('layouts.inner', 'INNER(@yield("body"))');
+        $this->put('widget', '@extends("layouts.inner")' . "\n" . '@section("body")' . "\n" . 'W' . "\n" . '@endsection');
+        $this->put(
+            'host',
+            '@extends("layouts.outer")' . "\n"
+            . '@section("content")' . "\n" . 'C1' . "\n" . '@include("widget")' . "\n" . 'C2' . "\n" . '@endsection',
+        );
+
+        $out = $this->factory()->render('host');
+
+        $this->assertStringContainsString('OUTER[', $out);
+        $this->assertStringContainsString('C1', $out);
+        $this->assertStringContainsString('INNER(', $out);
+        $this->assertStringContainsString('W', $out);
+        $this->assertStringContainsString('C2', $out);
+        // ترتیب: محتوای include بین C1 و C2 و درون layout والد
+        $this->assertTrue(
+            \strpos($out, 'C1') < \strpos($out, 'INNER(') && \strpos($out, 'INNER(') < \strpos($out, 'C2'),
+            'include باید بین C1 و C2 رندر شود',
+        );
+    }
+
     private function rrmdir(string $dir): void
     {
         if (!\is_dir($dir)) {

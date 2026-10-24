@@ -1,0 +1,53 @@
+/*
+ * پوستهٔ پیش‌فرض کیت وبلاگ — RTL با CSS logical properties (DOC-090 §7).
+ * این فایل توسط theme نصب می‌شود: public/assets/kits/blog/app.css
+ */
+
+:root {
+  --kit-primary: #0ea5e9;
+  --kit-primary-dark: #0369a1;
+  --kit-accent: #f59e0b;
+  --kit-text: #0f172a;
+  --kit-muted: #64748b;
+  --kit-bg: #f0f9ff;
+  --kit-card: #ffffff;
+  --kit-border: #e0f2fe;
+  --kit-radius: 14px;
+}
+
+body {
+  background:
+    radial-gradient(1200px 400px at 50% -100px, #e0f2fe 0%, transparent 100%),
+    var(--kit-bg);
+}
+
+.blog-header {
+  background: linear-gradient(180deg, #0c4a6e 0%, #075985 100%);
+  border-block-end: 3px solid var(--kit-accent);
+}
+
+.blog-header .blog-nav a { color: #e0f2fe; }
+.blog-header .blog-nav .brand { color: #fff; font-size: 1.3rem; }
+
+.blog-card {
+  border-radius: var(--kit-radius);
+  border-color: var(--kit-border);
+  box-shadow: 0 1px 3px rgb(14 165 233 / 8%);
+}
+
+.blog-card h2 a { color: var(--kit-primary-dark); }
+.blog-card h2 a:hover { color: var(--kit-primary); }
+
+.blog-btn { background: var(--kit-primary-dark); }
+.blog-btn:hover { background: var(--kit-primary); }
+
+.blog-tag { background: #fef3c7; color: #92400e; }
+
+a { color: var(--kit-primary-dark); }
+
+.blog-footer {
+  background: #0c4a6e;
+  color: #bae6fd;
+  border-block-start: 3px solid var(--kit-accent);
+}
+.blog-footer a { color: #fff; }

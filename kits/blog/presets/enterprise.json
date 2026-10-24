@@ -1,0 +1,30 @@
+{
+  "title_fa": "سازمانی",
+  "description": "سازمانی: صفحه‌بندی بزرگ‌تر، moderated سخت‌گیرانه‌تر (بدون auto-approve)، فید بزرگ.",
+  "config": {
+    "blog": {
+      "per_page": 20,
+      "feed": {
+        "limit": 50
+      },
+      "comments": {
+        "enabled": true,
+        "guest_allowed": true,
+        "notify_author": true,
+        "notify_commenter": true
+      },
+      "search": {
+        "enabled": true
+      },
+      "seo": {
+        "sitemap_enabled": true
+      }
+    },
+    "comment": {
+      "moderation": {
+        "auto_approve_trusted": false,
+        "max_links": 1
+      }
+    }
+  }
+}

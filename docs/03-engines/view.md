@@ -543,6 +543,21 @@ return [
 
 ---
 
+---
+
+## رفع M9: استقلال پشتهٔ extends در include
+
+`renderInclude` پیش‌تر چرخهٔ کامل `View::render` را طی می‌کرد و `popExtends()`
+قالبِ والد را از پشتهٔ **مشترک** مصرف می‌کرد — نتیجه: `@include` درون
+`@section` کل خروجی صفحه را از بین می‌برد. اکنون include با پشتهٔ extends
+مستقل رندر می‌شود (save/restore) و چرخهٔ layout والد دست‌نخورده می‌ماند.
+رگرسیون: `ViewTest::testIncludeInsideSectionKeepsParentExtends` و
+`testIncludeWithOwnExtendsDoesNotLeak`.
+
+یادآوری قواعد کامپایلر: directive باید در ابتدای خط یا پس از فاصله/علامت
+بیاید — `@` چسبیده به حرف/رقم (مثل `text@include`) محافظت ایمیل است و
+literal می‌ماند. CSSهای دارای `@media` را در `@verbatim…@endverbatim` بگذارید.
+
 ## ۱۵. بلوک ماشین‌خوان 🧠
 ```yaml
 # machine-readable: tavaan.engine.view.v1

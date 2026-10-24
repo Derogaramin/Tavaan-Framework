@@ -67,6 +67,9 @@ final class ArchCheckCommand extends Command
             $from = (string) ($rule['from'] ?? '');
             $deny = \array_map('strval', (array) ($rule['deny'] ?? []));
             $except = \array_map('strval', (array) ($rule['except'] ?? []));
+            // allow = نقطه‌های تمدید SDK (FQCNهای مجازِ موتور) — الگویی مشابه
+            // forbidden_functions_allow: صریح، محدود و مستند (M9).
+            $allow = \array_map('strval', (array) ($rule['allow'] ?? []));
             if ($from === '' || $deny === []) {
                 continue;
             }
@@ -86,8 +89,21 @@ final class ArchCheckCommand extends Command
                         continue;
                     }
 
+                    $codeLines = \explode("\n", $code);
                     foreach ($deny as $denied) {
                         foreach ($this->findLines($code, $denied) as $line) {
+                            $lineText = $codeLines[$line - 1] ?? '';
+                            $allowed = false;
+                            foreach ($allow as $allowFqcn) {
+                                // تطابق با مرز شناسه: `…\Command` مجاز، `…\Commands\X` نه
+                                if ($allowFqcn !== '' && \preg_match('/' . \preg_quote($allowFqcn, '/') . '(?![A-Za-z0-9_\\\\])/', $lineText) === 1) {
+                                    $allowed = true;
+                                    break;
+                                }
+                            }
+                            if ($allowed) {
+                                continue;
+                            }
                             $violations[] = [
                                 'rule' => 'ARCH-NS-' . ($index + 1),
                                 'desc' => $from . ' → ' . $denied . ' ممنوع است',

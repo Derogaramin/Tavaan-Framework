@@ -173,6 +173,41 @@ final class ModuleManager
 | چرخهٔ وابستگی | TopologicalSorter با تشخیص |
 | کد مخرب در provider | review + sandbox برای plugin |
 
+## ۷٫۵ کیت‌های اپلیکیشنی (M9 — DOC-090)
+
+کیت = مجموعهٔ ماژول‌ها + preset + theme + seed + نقش‌ها (`kits/<kit>/kit.json`).
+
+| کلاس/دستور | نقش |
+|---|---|
+| `Kit\KitManifest` | رکورد kit.json با اعتبارسنجی (id/version/ماژول‌ها) |
+| `Kit\KitManager` | discover / requirementsCheck / install (زنجیرهٔ DOC-090 §8) |
+| `Kit\KitException` | خطاهای Fail-Explainable (`kit.not_found` و …) |
+| `tvn kit:list` | فهرست کیت‌ها + وضعیت نصب |
+| `tvn kit:install <kit> [--preset=] [--with-demo] [--skip-migrate] [--skip-seed]` | نصب کامل |
+
+**زنجیرهٔ install:** requirements → enable ماژول‌ها (ترتیب توپولوژیک) →
+preset (overlay در `config/<namespace>.php` — سطح app، سازگار با production
+freeze) → migrate → theme (کپی ویوها به `resources/views/vendor/<kit>` —
+مکانیزم override استاندارد ViewFinder + assets به `public/assets/kits/<kit>`)
+→ rbac (sync مجوزها + نقش‌ها از `seed/roles.json`) → demo seed → ثبت وضعیت
+(`storage/framework/kits.status.php` + `tavaan.json → kits[]`).
+
+نصب **idempotent** است. preset فایل JSON با کلید `config` است:
+`{"config": {"blog": {"per_page": 20}}}`.
+
+### ثبت Provider ماژول‌ها (M9)
+
+`DiscoverModules` (B7) پس از کشف و مرتب‌سازی توپولوژیک، Provider ماژول‌ها/
+کیت‌ها (غیر engine/plugin) را از manifest ثبت می‌کند — boot() آن‌ها پس از
+همهٔ موتورها اجرا می‌شود (DOC-022 §4 گام ۴).
+
+### رفع برخوردهای شناسهٔ کوتاه (M9)
+
+`sorted()` با **شناسهٔ کامل** کلید می‌خورد؛ موتور و ماژول هم‌نام (مثلاً
+`tavaan.engine.media` و `tavaan.media`) دیگر چرخهٔ کاذب نمی‌سازند.
+`requires.engines` با اولویت `tavaan.engine.*` و `requires.modules` با
+شناسهٔ کامل/کوتاه resolve می‌شوند.
+
 ## ۸. تست
 | T-01 | parse manifest معتبر/نامعتبر |
 | T-02 | Topological sort با ۵ ماژول |
@@ -205,5 +240,10 @@ engine:
       methods: [install, uninstall, enable, disable, update, validate]
     - class: ModuleRunner
       methods: [run]
-  loc_estimate: 900
+    - class: Kit\KitManager          # M9
+      methods: [discover, get, has, presets, installed, isInstalled, requirementsCheck, install]
+    - class: Kit\KitManifest         # M9
+      methods: [fromArray, requiredModules, optionalModules]
+  console: [kit:list, kit:install]     # M9
+  loc_estimate: 1600
 ```

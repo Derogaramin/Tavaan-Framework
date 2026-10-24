@@ -1,0 +1,14 @@
+{
+  "name": "tavaan-modules/core-user",
+  "description": "ماژول CoreUser برای فریمورک تَوان",
+  "type": "tavaan-module",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Modules\\CoreUser\\": "src/"
+    }
+  }
+}

@@ -66,4 +66,10 @@ final readonly class Manifest
     {
         return (array) ($this->requires['engines'] ?? []);
     }
+
+    /** @return list<string> شناسهٔ ماژول‌های پیش‌نیاز (کوتاه یا کامل) */
+    public function moduleDependencies(): array
+    {
+        return (array) ($this->requires['modules'] ?? []);
+    }
 }

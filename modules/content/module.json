@@ -1,0 +1,18 @@
+{
+  "$schema": "https://docs.tavaan.dev/schemas/module.v1.json",
+  "id": "tavaan.content",
+  "type": "module",
+  "name": "Content",
+  "title_fa": "محتوا",
+  "title_en": "Content",
+  "version": "0.1.0",
+  "description": "هستهٔ مشترک محتوا: چرخهٔ وضعیت انتشار، Slug یونیکد-امن، SEO/OpenGraph، Markdown امن (escape-first)، فید RSS/Atom، Sitemap، آرشیو جلالی و خلاصه‌ساز (DOC-090 §5 / DOC-091 §6).",
+  "namespace": "Modules\\Content\\",
+  "autoload": {"psr-4": {"Modules\\Content\\": "src/"}},
+  "providers": ["Modules\\Content\\Providers\\ContentServiceProvider"],
+  "requires": {"tavaan": "^1.0", "php": ">=8.2", "engines": [], "modules": []},
+  "tables": [],
+  "commands": [],
+  "docs": "modules/content/README.md",
+  "notes": "دامنهٔ خالص (بدون DB/HTTP) — مصرف‌کنندگان: blog, news-portal (M9)."
+}

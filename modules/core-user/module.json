@@ -1,0 +1,28 @@
+{
+  "$schema": "https://docs.tavaan.dev/schemas/module.v1.json",
+  "id": "tavaan.core-user",
+  "type": "module",
+  "name": "CoreUser",
+  "title_fa": "کاربران پایه",
+  "title_en": "Core User",
+  "version": "0.1.0",
+  "description": "ماژول پایهٔ کاربران: جدول users، موجودیت User (Authenticatable/Notifiable)، پورت UserReaderInterface برای همهٔ ماژول‌ها و دستور user:create (DOC-090 §5-6).",
+  "namespace": "Modules\\CoreUser\\",
+  "autoload": {"psr-4": {"Modules\\CoreUser\\": "src/"}},
+  "providers": ["Modules\\CoreUser\\Providers\\CoreUserServiceProvider"],
+  "requires": {"tavaan": "^1.0", "php": ">=8.2", "engines": ["database", "auth", "hash", "rbac"], "modules": []},
+  "tables": ["users"],
+  "commands": ["Modules\\CoreUser\\Console\\Commands\\UserCreateCommand"],
+  "permissions": {
+    "group": {"id": "user", "title_fa": "کاربران"},
+    "items": [
+      {"key": "user.view", "title_fa": "مشاهدهٔ کاربران", "title_en": "View users"},
+      {"key": "user.create", "title_fa": "ساخت کاربر", "title_en": "Create users"},
+      {"key": "user.update", "title_fa": "ویرایش کاربر", "title_en": "Update users"},
+      {"key": "user.delete", "title_fa": "حذف کاربر", "title_en": "Delete users"}
+    ]
+  },
+  "database": {"tables": ["users"], "seed_on_install": true},
+  "docs": "modules/core-user/README.md",
+  "notes": "UserReaderInterface قرارداد مشترک همهٔ کیت‌هاست (DOC-090 §6)."
+}

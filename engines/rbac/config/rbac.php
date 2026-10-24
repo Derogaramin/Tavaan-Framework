@@ -34,6 +34,12 @@ return [
         'bypasses_gate' => true,
     ],
 
+    // نگاشت اعلامی Policyها — ماژول‌ها با modules/<x>/config/rbac.php ادغام
+    // می‌کنند (M9). Gate در اولین مصرف ساخته می‌شود → هیچ resolve زودهنگامِ
+    // اتصال DB در boot (مشکل اتصال کهنه در تست‌های RefreshDatabase).
+    // قالب: '<Model FQCN>' => '<Policy FQCN>'
+    'policies' => [],
+
     'wildcard' => [
         'enabled' => true,
         'separator' => '*',

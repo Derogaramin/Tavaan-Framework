@@ -2,6 +2,32 @@
 
 فرمت: Keep a Changelog — نسخه‌گذاری: SemVer.
 
+## [0.9.0] - 2026-10-24 — فاز M9 (گام ۱): زیرساخت کیت‌ها + کیت وبلاگ ✍️
+
+### افزوده شد
+- **زیرساخت کیت (DOC-090 §8)**: `KitManifest`/`KitManager`/`KitException` در موتور module + دستورات `tvn kit:list` و `tvn kit:install <kit> [--preset= --with-demo --skip-migrate --skip-seed]` — زنجیرهٔ ۸ گامی (requirements → enable ماژول‌ها → preset overlay → migrate → theme copy → rbac sync/roles → demo seed → status) به‌صورت **idempotent** + `docs/schemas/kit.v1.json`
+- **ثبت Provider ماژول‌ها در بوت** — `DiscoverModules` اکنون manifest.providers ماژول‌ها/کیت‌ها را به ترتیب توپولوژیک ثبت می‌کند (حلقهٔ مفقودهٔ DOC-022 §4 گام ۴)
+- **۵ ماژول HMVC** (اولین ساکنان `modules/`):
+  - `tavaan.content` — ContentStatus، Slug فارسی‌اول (ی/ک/ارقام/اِعراب/نیم‌فاصله)، SeoMetadata/OG، **Markdown امن escape-first**، JalaliMonth (آرشیو)، FeedBuilder (RSS 2.0/Atom 1.0)، SitemapBuilder، ExcerptGenerator
+  - `tavaan.comment` — Comment entity + CommentableInterface/CommentStoreInterface (پورت)، CommentModerator (اسپم/trusted/manual)، CommentThreadBuilder (تو‌در‌تو)
+  - `tavaan.media` — MediaAttachableInterface + MediaGatewayInterface/آداپتر Facade + MediaFile DTO
+  - `tavaan.core-user` — جدول `users`، User (Authenticatable+Notifiable)، UserReaderInterface/UserSnapshot، `tvn user:create`، seeder دمو
+  - `tavaan.blog` — پیاده‌سازی کامل DOC-091: Post/Category/Tag (Aggregate + رویداد)، ۵ UseCase، ۴ مخزن prepared، PostPolicy، ۹ کنترلر، ویوهای RTL (blog::)، آرشیو جلالی (ارقام فارسی ✓)، RSS/Atom، sitemap/SEO/OG، نظرات تو‌در‌تو با moderation، جست‌وجوی فارسی (رویداد→ایندکس)، اعلان‌ها (نویسنده/نظردهنده)، `tvn blog:publish-scheduled`، مهاجرت ۵ جدول `blog_*`، seed دمو، پنل `/admin/blog/*`
+- **کیت `tavaan.kit.blog`** — kit.json + ۳ preset (minimal/standard/enterprise) + theme پیش‌فرض RTL (Vazirmatn/CSS logical properties) + seed/roles.json (reader/author/editor/admin) + demo + install/steps.json + راهنمای کاربر/ادمین
+- **موتور notification**: `ArrayNotification` (اعلان آرایه‌محور) + binding `notification.message` — نقطهٔ ورود ماژول‌ها بدون کلاس اختصاصی موتور (ARCH-003)
+- **موتور rbac**: policies اعلامی در config (`rbac.policies` — ادغام‌شونده از ماژول‌ها) + aliasهای `rbac.roles`/`rbac.permissions`/`rbac.sync` + پشتیبانی قالب object مجوزها (`{group,items}` schema) با title_fa/en در PermissionSync
+- **معماری**: کلید `allow` (allowlist صریح FQCN با مرز شناسه) در قواعد namespace `config/architecture.php` — SDK مجاز ماژول‌ها: `Tavaan\Engine\Console\Command`
+- **۹۱ تست جدید** (۱۳۴۲ کل / ۸۷۴۹ assertion): E2E-01..05 وبلاگ، XSS (۸ بردار)، فید/sitemap با simplexml، بردارهای جلالی، KitManager روی base موقت، رگرسیون‌های view/module
+
+### اصلاح شد
+- **🐛 موتور view (بحرانی)**: `@include` درون `@section` کل خروجی صفحه را از بین می‌برد — `renderInclude` قالب والد را از پشتهٔ مشترک extends مصرف می‌کرد؛ اکنون include پشتهٔ مستقل دارد (+۲ تست رگرسیون)
+- **🐛 موتور module**: چرخهٔ کاذب ماژول/موتور هم‌نام (`tavaan.media`/`tavaan.engine.media`) — `sorted()` با شناسهٔ کامل کلید می‌خورد + resolve سه‌مرحله‌ای وابستگی‌ها؛ `requires.modules` اکنون در مرتب‌سازی و `dependentsOf` لحاظ می‌شود
+- **🐛 موتور http**: `Request::create` مسیر percent-encoded را decode نمی‌کرد (رفتار متفاوت از `fromGlobals` در تست‌های درون‌فرایندی) — decode + double-encoding guard یکسان شد
+- **🐛 موتور rbac**: `Gate::policy` در boot ماژول‌ها اتصال DB پیش‌فرض را پیش از سوییچ تست‌ها capture می‌کرد → مسیر اعلامی config جایگزین شد
+
+### مستندات
+- DOC-091 §9 (وضعیت پیاده‌سازی + بلوک ماشین‌خوان کیت) • DOC-038 §7.5 (کیت‌ها) • DOC-057/066/043 (افزودنی‌های M9) • `docs/schemas/kit.v1.json` • گزارش `docs/reports/M9-blog-implementation-report.md` • بک‌لاگ: TVN-0091 → done
+
 ## [0.8.0] - 2026-10-19 — فاز M8: ابزار + ممیزی جامع M0–M8
 
 ### ممیزی جامع M0–M8 (این نگارش — نقشه و جزئیات: `docs/reports/M0-M8-audit-report.md`)

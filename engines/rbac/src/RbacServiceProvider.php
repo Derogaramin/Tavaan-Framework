@@ -55,14 +55,31 @@ final class RbacServiceProvider extends ServiceProvider
                 return $user instanceof Authenticatable ? $user : null;
             };
 
-            return new Gate(
+            $config = (array) ($c->bound('config') ? $c->make('config')->get('rbac', []) : []);
+            $gate = new Gate(
                 $c->make(PermissionResolver::class),
                 $userResolver,
-                (array) ($c->bound('config') ? $c->make('config')->get('rbac', []) : []),
+                $config,
             );
+
+            // policies اعلامی از config (rbac.policies) — ماژول‌ها به‌جای
+            // Gate::policy در boot، نگاشت را در config خود ادغام می‌کنند (M9).
+            foreach ((array) ($config['policies'] ?? []) as $model => $policy) {
+                if (\is_string($model) && \is_string($policy) && $model !== '' && $policy !== '') {
+                    $gate->policy($model, $policy);
+                }
+            }
+
+            return $gate;
         });
         $this->app->alias(Gate::class, 'gate');
         $this->app->alias(Gate::class, GateInterface::class);
+
+        // aliasهای RoleManager/PermissionSync/PermissionResolver — نقطهٔ ورود
+        // ماژول‌ها/کیت‌ها بدون ارجاع به کلاس موتور (ARCH-003، M9).
+        $this->app->alias(RoleManager::class, 'rbac.roles');
+        $this->app->alias(PermissionResolver::class, 'rbac.permissions');
+        $this->app->alias(PermissionSync::class, 'rbac.sync');
 
         $this->app->singleton(PermissionSync::class, static fn (ContainerInterface $c): PermissionSync => new PermissionSync(
             $c->make(ConnectionInterface::class),

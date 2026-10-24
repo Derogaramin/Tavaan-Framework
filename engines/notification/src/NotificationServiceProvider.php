@@ -32,11 +32,15 @@ final class NotificationServiceProvider extends ServiceProvider
             );
         });
         $this->app->alias(NotificationSender::class, 'notification');
+
+        // اعلان عمومی آرایه‌محور — نقطهٔ ورود ماژول‌ها/کیت‌ها (M9، ARCH-003):
+        // $app->make('notification.message', ['payload' => [...]])
+        $this->app->bind('notification.message', static fn (ContainerInterface $c, array $parameters = []): ArrayNotification => new ArrayNotification((array) ($parameters['payload'] ?? [])));
     }
 
     /** @return list<string> */
     public function provides(): array
     {
-        return [NotificationSender::class, 'notification'];
+        return [NotificationSender::class, 'notification', 'notification.message'];
     }
 }

@@ -55,6 +55,71 @@ final class ModuleTest extends TestCase
         $this->assertTrue(\array_search('v.c', $first) < \array_search('v.e', $first));
     }
 
+    /** M9: ماژول هم‌نام با موتور (tavaan.media / tavaan.engine.media) → چرخهٔ کاذب نباید بسازد */
+    public function testSorterSameShortNameAsEngineNoFalseCycle(): void
+    {
+        $modules = [
+            'tavaan.engine.media' => $this->module('tavaan.engine.media', ['config']),
+            'tavaan.engine.config' => $this->module('tavaan.engine.config', ['container']),
+            'tavaan.engine.container' => $this->module('tavaan.engine.container', []),
+            'tavaan.media' => $this->module('tavaan.media', ['media']),
+        ];
+
+        $sorted = (new TopologicalSorter())->sort($modules);
+        $ids = \array_map(static fn (Module $m): string => $m->id(), $sorted);
+
+        $this->assertCount(4, $ids);
+        // requires.engines: ['media'] باید به موتور resolve شود نه ماژول هم‌نام
+        $this->assertTrue(\array_search('tavaan.engine.media', $ids) < \array_search('tavaan.media', $ids));
+        $this->assertTrue(\array_search('tavaan.engine.container', $ids) < \array_search('tavaan.engine.config', $ids));
+    }
+
+    /** M9: وابستگی ماژول→ماژول (requires.modules با شناسهٔ کامل) در ترتیب boot لحاظ شود */
+    public function testSorterModuleToModuleDependency(): void
+    {
+        $blog = Manifest::fromArray([
+            'id' => 'tavaan.blog',
+            'name' => 'Blog',
+            'version' => '1.0.0',
+            'autoload' => [],
+            'providers' => [],
+            'requires' => ['engines' => ['view'], 'modules' => ['tavaan.content', 'tavaan.comment']],
+        ], '/tmp/tavaan.blog');
+
+        $modules = [
+            'tavaan.blog' => new Module($blog),
+            'tavaan.content' => $this->module('tavaan.content', []),
+            'tavaan.comment' => $this->module('tavaan.comment', []),
+            'tavaan.engine.view' => $this->module('tavaan.engine.view', []),
+        ];
+
+        $ids = \array_map(static fn (Module $m): string => $m->id(), (new TopologicalSorter())->sort($modules));
+
+        $this->assertTrue(\array_search('tavaan.content', $ids) < \array_search('tavaan.blog', $ids));
+        $this->assertTrue(\array_search('tavaan.comment', $ids) < \array_search('tavaan.blog', $ids));
+        $this->assertTrue(\array_search('tavaan.engine.view', $ids) < \array_search('tavaan.blog', $ids));
+    }
+
+    /** M9: Registry پروژهٔ واقعی — موتور media و ماژول tavaan.media هم‌زمان در sorted() حاضرند */
+    public function testRegistrySortedKeepsEngineAndModuleWithSameShortName(): void
+    {
+        $base = \defined('TVN_BASE_PATH') ? (string) TVN_BASE_PATH : \dirname(__DIR__, 5);
+        $modulesDir = $base . '/modules';
+        if (!\is_dir($modulesDir . '/media')) {
+            $this->assertTrue(true);   // ماژول media نصب نیست — skip
+            return;
+        }
+
+        $registry = new ModuleRegistry([$base . '/engines', $modulesDir]);
+        $registry->discover();
+
+        $ids = \array_map(static fn (Module $m): string => $m->id(), $registry->sorted());
+
+        $this->assertTrue(\in_array('tavaan.engine.media', $ids, true));
+        $this->assertTrue(\in_array('tavaan.media', $ids, true));
+        $this->assertTrue(\array_search('tavaan.engine.media', $ids) < \array_search('tavaan.media', $ids));
+    }
+
     /** T-03: چرخه → exception با فهرست ماژول‌ها */
     public function testCircularDependencyThrows(): void
     {

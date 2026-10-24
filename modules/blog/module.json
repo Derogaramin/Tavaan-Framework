@@ -1,0 +1,61 @@
+{
+  "$schema": "https://docs.tavaan.dev/schemas/module.v1.json",
+  "id": "tavaan.blog",
+  "type": "module",
+  "name": "Blog",
+  "title_fa": "وبلاگ",
+  "title_en": "Blog",
+  "version": "0.1.0",
+  "description": "وبلاگ کامل: مقاله/دسته/برچسب، نظرات تو‌در‌تو با moderation، جست‌وجوی فارسی، آرشیو جلالی، RSS/Atom، sitemap و SEO، زمان‌بندی انتشار و آمار بازدید (DOC-091).",
+  "namespace": "Modules\\Blog\\",
+  "autoload": {"psr-4": {"Modules\\Blog\\": "src/"}},
+  "providers": ["Modules\\Blog\\Providers\\BlogServiceProvider"],
+  "requires": {
+    "tavaan": "^1.0",
+    "php": ">=8.2",
+    "engines": ["view", "i18n", "search", "media", "notification", "database", "rbac", "security"],
+    "modules": ["tavaan.core-user", "tavaan.content", "tavaan.comment", "tavaan.media"]
+  },
+  "tables": ["blog_posts", "blog_categories", "blog_tags", "blog_post_tag", "blog_comments"],
+  "commands": ["Modules\\Blog\\Console\\Commands\\PublishScheduledPostsCommand"],
+  "routes": {
+    "web": "routes/web.php",
+    "admin": "routes/admin.php"
+  },
+  "views": {"namespace": "blog", "path": "views"},
+  "lang": {"path": "lang"},
+  "migrations": {"path": "migrations"},
+  "seeds": {"demo": "seeds/demo.php"},
+  "events": {
+    "published": [
+      {"name": "blog.post.published", "class": "Modules\\Blog\\Domain\\Events\\PostWasPublished", "version": 1},
+      {"name": "blog.post.updated", "class": "Modules\\Blog\\Domain\\Events\\PostWasUpdated", "version": 1},
+      {"name": "blog.comment.submitted", "class": "Modules\\Blog\\Domain\\Events\\CommentWasSubmitted", "version": 1},
+      {"name": "blog.comment.approved", "class": "Modules\\Blog\\Domain\\Events\\CommentWasApproved", "version": 1}
+    ]
+  },
+  "permissions": {
+    "group": {"id": "blog", "title_fa": "وبلاگ"},
+    "items": [
+      {"key": "blog.post.view", "title_fa": "مشاهدهٔ مقالات (مدیریت)", "title_en": "View posts (admin)"},
+      {"key": "blog.post.create", "title_fa": "نوشتن مقاله", "title_en": "Create posts"},
+      {"key": "blog.post.update", "title_fa": "ویرایش مقاله", "title_en": "Update posts"},
+      {"key": "blog.post.delete", "title_fa": "حذف مقاله", "title_en": "Delete posts"},
+      {"key": "blog.post.publish", "title_fa": "انتشار مقاله", "title_en": "Publish posts"},
+      {"key": "blog.comment.view", "title_fa": "مشاهدهٔ نظرات (مدیریت)", "title_en": "View comments (admin)"},
+      {"key": "blog.comment.approve", "title_fa": "تأیید نظر", "title_en": "Approve comments"},
+      {"key": "blog.comment.delete", "title_fa": "حذف نظر", "title_en": "Delete comments"}
+    ]
+  },
+  "navigation": [
+    {"title": "مقالات", "title_fa": "مقالات", "uri": "/admin/blog/posts", "icon": "📝", "permission": "blog.post.view", "order": 20},
+    {"title": "نظرات", "title_fa": "نظرات وبلاگ", "uri": "/admin/blog/comments", "icon": "💬", "permission": "blog.comment.view", "order": 21}
+  ],
+  "database": {
+    "table_prefix": "blog_",
+    "tables": ["blog_posts", "blog_categories", "blog_tags", "blog_post_tag", "blog_comments"],
+    "seed_on_install": true
+  },
+  "docs": "modules/blog/README.md",
+  "notes": "کیت وبلاگ (kits/blog) این ماژول را با theme/preset/demo نصب می‌کند — DOC-091/TVN-0091."
+}

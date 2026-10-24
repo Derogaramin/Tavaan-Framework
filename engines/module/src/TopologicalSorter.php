@@ -16,7 +16,7 @@ use Tavaan\Engine\Module\Exceptions\CircularModuleDependencyException;
 final class TopologicalSorter
 {
     /**
-     * @param array<string, Module> $modules کلید = شناسهٔ کوتاه (بدون vendor)
+     * @param array<string, Module> $modules کلید = شناسهٔ کامل (یا کوتاه در تست‌های واحد)
      *
      * @return list<Module>
      */
@@ -25,13 +25,35 @@ final class TopologicalSorter
         $inDegree = [];
         $graph = [];
 
+        // نگاشت نام کوتاه → کلید: ابتدا کلید دقیق، بعد کوتاه (بخش انتهایی).
+        // در برخورد کوتاه‌ها (مثلاً موتور media و ماژول tavaan.media) اولویت با
+        // `tavaan.engine.*` است — requires.engines باید به موتور برسد، نه ماژول هم‌نام.
+        $shortToKey = [];
+        foreach ($modules as $key => $module) {
+            $parts = \explode('.', (string) $key);
+            $short = \end($parts) ?: (string) $key;
+            $existing = $shortToKey[$short] ?? null;
+            if ($existing === null
+                || (\str_starts_with((string) $key, 'tavaan.engine.') && !\str_starts_with($existing, 'tavaan.engine.'))) {
+                $shortToKey[$short] = (string) $key;
+            }
+        }
+
         foreach ($modules as $id => $module) {
             $inDegree[$id] ??= 0;
             foreach ($module->dependencies() as $dep) {
-                if (!isset($modules[$dep])) {
+                $dep = (string) $dep;
+                if (isset($modules[$dep])) {
+                    $target = $dep;                                  // کلید دقیق (کامل یا کوتاه)
+                } elseif (!\str_contains($dep, '.') && isset($shortToKey[$dep])) {
+                    $target = $shortToKey[$dep];                     // نام کوتاه → resolve
+                } else {
                     continue;   // وابستگی به ماژول ناشناخته/خارجی — نادیده
                 }
-                $graph[$dep][] = $id;
+                if ($target === $id) {
+                    continue;   // خودیال (هم‌نامی کوتاه) — نادیده
+                }
+                $graph[$target][] = $id;
                 $inDegree[$id] = ($inDegree[$id] ?? 0) + 1;
             }
         }

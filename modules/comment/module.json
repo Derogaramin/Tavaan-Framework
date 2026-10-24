@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.tavaan.dev/schemas/module.v1.json",
+  "id": "tavaan.comment",
+  "type": "module",
+  "name": "Comment",
+  "title_fa": "نظر",
+  "title_en": "Comment",
+  "version": "0.1.0",
+  "description": "دامنهٔ نظر عمومی: موجودیت Comment، قرارداد Commentable، پورت ذخیره‌سازی، moderation (اسپم/تأیید) و رشتهٔ نظرات تو‌در‌تو (DOC-090 §6 / DOC-091 §1).",
+  "namespace": "Modules\\Comment\\",
+  "autoload": {"psr-4": {"Modules\\Comment\\": "src/"}},
+  "providers": ["Modules\\Comment\\Providers\\CommentServiceProvider"],
+  "requires": {"tavaan": "^1.0", "php": ">=8.2", "engines": [], "modules": []},
+  "tables": [],
+  "commands": [],
+  "events": {
+    "published": [
+      {"name": "comment.status.changed", "class": "Modules\\Comment\\Domain\\Events\\CommentStatusChanged", "version": 1}
+    ]
+  },
+  "docs": "modules/comment/README.md",
+  "notes": "بدون جدول اختصاصی — ذخیره‌سازی از طریق پورت CommentStoreInterface توسط ماژول مصرف‌کننده (blog_comments و …) پیاده‌سازی می‌شود."
+}

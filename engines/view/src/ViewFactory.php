@@ -22,6 +22,9 @@ use Tavaan\Engine\View\Exceptions\ViewException;
  */
 final class ViewFactory
 {
+    /** سقف عمق layout برای includeها (مشابه View::MAX_LAYOUT_DEPTH). */
+    private const MAX_INCLUDE_LAYOUT_DEPTH = 10;
+
     private ViewFinder $finder;
 
     private TemplateCompiler $compiler;
@@ -440,7 +443,27 @@ final class ViewFactory
      */
     public function renderInclude(string $template, array $data = []): string
     {
-        return $this->render($template, $data);
+        // 🔒 M9: چرخهٔ extends مستقل برای include — popExtends نباید layout
+        // قالبِ والد را از پشتهٔ مشترک مصرف کند (باگ: @include درون section
+        // باعث گم‌شدن کل خروجی صفحه می‌شد).
+        $savedExtends = $this->extendsStack;
+        $this->extendsStack = [];
+
+        try {
+            $content = $this->evaluateTemplate($template, $data);
+
+            $depth = 0;
+            while (($parent = $this->popExtends()) !== null) {
+                if (++$depth > self::MAX_INCLUDE_LAYOUT_DEPTH) {
+                    throw ViewException::maxDepth((string) $parent, self::MAX_INCLUDE_LAYOUT_DEPTH);
+                }
+                $content = $this->evaluateTemplate($parent, [...$data, '__content' => $content]);
+            }
+
+            return $content;
+        } finally {
+            $this->extendsStack = $savedExtends;
+        }
     }
 
     /** @param array<string, mixed> $data */

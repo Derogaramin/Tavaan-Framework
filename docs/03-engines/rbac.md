@@ -275,6 +275,39 @@ return [
 | Symfony Security Voters | Policy | — |
 | CASL (JS) | ABAC rules | — |
 
+---
+
+## افزودنی‌های M9
+
+### policies اعلامی (config)
+
+به‌جای `Gate::policy()` در boot ماژول‌ها (که Gate/PermissionResolver را
+زودهنگام resolve و اتصال DB را capture می‌کند)، نگاشت Policyها در config
+ادغام می‌شود و Gate در **اولین مصرف** ساخته می‌شود:
+
+```php
+// modules/blog/config/rbac.php → ادغام در rbac.policies
+return ['policies' => [
+    \Modules\Blog\Domain\Entities\Post::class => \Modules\Blog\Policies\PostPolicy::class,
+]];
+```
+
+### قالب object مجوزها در manifest
+
+`PermissionSync::readManifest` هر دو قالب را می‌پذیرد:
+
+```json
+"permissions": ["user.view"]                                  // فهرست مسطح
+"permissions": {"group": {...}, "items": [{"key": "user.view", "title_fa": "…"}]}  // schema module.v1.json
+```
+
+عنوان‌ها (title_fa/title_en) هنگام ساخت مجوز منتقل می‌شوند.
+
+### aliasهای کانتینر (نقطهٔ ورود ماژول‌ها)
+
+`rbac.roles` (RoleManager) • `rbac.permissions` (PermissionResolver) •
+`rbac.sync` (PermissionSync) — بدون ارجاع ماژول به کلاس موتور (ARCH-003).
+
 ## ۱۴. بلوک ماشین‌خوان 🧠
 ```yaml
 # machine-readable: tavaan.engine.rbac.v1

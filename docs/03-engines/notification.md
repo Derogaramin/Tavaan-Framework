@@ -129,6 +129,26 @@ return [
 ## ۹. معیار پذیرش 🧪
 - AC-NOTIF-01..07.
 
+---
+
+## ArrayNotification (M9) 🧩
+
+اعلان عمومی آرایه‌محور — نقطهٔ ورود ماژول‌ها/کیت‌ها که به مرز معماری
+(ARCH-003) نمی‌توانند کلاس اختصاصی از `Notification` بسازند:
+
+```php
+$notification = $app->make('notification.message', ['payload' => [
+    'via'      => ['mail', 'database'],
+    'mail'     => ['subject' => '…', 'greeting' => '…', 'lines' => ['…'],
+                   'salutation' => '…', 'action' => ['text' => '…', 'url' => '…']],
+    'database' => ['kind' => 'blog.comment.submitted', 'post_id' => '…'],
+    'sms'      => ['text' => '…'],
+]]);
+\Tavaan\Core\Facade\Facades\Notification::send($notifiable, $notification);
+```
+
+binding: `notification.message` (در NotificationServiceProvider).
+
 ## ۱۰. بلوک ماشین‌خوان 🧠
 ```yaml
 # machine-readable: tavaan.engine.notification.v1

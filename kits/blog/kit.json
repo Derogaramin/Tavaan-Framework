@@ -1,0 +1,43 @@
+{
+  "id": "tavaan.kit.blog",
+  "title_fa": "کیت وبلاگ",
+  "title_en": "Blog Kit",
+  "version": "1.0.0",
+  "tavaan": "^1.0",
+  "architecture": "hmvc",
+  "description": "وبلاگ شخصی/سازمانی کامل: مقاله، دسته، برچسب، نظرات تو‌در‌تو با moderation، جست‌وجوی فارسی، آرشیو جلالی، RSS/Atom، sitemap و SEO (DOC-091).",
+
+  "modules": [
+    {"id": "tavaan.core-user", "required": true},
+    {"id": "tavaan.content",   "required": true},
+    {"id": "tavaan.comment",   "required": true},
+    {"id": "tavaan.media",     "required": true},
+    {"id": "tavaan.blog",      "required": true}
+  ],
+
+  "engines": {
+    "required": ["view", "i18n", "search", "media", "notification"],
+    "recommended": ["observability", "cache"]
+  },
+
+  "theme": "themes/default",
+  "default_preset": "standard",
+
+  "roles": ["reader", "author", "editor", "admin"],
+  "demo_data": "seed/demo",
+
+  "requirements": {
+    "php": ">=8.2",
+    "extensions": ["pdo", "mbstring"],
+    "storage_mb": 200,
+    "memory_mb": 128
+  },
+
+  "install": {
+    "steps": ["env", "key:generate", "migrate", "rbac:sync", "seed:demo", "optimize"],
+    "wizard": false
+  },
+
+  "health_check": "/blog",
+  "docs": "kits/blog/README.md"
+}

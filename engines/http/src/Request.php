@@ -214,6 +214,17 @@ class Request implements RequestInterface
         $method = \strtoupper($method);
         $parsed = new Uri($uri);
 
+        // 🔒 هم‌راستا با fromGlobals: مسیر percent-decoded می‌شود تا رفتار
+        // تست درون‌فرایندی با HTTP واقعی یکسان بماند (M9 — مسیرهای فارسی
+        // مثل /blog/archive/۱۴۰۳/۰۷). guard دوباره-رمزنگاری مانند fromGlobals.
+        if (\str_contains($parsed->path(), '%')) {
+            $decodedPath = \rawurldecode($parsed->path());
+            if (\preg_match('/%[0-9a-fA-F]{2}/', $decodedPath) === 1) {
+                throw new BadRequestException('http.bad_request', ['reason' => 'double_encoded_path']);
+            }
+            $parsed = $parsed->withPath($decodedPath);
+        }
+
         $headers = [];
         foreach ($server as $key => $value) {
             if (\str_starts_with((string) $key, 'HTTP_')) {

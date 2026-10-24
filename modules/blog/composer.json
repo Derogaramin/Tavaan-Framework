@@ -1,0 +1,14 @@
+{
+  "name": "tavaan-modules/blog",
+  "description": "ماژول Blog برای فریمورک تَوان",
+  "type": "tavaan-module",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Modules\\Blog\\": "src/"
+    }
+  }
+}

@@ -24,9 +24,12 @@ return [
          'except' => ['Tavaan\\Core\\Bootstrap\\', 'Tavaan\\Core\\Contracts\\']],
         // موتور فقط به core و contractها
         ['from' => 'Tavaan\\Engine\\', 'deny' => ['Modules\\', 'App\\']],
-        // ماژول به موتور دیگر فقط از طریق Contract/Event
+        // ماژول به موتور دیگر فقط از طریق Contract/Event/Facade هسته.
+        // allow = نقطه‌های تمدید SDK (صریح و مستند — ممیزی M9):
+        //   Console\Command: پایهٔ دستورات CLI ماژول‌ها (کشف خودکار
+        //   modules/*&#47;src/Console/Commands بدون آن ممکن نیست — DOC-076/DOC-080).
         ['from' => 'Modules\\', 'deny' => ['Tavaan\\Engine\\'],
-         'allow_namespace' => ['Tavaan\\Core\\Contracts\\', 'Tavaan\\Support\\']],
+         'allow' => ['Tavaan\\Engine\\Console\\Command']],
     ],
     'forbidden_functions' => [
         'eval', 'create_function', 'putenv', 'shell_exec', 'exec', 'system', 'passthru',
