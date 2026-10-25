@@ -1,0 +1,17 @@
+{
+  "title_fa": "استاندارد",
+  "description": "پیش‌فرض DOC-095: کش فهرست، صدور خودکار گواهی با Workflow، اعلان‌های کامل، Q&A فقط برای ثبت‌نام‌شده‌ها.",
+  "config": {
+    "lms": {
+      "per_page": 12,
+      "cache": {"enabled": true, "list_ttl": 60},
+      "payment": {"driver": "sandbox"},
+      "quiz": {"default_pass_score": 50, "default_max_attempts": 3, "default_time_limit": null, "auto_grade_short_answer": true},
+      "certificates": {"auto_issue": true, "serial_prefix": "TVN-LMS", "storage_path": "certificates", "verify_base": "/lms/certificates", "workflow": "lms-issue-certificate"},
+      "progress": {"complete_quiz_lesson_on_pass": true},
+      "notifications": {"welcome": true, "course_completed": true, "certificate_issued": true, "attempt_graded": true},
+      "search": {"enabled": true, "index": "lms_courses"},
+      "qa": {"enabled": true, "enrolled_only": true, "auto_approve_staff": true}
+    }
+  }
+}

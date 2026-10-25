@@ -1,0 +1,17 @@
+{
+  "title_fa": "سازمانی",
+  "description": "درگاه واقعی موتور payment، کش تهاجمی‌تر، صف پرسش‌ها با moderation سخت‌گیرانه، گزارش‌های کامل.",
+  "config": {
+    "lms": {
+      "per_page": 24,
+      "cache": {"enabled": true, "list_ttl": 120},
+      "payment": {"driver": "engine", "gateway": "", "callback_url": "/lms/pay/callback"},
+      "quiz": {"default_pass_score": 60, "default_max_attempts": 2, "default_time_limit": 30, "auto_grade_short_answer": true},
+      "certificates": {"auto_issue": true, "serial_prefix": "TVN-LMS", "storage_path": "certificates", "verify_base": "/lms/certificates", "workflow": "lms-issue-certificate"},
+      "progress": {"complete_quiz_lesson_on_pass": true},
+      "notifications": {"welcome": true, "course_completed": true, "certificate_issued": true, "attempt_graded": true},
+      "search": {"enabled": true, "index": "lms_courses"},
+      "qa": {"enabled": true, "enrolled_only": true, "auto_approve_staff": false}
+    }
+  }
+}

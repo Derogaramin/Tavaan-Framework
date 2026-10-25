@@ -1,0 +1,11 @@
+{
+  "id": "default",
+  "name": "پوستهٔ پیش‌فرض کیت آموزش آنلاین",
+  "rtl": true,
+  "font": "Vazirmatn",
+  "colors": {"primary": "#0d9488", "secondary": "#134e4a", "accent": "#f59e0b"},
+  "slots": ["header", "sidebar", "progress", "footer"],
+  "breakpoints": {"sm": 640, "md": 768, "lg": 1024, "xl": 1280},
+  "overrides": "views/",
+  "assets": "assets/"
+}

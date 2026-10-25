@@ -93,8 +93,9 @@ final class DatabaseBroker implements BrokerInterface
     public function prune(): int
     {
         // 🔒 cutoff با همان قالب Clock::isoNow (مقایسهٔ رشته‌ای ISO ترتیب زمانی دارد)
-        $cutoff = (new \DateTimeImmutable('-' . $this->ttlSeconds . ' seconds'))
-            ->setTimezone(new \DateTimeZone('UTC'))
+        // ⏱ از Clock (نه new DateTime مستقیم) تا با Fake زمان در تست‌ها قطعی بماند (DOC-110)
+        $cutoff = Clock::utcNow()
+            ->modify('-' . $this->ttlSeconds . ' seconds')
             ->format('Y-m-d\TH:i:s.uP');
 
         return (int) $this->connection->table($this->table)->where('created_at', '<', $cutoff)->delete();

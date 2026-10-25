@@ -2,6 +2,20 @@
 
 فرمت: Keep a Changelog — نسخه‌گذاری: SemVer.
 
+## [0.13.0] - 2026-10-25 — فاز M9 (گام ۵): کیت آموزش آنلاین (LMS) 🎓
+
+### افزوده شد
+- **ماژول `tavaan.lms`** (DOC-095 کامل — hexagonal): کاتالوگ دوره (بخش/درس ویدیو|متن|آزمون|پیوست + دسته + **پیش‌نیاز** با بررسی تکمیل و محافظ چرخه) • **ثبت‌نام رایگان/پولی** (pending_payment → purchase → callback → **verify با مبلغ محلی** — idempotent در برابر callback تکراری؛ پورت `PaymentGatewayPort` با دو آداپتر Sandbox/Engine — الگوی shop) • **پیشرفت درس/دوره** (POST /lms/lessons/{id}/complete → recalc درصد → تکمیل دوره → رویدادها) • **آزمون** (max_attempts/time_limit با رد ارسال دیرهنگام، نمره‌دهی خودکار multiple_choice/true_false/short_answer با **AnswerNormalizer فارسی‌آگاه** (ارقام ۱۴۰۵↔1405، ی/ک، نیم‌فاصله، صحیح/غلط فارسی، پاسخ چندگانه با `|`) و دستی descriptive در صف `/admin/lms/grading` • pass_score درصدی با مقایسهٔ int) • **گواهی با Workflow** (AC-LMS-08): فرایند `lms-issue-certificate` (requested→generating→issued/failed) روی موتور workflow + serial یکتا **Crockford base32 با رقم کنترل** (tamper بدون DB رد می‌شود) + سند HTML آمادهٔ چاپ (رویکرد PdfExporter موتور report) + snapshot روی Storage + **verify عمومی** `/lms/certificates/{serial}` + ابطال مدیرتی • **پرسش‌وپاسخ درس‌ها** روی پورت ماژول comment (جدول `lms_comments`، پاسخ staff بدون moderation) • جست‌وجوی فارسی (ایندکس رویدادمحور `lms_courses` + fallback LIKE با واریانت رقم) • اعلان‌های mail+database (welcome/تکمیل/گواهی/نتیجهٔ نمره — binding `notification.message`) • Markdown escape-first→sanitize دو‌لایه + allowlist نشانی ویدیو (ضد javascript:/data:) • **گزارش پیشرفت** (میانگین/نرخ تکمیل/درآمد + CSV با BOM و ضد injection) • پنل `/admin/lms/*` (دوره/بخش/درس/دسته، آزمون/سؤال، نمره‌دهی، ثبت‌نام‌ها، گواهی‌ها، گزارش) • `tvn lms:recompute-progress` • ۱۲ جدول `lms_*` • ۱۴ مجوز RBAC + CoursePolicy اعلامی (مالکیت مدرس + مجوزهای «همه») • seed دمو
+- **کیت `tavaan.kit.lms`**: kit.json + ۳ preset (minimal بدون گواهی خودکار/standard DOC-095/enterprise با درگاه واقعی + timer ۳۰ دقیقه) + theme RTL emerald (vendor override) + roles.json (student/instructor/assistant/lms-admin/admin) + demo (انتصاب نقش + ثبت‌نام فعال + دورهٔ تکمیل‌شده با **گواهی قابل verify**) + راهنمای کاربر/ادمین
+- **۴۰ تست جدید** (۱۵۰۸ کل / ۹۸۱۴ assertion): ۲۰ Unit (ماتریس‌های وضعیت Course/Enrollment/Attempt، QuizGrader خودکار/دستی/آستانهٔ int، AnswerNormalizer فارسی، ProgressCalculator، PrerequisiteChecker+چرخه، serial+رقم کنترل، Money، اعتبارسنجی Question/Quiz time-limit) + ۲۰ Feature شامل **E2E-01..07 DOC-095 §7** (ثبت‌نام پولی sandbox+callback idempotent، پرداخت ناموفق+retry، رایگان، درس+پیشرفت+گاردها، آزمون خودکار/رد/سقف/تایمر/دستی+اعلان، تکمیل→گواهی با Workflow+نمونهٔ DB، verify عمومی+ tamper+ابطال+404 سند، گزارش+CSV) + matrix نقش‌ها/مالکیت مدرس + پیش‌نیاز + XSS + Q&A moderation + جست‌وجوی رقم فارسی + گارد auth
+
+### اصلاح شد
+- **`DatabaseBroker::prune`** (realtime): `new DateTimeImmutable` مستقیم به‌جای Clock → نقض قاعدهٔ «Clock منبع یگانه زمان» (DOC-110) + flake ~۲٪ در `testDatabaseBrokerRoundTrip` وقتی prune فرصت‌طلبِ درون publish با زمان fake تداخل می‌کرد — اکنون `Clock::utcNow()->modify(...)` (قطعی با Fake)
+- **`user_agent` موتور http-client**: کلید خالی `TVN_HTTP_USER_AGENT=` در `.env.example` → `env_string` رشتهٔ خالی برمی‌گرداند (نه پیش‌فرض) → هدر User-Agent خالی و شکست `testFluentHeadersTokenAndQuery` در محیط‌های دارای .env — fallback `?:` در config + PendingRequest (هم‌راستا با الگوی ca_bundle/proxy)
+
+### مستندات
+- DOC-095 §9 (وضعیت + بلوک ماشین‌خوان) • `docs/reports/M9-lms-implementation-report.md` • بک‌لاگ: TVN-0095 → done (M9: ۳ مانده/۵ انجام) • README ماژول/کیت • `.gitignore` (overlayهای config/lms.php + vendor/lms)
+
 ## [0.12.0] - 2026-10-24 — فاز M9 (گام ۴): کیت انجمن 💬
 
 ### افزوده شد

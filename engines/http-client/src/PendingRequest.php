@@ -65,7 +65,7 @@ final class PendingRequest
             'max_size' => (int) ($config['max_size'] ?? 0),
         ];
 
-        $userAgent = (string) ($config['user_agent'] ?? 'Tavaan/1.0 (+https://tavaan.dev)');
+        $userAgent = ((string) ($config['user_agent'] ?? '')) ?: 'Tavaan/1.0 (+https://tavaan.dev)';
         $this->headers = ['User-Agent' => $userAgent, 'Accept' => '*/*'];
 
         $retry = (array) ($config['retry'] ?? []);

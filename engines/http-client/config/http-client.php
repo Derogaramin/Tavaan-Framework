@@ -20,7 +20,7 @@ return [
     'verify_tls' => env_bool('TVN_HTTP_VERIFY_TLS', true),
     'ca_bundle' => env_string('TVN_HTTP_CA_BUNDLE', '') ?: null,
     'proxy' => env_string('TVN_HTTP_PROXY', '') ?: null,
-    'user_agent' => env_string('TVN_HTTP_USER_AGENT', 'Tavaan/1.0 (+https://tavaan.dev)'),
+    'user_agent' => env_string('TVN_HTTP_USER_AGENT', 'Tavaan/1.0 (+https://tavaan.dev)') ?: 'Tavaan/1.0 (+https://tavaan.dev)',
 
     // 🔒 SSRF
     'ssrf_protection' => env_bool('TVN_HTTP_SSRF', true),

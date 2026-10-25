@@ -246,7 +246,7 @@ tickets:
   - {id: TVN-0092, title: "Kit: News Portal", phase: M9, docs: [DOC-092], status: done}
   - {id: TVN-0093, title: "Kit: Shop", phase: M9, docs: [DOC-093], status: done}
   - {id: TVN-0094, title: "Kit: Forum", phase: M9, docs: [DOC-094], status: done}
-  - {id: TVN-0095, title: "Kit: LMS", phase: M9, docs: [DOC-095]}
+  - {id: TVN-0095, title: "Kit: LMS", phase: M9, docs: [DOC-095], status: done}
   - {id: TVN-0096, title: "Kit: CRM", phase: M9, docs: [DOC-096]}
   - {id: TVN-0097, title: "Kit: ERP", phase: M9, docs: [DOC-097]}
   - {id: TVN-0098, title: "Kit: BPMS", phase: M9, docs: [DOC-098]}
@@ -296,7 +296,7 @@ function pickNextTicket(agent):
 | M6 | 6 | 0 | 0 | 6 |
 | M7 | 3 | 0 | 0 | 3 |
 | M8 | 5 | 0 | 0 | 5 |
-| M9 | 8 | 4 | 0 | 4 |
-| **جمع** | **63** | **5** | **0** | **58** |
+| M9 | 8 | 3 | 0 | 5 |
+| **جمع** | **63** | **3** | **0** | **60** |
 
 > ⚠️ این فایل با پیشرفت پروژه به‌روز می‌شود. `status` هر تیکت را پس از اتمام تغییر دهید.

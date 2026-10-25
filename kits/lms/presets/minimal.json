@@ -1,0 +1,15 @@
+{
+  "title_fa": "مینیمال",
+  "description": "کمترین منابع: کش خاموش، صدور گواهی خاموش، اعلان‌های حداقلی — مناسب توسعه/دمو.",
+  "config": {
+    "lms": {
+      "per_page": 12,
+      "cache": {"enabled": false},
+      "payment": {"driver": "sandbox"},
+      "quiz": {"default_pass_score": 50, "default_max_attempts": 3, "auto_grade_short_answer": true},
+      "certificates": {"auto_issue": false},
+      "notifications": {"welcome": true, "course_completed": false, "certificate_issued": false, "attempt_graded": false},
+      "qa": {"enabled": true, "enrolled_only": true}
+    }
+  }
+}

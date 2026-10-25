@@ -1,0 +1,74 @@
+{
+  "$schema": "https://docs.tavaan.dev/schemas/module.v1.json",
+  "id": "tavaan.lms",
+  "type": "module",
+  "name": "Lms",
+  "title_fa": "سامانهٔ مدیریت آموزش",
+  "title_en": "Learning Management System",
+  "version": "0.1.0",
+  "description": "آموزش آنلاین: دوره/بخش/درس (ویدیو/متن/آزمون/پیوست)، ثبت‌نام رایگان و پولی با درگاه پرداخت، پیشرفت درس و دوره، آزمون با نمره‌دهی خودکار و دستی، صدور مدرک با Workflow و verify عمومی (serial)، پیش‌نیاز دوره، پرسش‌وپاسخ درس، جست‌وجوی فارسی و گزارش پیشرفت (DOC-095).",
+  "namespace": "Modules\\Lms\\",
+  "autoload": {"psr-4": {"Modules\\Lms\\": "src/"}},
+  "providers": ["Modules\\Lms\\Providers\\LmsServiceProvider"],
+  "requires": {
+    "tavaan": "^1.0",
+    "php": ">=8.2",
+    "engines": ["view", "i18n", "jalali", "search", "cache", "notification", "database", "rbac", "security", "media", "workflow", "payment"],
+    "modules": ["tavaan.core-user", "tavaan.content", "tavaan.comment", "tavaan.media"]
+  },
+  "tables": ["lms_categories", "lms_courses", "lms_sections", "lms_lessons", "lms_course_prerequisites", "lms_enrollments", "lms_lesson_progress", "lms_quizzes", "lms_questions", "lms_quiz_attempts", "lms_certificates", "lms_comments"],
+  "commands": ["Modules\\Lms\\Console\\Commands\\RecomputeProgressCommand"],
+  "routes": {
+    "web": "routes/web.php",
+    "admin": "routes/admin.php"
+  },
+  "views": {"namespace": "lms", "path": "views"},
+  "lang": {"path": "lang"},
+  "migrations": {"path": "migrations"},
+  "seeds": {"demo": "seeds/demo.php"},
+  "events": {
+    "published": [
+      {"name": "lms.course.published", "class": "Modules\\Lms\\Domain\\Events\\CourseWasPublished", "version": 1},
+      {"name": "lms.course.updated", "class": "Modules\\Lms\\Domain\\Events\\CourseWasUpdated", "version": 1},
+      {"name": "lms.student.enrolled", "class": "Modules\\Lms\\Domain\\Events\\StudentWasEnrolled", "version": 1},
+      {"name": "lms.lesson.completed", "class": "Modules\\Lms\\Domain\\Events\\LessonWasCompleted", "version": 1},
+      {"name": "lms.course.completed", "class": "Modules\\Lms\\Domain\\Events\\CourseWasCompleted", "version": 1},
+      {"name": "lms.quiz.passed", "class": "Modules\\Lms\\Domain\\Events\\QuizWasPassed", "version": 1},
+      {"name": "lms.attempt.graded", "class": "Modules\\Lms\\Domain\\Events\\AttemptWasGraded", "version": 1},
+      {"name": "lms.certificate.issued", "class": "Modules\\Lms\\Domain\\Events\\CertificateWasIssued", "version": 1}
+    ]
+  },
+  "permissions": {
+    "group": {"id": "lms", "title_fa": "آموزش (LMS)"},
+    "items": [
+      {"key": "lms.course.view", "title_fa": "مشاهدهٔ دوره‌ها (مدیریت)", "title_en": "View courses (admin)"},
+      {"key": "lms.course.create", "title_fa": "ساخت دوره (مدرس — دورهٔ خود)", "title_en": "Create courses (own)"},
+      {"key": "lms.course.update", "title_fa": "ویرایش دوره (همه)", "title_en": "Update any course"},
+      {"key": "lms.course.delete", "title_fa": "حذف دوره (همه)", "title_en": "Delete any course"},
+      {"key": "lms.course.publish", "title_fa": "انتشار دوره (همه)", "title_en": "Publish any course"},
+      {"key": "lms.category.manage", "title_fa": "مدیریت دسته‌های دوره", "title_en": "Manage course categories"},
+      {"key": "lms.enrollment.view", "title_fa": "مشاهدهٔ ثبت‌نام‌ها (مدیریت)", "title_en": "View enrollments (admin)"},
+      {"key": "lms.enrollment.manage", "title_fa": "مدیریت ثبت‌نام‌ها (drop/activate)", "title_en": "Manage enrollments"},
+      {"key": "lms.quiz.manage", "title_fa": "مدیریت آزمون/سؤال (دورهٔ خود)", "title_en": "Manage quizzes/questions"},
+      {"key": "lms.attempt.grade", "title_fa": "نمره‌دهی دستی (دورهٔ خود)", "title_en": "Grade attempts (own course)"},
+      {"key": "lms.attempt.grade-any", "title_fa": "نمره‌دهی دستی (همهٔ دوره‌ها)", "title_en": "Grade any attempt"},
+      {"key": "lms.certificate.view", "title_fa": "مشاهدهٔ گواهی‌ها (مدیریت)", "title_en": "View certificates (admin)"},
+      {"key": "lms.certificate.revoke", "title_fa": "ابطال گواهی", "title_en": "Revoke certificates"},
+      {"key": "lms.report.view", "title_fa": "گزارش پیشرفت", "title_en": "View progress reports"}
+    ]
+  },
+  "navigation": [
+    {"title": "دوره‌ها", "title_fa": "دوره‌ها", "uri": "/admin/lms/courses", "icon": "🎓", "permission": "lms.course.view", "order": 40},
+    {"title": "نمره‌دهی", "title_fa": "نمره‌دهی", "uri": "/admin/lms/grading", "icon": "📝", "permission": "lms.attempt.grade", "order": 41},
+    {"title": "ثبت‌نام‌ها", "title_fa": "ثبت‌نام‌ها", "uri": "/admin/lms/enrollments", "icon": "🧾", "permission": "lms.enrollment.view", "order": 42},
+    {"title": "گواهی‌ها", "title_fa": "گواهی‌ها", "uri": "/admin/lms/certificates", "icon": "🏅", "permission": "lms.certificate.view", "order": 43},
+    {"title": "گزارش پیشرفت", "title_fa": "گزارش پیشرفت", "uri": "/admin/lms/reports/progress", "icon": "📊", "permission": "lms.report.view", "order": 44}
+  ],
+  "database": {
+    "table_prefix": "lms_",
+    "tables": ["lms_categories", "lms_courses", "lms_sections", "lms_lessons", "lms_course_prerequisites", "lms_enrollments", "lms_lesson_progress", "lms_quizzes", "lms_questions", "lms_quiz_attempts", "lms_certificates", "lms_comments"],
+    "seed_on_install": true
+  },
+  "docs": "modules/lms/README.md",
+  "notes": "کیت LMS (kits/lms) این ماژول را با theme/preset/roles/demo نصب می‌کند — DOC-095/TVN-0095."
+}

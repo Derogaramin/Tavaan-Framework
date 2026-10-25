@@ -1,0 +1,44 @@
+{
+  "id": "tavaan.kit.lms",
+  "title_fa": "کیت آموزش آنلاین (LMS)",
+  "title_en": "LMS Kit",
+  "version": "1.0.0",
+  "tavaan": "^1.0",
+  "architecture": "hexagonal",
+  "description": "سامانهٔ مدیریت آموزش کامل: دوره/بخش/درس (ویدیو/متن/آزمون/پیوست)، ثبت‌نام رایگان و پولی با درگاه پرداخت، پیشرفت، آزمون با نمره‌دهی خودکار و دستی، صدور گواهی با Workflow و راستی‌آزمایی عمومی، پیش‌نیاز دوره، پرسش‌وپاسخ درس، جست‌وجوی فارسی و گزارش پیشرفت (DOC-095).",
+
+  "modules": [
+    {"id": "tavaan.core-user", "required": true},
+    {"id": "tavaan.content",   "required": true},
+    {"id": "tavaan.comment",   "required": true},
+    {"id": "tavaan.media",     "required": true},
+    {"id": "tavaan.lms",       "required": true},
+    {"id": "tavaan.blog",      "required": false, "note": "مجلهٔ آموزشی/بازاریابی محتوا — اختیاری"}
+  ],
+
+  "engines": {
+    "required": ["view", "i18n", "jalali", "search", "cache", "notification", "database", "rbac", "security", "media", "workflow", "payment", "session"],
+    "recommended": ["queue", "report", "audit", "schedule", "realtime"]
+  },
+
+  "theme": "themes/default",
+  "default_preset": "standard",
+
+  "roles": ["student", "instructor", "assistant", "lms-admin", "admin"],
+  "demo_data": "seed/demo",
+
+  "requirements": {
+    "php": ">=8.2",
+    "extensions": ["pdo", "mbstring"],
+    "storage_mb": 300,
+    "memory_mb": 128
+  },
+
+  "install": {
+    "steps": ["env", "key:generate", "migrate", "rbac:sync", "seed:demo", "optimize"],
+    "wizard": false
+  },
+
+  "health_check": "/lms",
+  "docs": "kits/lms/README.md"
+}

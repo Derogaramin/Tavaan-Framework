@@ -182,3 +182,52 @@ Enrollment completed + همهٔ آزمون‌ها pass
 ## ۸. معیار پذیرش 🧪
 - AC-LMS-01..07.
 - AC-LMS-08: صدور مدرک با Workflow و verify عمومی.
+
+---
+
+## ۹. وضعیت پیاده‌سازی (M9 — TVN-0095) ✅
+
+| بخش | محل |
+|---|---|
+| ماژول دامنه | `modules/lms/` (tavaan.lms — hexagonal) |
+| کیت | `kits/lms/` (kit.json + ۳ preset + theme emerald + roles.json + demo + docs) |
+| نصب | `php bin/tvn kit:install lms --with-demo` |
+| جداول | `lms_categories` / `lms_courses` / `lms_sections` / `lms_lessons` / `lms_course_prerequisites` / `lms_enrollments` (uk student+course) / `lms_lesson_progress` (uk enrollment+lesson) / `lms_quizzes` / `lms_questions` / `lms_quiz_attempts` / `lms_certificates` (serial یکتا) / `lms_comments` (Q&A) |
+| Aggregateها | Course (+Section/Lesson/Prerequisite) / Enrollment (+LessonProgress) / Quiz (+Question/Attempt) / Certificate — ULID برای شناسه‌ها |
+| نقش‌ها | student / instructor (مالکیت با CoursePolicy) / assistant (grade-any) / lms-admin (kits/lms/seed/roles.json + ۱۴ مجوز manifest) |
+| پرداخت | پورت `PaymentGatewayPort` — Sandbox قطعی (شبیه‌ساز `/lms/pay/sandbox/{authority}`) + Engine (موتور payment) • verify با مبلغ محلی • callback idempotent |
+| آزمون | خودکار (mc/tf/short با AnswerNormalizer فارسی‌آگاه) + دستی (descriptive) در صف `/admin/lms/grading` • time_limit (رد ارسال دیرهنگام + تایمر کلاینت) • max_attempts • pass_score درصدی (مقایسهٔ int) |
+| گواهی | Workflow `lms-issue-certificate` (requested→generating→issued/failed) • serial با رقم کنترل Crockford • سند HTML آمادهٔ چاپ + snapshot روی Storage • verify عمومی + ابطال |
+| پیشرفت | POST `/lms/lessons/{id}/complete` → recalc → تکمیل دوره → certificate check • درس quiz با قبولی آزمون تکمیل می‌شود • `tvn lms:recompute-progress` |
+| جست‌وجو | ایندکس `lms_courses` (رویدادمحور) + fallback LIKE با واریانت رقم فارسی/لاتین |
+| Q&A | پورت ماژول comment روی `lms_comments` — پاسخ staff (مالک/grade) بدون moderation |
+| گزارش | `/admin/lms/reports/progress` (+CSV با BOM و ضد injection) — تفکیک مدرس/مدیر |
+| تست | `modules/lms/tests/` — ۴۰ تست (۲۰ Unit + ۲۰ Feature: E2E-01..07 + نقش‌ها/پیش‌نیاز/XSS/Q&A/tamper-serial) |
+
+انطباق: E2E-01 (ثبت‌نام پولی: enroll→sandbox→callback→active+اعلان+idempotency) ✅ •
+E2E-02 (درس+پیشرفت ۵۰→۱۰۰٪+تکمیل+گاردهای دسترسی/پیش‌نمایش رایگان) ✅ • E2E-03 (آزمون
+خودکار: فرم/submit/نمره/قبولی + دستی: صف→نمره→اعلان + سقف تلاش + تایمر) ✅ • E2E-04
+(تکمیل دوره → صدور گواهی با Workflow — نمونهٔ فرایند در `tvn_process_instances` +
+workflow_instance_id روی گواهی) ✅ • E2E-05 (verify عمومی با serial: معتبر/tamper→«یافت
+نشد»/ابطال→«باطل»/سند ۴۰۴) ✅ • E2E-06 (instructor: ساخت→انتشار مشروط به درس→ویترین
++ ۴۰۳ روی دورهٔ غیرخود) ✅ • E2E-07 (گزارش پیشرفت + CSV) ✅ • AC-LMS-08 (Workflow +
+verify عمومی + رقم کنترل) ✅
+
+> 📄 سند گواهی: HTML آمادهٔ چاپ (print-to-PDF) — همان رویکرد `PdfExporter` موتور
+> report با `pdf_driver=html` (بدون ext، RTL/فارسی کامل). PDF باینری با فونت
+> فارسیِ embed در بک‌لاگ Release 1.0 ثبت شد.
+
+```yaml
+# machine-readable: tavaan.kit.lms.v1 (وضعیت M9)
+kit:
+  id: tavaan.kit.lms
+  status: implemented
+  ticket: TVN-0095
+  modules: [tavaan.core-user, tavaan.content, tavaan.comment, tavaan.media, tavaan.lms]
+  routes_public: [/lms, /lms/search, /lms/category/{slug}, /lms/courses/{slug}, /lms/courses/{id}/enroll, /lms/pay/{id}, /lms/pay/sandbox/{authority}, /lms/pay/callback, /lms/learn, /lms/learn/{slug}, /lms/lessons/{id}, /lms/lessons/{id}/complete, /lms/lessons/{id}/questions, /lms/quizzes/{id}, /lms/quizzes/{id}/attempt, /lms/attempts/{id}, /lms/attempts/{id}/submit, /lms/attempts/{id}/result, /lms/verify-certificate, /lms/certificates/{serial}, /lms/certificates/{serial}/document]
+  routes_admin: [/admin/lms/courses, /admin/lms/courses/{id}/edit, /admin/lms/courses/{id}/publish, /admin/lms/courses/{id}/quizzes, /admin/lms/quizzes/{id}/edit, /admin/lms/grading, /admin/lms/enrollments, /admin/lms/certificates, /admin/lms/reports/progress]
+  events: [lms.course.published, lms.course.updated, lms.student.enrolled, lms.lesson.completed, lms.course.completed, lms.quiz.passed, lms.attempt.graded, lms.certificate.issued]
+  workflow: lms-issue-certificate
+  search_index: lms_courses
+  tests: {unit: modules/lms/tests/Unit, feature: modules/lms/tests/Feature}
+```

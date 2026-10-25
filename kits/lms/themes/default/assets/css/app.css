@@ -1,0 +1,40 @@
+/*
+ * کیت آموزش آنلاین (LMS) — پوستهٔ پیش‌فرض
+ * اجزای تکمیلی فراتر از layout (کارت دوره، سند گواهی، تایمر آزمون).
+ * RTL با CSS logical properties (DOC-090 §7).
+ */
+
+/* کارت دوره در فهرست‌ها */
+.lms-card h3 a { color: #115e59; }
+.lms-card h3 a:hover { color: #0d9488; }
+
+/* هایلایت درس جاری در فضای یادگیری */
+.lesson-row .grow a { font-weight: 700; }
+
+/* تایمر آزمون */
+#lms-countdown {
+    font-family: monospace;
+    direction: ltr;
+    display: inline-block;
+    background: #fef3c7;
+    color: #92400e;
+    border-radius: 6px;
+    padding-inline: .45rem;
+    font-weight: 700;
+}
+
+/* نوار پیشرفت بزرگ‌تر در صفحهٔ دوره */
+.progress-track { min-width: 120px; }
+
+/* صفحهٔ راستی‌آزمایی گواهی */
+.lms-card table td:first-child {
+    color: #64748b;
+    padding-inline-end: 1rem;
+}
+
+/* دکمه‌های ورود/ثبت‌نام در هدر */
+.lms-nav .lms-btn.sm { padding-block: .2rem; }
+
+@media print {
+    .lms-header, .lms-footer, .toolbar { display: none; }
+}

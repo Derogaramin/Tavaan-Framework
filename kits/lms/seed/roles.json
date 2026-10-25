@@ -1,0 +1,80 @@
+{
+  "roles": [
+    {
+      "key": "student",
+      "title_fa": "دانشجو",
+      "title_en": "Student",
+      "permissions": []
+    },
+    {
+      "key": "instructor",
+      "title_fa": "مدرس",
+      "title_en": "Instructor",
+      "permissions": [
+        "lms.course.create",
+        "lms.quiz.manage",
+        "lms.attempt.grade",
+        "lms.enrollment.view",
+        "lms.certificate.view",
+        "lms.report.view"
+      ]
+    },
+    {
+      "key": "assistant",
+      "title_fa": "دستیار آموزشی",
+      "title_en": "Teaching Assistant",
+      "permissions": [
+        "lms.attempt.grade",
+        "lms.attempt.grade-any",
+        "lms.enrollment.view",
+        "lms.course.view"
+      ]
+    },
+    {
+      "key": "lms-admin",
+      "title_fa": "مدیر آموزش",
+      "title_en": "LMS Admin",
+      "permissions": [
+        "lms.course.view",
+        "lms.course.create",
+        "lms.course.update",
+        "lms.course.delete",
+        "lms.course.publish",
+        "lms.category.manage",
+        "lms.enrollment.view",
+        "lms.enrollment.manage",
+        "lms.quiz.manage",
+        "lms.attempt.grade",
+        "lms.attempt.grade-any",
+        "lms.certificate.view",
+        "lms.certificate.revoke",
+        "lms.report.view"
+      ]
+    },
+    {
+      "key": "admin",
+      "title_fa": "مدیر کل",
+      "title_en": "Admin",
+      "permissions": [
+        "lms.course.view",
+        "lms.course.create",
+        "lms.course.update",
+        "lms.course.delete",
+        "lms.course.publish",
+        "lms.category.manage",
+        "lms.enrollment.view",
+        "lms.enrollment.manage",
+        "lms.quiz.manage",
+        "lms.attempt.grade",
+        "lms.attempt.grade-any",
+        "lms.certificate.view",
+        "lms.certificate.revoke",
+        "lms.report.view",
+        "user.view",
+        "user.create",
+        "user.update",
+        "user.delete"
+      ]
+    }
+  ]
+}
