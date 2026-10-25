@@ -1,0 +1,20 @@
+/*
+ * کیت CRM — پوستهٔ پیش‌فرض
+ * اجزای تکمیلی فراتر از layout (پرتال پشتیبانی).
+ * RTL با CSS logical properties (DOC-090 §7).
+ */
+
+/* وضعیت‌های تیکت در پرتال */
+.crm-card h1 { font-size: 1.25rem; margin-block-end: .4rem; }
+
+/* فرم‌ها در عرض کم */
+@media (max-width: 640px) {
+    .crm-card { padding: 1rem; }
+}
+
+/* دکمهٔ ردیابی */
+#track-form .crm-btn { margin-block-start: .3rem; }
+
+@media print {
+    .crm-header, .crm-footer { display: none; }
+}

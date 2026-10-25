@@ -1,0 +1,18 @@
+{
+  "title_fa": "استاندارد",
+  "description": "پیش‌فرض DOC-096: SLA چهارسطحی، scoring مستند، escalation خودکار، اعلان‌های کامل، همگام‌سازی shop.",
+  "config": {
+    "crm": {
+      "per_page": 20,
+      "pipeline": {"workflow": "crm-sales-pipeline", "probabilities": {"prospecting": 10, "qualification": 25, "proposal": 50, "negotiation": 75, "closed_won": 100, "closed_lost": 0}},
+      "scoring": {"source_referral": 20, "source_default": 5, "has_company": 15, "high_value_threshold": 100000000, "high_value": 25, "low_value": 10, "engagement_per_activity": 5, "engagement_max": 15, "cap": 100},
+      "sla": {"urgent": 2, "high": 4, "normal": 8, "low": 24, "escalate_roles": ["support-manager", "crm-admin", "admin"]},
+      "tickets": {"number_prefix": "TKT", "portal_enabled": true, "auto_close_days": 7},
+      "campaigns": {"batch_size": 50, "from_name": "پشتیبانی"},
+      "notifications": {"ticket_assigned": true, "ticket_replied": true, "sla_breached": true, "ticket_resolved": true, "lead_assigned": true, "opportunity_won": true},
+      "search": {"enabled": true, "index": "crm_contacts"},
+      "sync": {"shop_orders": true},
+      "encryption": {"national_id": true}
+    }
+  }
+}

@@ -1,0 +1,344 @@
+{
+  "$schema": "https://docs.tavaan.dev/schemas/module.v1.json",
+  "id": "tavaan.crm",
+  "type": "module",
+  "name": "Crm",
+  "title_fa": "مدیریت ارتباط با مشتری",
+  "title_en": "Customer Relationship Management",
+  "version": "0.1.0",
+  "description": "CRM کامل: مخاطب با رمزنگاری کدملی، سرنخ با Lead Scoring خودکار، Pipeline فرصت فروش با Workflow و forecast وزنی، فعالیت‌ها (تماس/جلسه/ایمیل/یادداشت/کار)، تیکت پشتیبانی با SLA و escalation خودکار، کمپین ایمیل/پیامک با audience query، همگام‌سازی مشتری فروشگاه (رویدادمحور)، گزارش‌ها (pipeline/win-loss/forecast/کارکرد کارشناس/SLA/منبع سرنخ) و API ورود سرنخ/تیکت (DOC-096).",
+  "namespace": "Modules\\Crm\\",
+  "autoload": {
+    "psr-4": {
+      "Modules\\Crm\\": "src/"
+    }
+  },
+  "providers": [
+    "Modules\\Crm\\Providers\\CrmServiceProvider"
+  ],
+  "requires": {
+    "tavaan": "^1.0",
+    "php": ">=8.2",
+    "engines": [
+      "view",
+      "i18n",
+      "search",
+      "cache",
+      "notification",
+      "database",
+      "rbac",
+      "security",
+      "mail",
+      "workflow",
+      "crypt"
+    ],
+    "modules": [
+      "tavaan.core-user"
+    ]
+  },
+  "tables": [
+    "crm_contacts",
+    "crm_leads",
+    "crm_opportunities",
+    "crm_activities",
+    "crm_tickets",
+    "crm_ticket_replies",
+    "crm_campaigns",
+    "crm_campaign_recipients"
+  ],
+  "commands": [
+    "Modules\\Crm\\Console\\Commands\\CheckSlaCommand",
+    "Modules\\Crm\\Console\\Commands\\SendCampaignsCommand",
+    "Modules\\Crm\\Console\\Commands\\RecalculateLeadScoresCommand"
+  ],
+  "routes": {
+    "web": "routes/web.php",
+    "admin": "routes/admin.php",
+    "api": "routes/api.php"
+  },
+  "views": {
+    "namespace": "crm",
+    "path": "views"
+  },
+  "lang": {
+    "path": "lang"
+  },
+  "migrations": {
+    "path": "migrations"
+  },
+  "seeds": {
+    "demo": "seeds/demo.php"
+  },
+  "events": {
+    "published": [
+      {
+        "name": "crm.lead.created",
+        "class": "Modules\\Crm\\Domain\\Events\\LeadWasCreated",
+        "version": 1
+      },
+      {
+        "name": "crm.lead.converted",
+        "class": "Modules\\Crm\\Domain\\Events\\LeadWasConverted",
+        "version": 1
+      },
+      {
+        "name": "crm.opportunity.stage_changed",
+        "class": "Modules\\Crm\\Domain\\Events\\OpportunityStageChanged",
+        "version": 1
+      },
+      {
+        "name": "crm.opportunity.won",
+        "class": "Modules\\Crm\\Domain\\Events\\OpportunityWasWon",
+        "version": 1
+      },
+      {
+        "name": "crm.opportunity.lost",
+        "class": "Modules\\Crm\\Domain\\Events\\OpportunityWasLost",
+        "version": 1
+      },
+      {
+        "name": "crm.ticket.created",
+        "class": "Modules\\Crm\\Domain\\Events\\TicketWasCreated",
+        "version": 1
+      },
+      {
+        "name": "crm.ticket.assigned",
+        "class": "Modules\\Crm\\Domain\\Events\\TicketWasAssigned",
+        "version": 1
+      },
+      {
+        "name": "crm.ticket.sla_breached",
+        "class": "Modules\\Crm\\Domain\\Events\\TicketSlaBreached",
+        "version": 1
+      },
+      {
+        "name": "crm.ticket.resolved",
+        "class": "Modules\\Crm\\Domain\\Events\\TicketWasResolved",
+        "version": 1
+      },
+      {
+        "name": "crm.campaign.sent",
+        "class": "Modules\\Crm\\Domain\\Events\\CampaignWasSent",
+        "version": 1
+      },
+      {
+        "name": "crm.contact.synced",
+        "class": "Modules\\Crm\\Domain\\Events\\ContactWasSynced",
+        "version": 1
+      }
+    ],
+    "consumed": [
+      {
+        "name": "shop.order.paid",
+        "purpose": "همگام‌سازی مشتری فروشگاه → مخاطب (DOC-096 §7)"
+      }
+    ]
+  },
+  "permissions": {
+    "group": {
+      "id": "crm",
+      "title_fa": "مدیریت ارتباط با مشتری"
+    },
+    "items": [
+      {
+        "key": "crm.contact.view",
+        "title_fa": "مشاهدهٔ مخاطبان",
+        "title_en": "View contacts"
+      },
+      {
+        "key": "crm.contact.create",
+        "title_fa": "ساخت مخاطب",
+        "title_en": "Create contacts"
+      },
+      {
+        "key": "crm.contact.update",
+        "title_fa": "ویرایش مخاطب (همه)",
+        "title_en": "Update any contact"
+      },
+      {
+        "key": "crm.contact.delete",
+        "title_fa": "حذف مخاطب",
+        "title_en": "Delete contacts"
+      },
+      {
+        "key": "crm.contact.assign",
+        "title_fa": "تخصیص مالک مخاطب",
+        "title_en": "Assign contact owner"
+      },
+      {
+        "key": "crm.lead.view",
+        "title_fa": "مشاهدهٔ سرنخ‌ها",
+        "title_en": "View leads"
+      },
+      {
+        "key": "crm.lead.create",
+        "title_fa": "ساخت سرنخ",
+        "title_en": "Create leads"
+      },
+      {
+        "key": "crm.lead.update",
+        "title_fa": "ویرایش سرنخ (همه)",
+        "title_en": "Update any lead"
+      },
+      {
+        "key": "crm.lead.convert",
+        "title_fa": "تبدیل سرنخ به فرصت",
+        "title_en": "Convert leads"
+      },
+      {
+        "key": "crm.lead.assign",
+        "title_fa": "تخصیص سرنخ",
+        "title_en": "Assign leads"
+      },
+      {
+        "key": "crm.opportunity.view",
+        "title_fa": "مشاهدهٔ فرصت‌ها",
+        "title_en": "View opportunities"
+      },
+      {
+        "key": "crm.opportunity.create",
+        "title_fa": "ساخت فرصت فروش",
+        "title_en": "Create opportunities"
+      },
+      {
+        "key": "crm.opportunity.update",
+        "title_fa": "ویرایش فرصت (همه)",
+        "title_en": "Update any opportunity"
+      },
+      {
+        "key": "crm.opportunity.move",
+        "title_fa": "جابجایی مرحلهٔ pipeline (همه)",
+        "title_en": "Move any pipeline stage"
+      },
+      {
+        "key": "crm.opportunity.assign",
+        "title_fa": "تخصیص فرصت",
+        "title_en": "Assign opportunities"
+      },
+      {
+        "key": "crm.activity.manage",
+        "title_fa": "ثبت/تکمیل فعالیت",
+        "title_en": "Manage activities"
+      },
+      {
+        "key": "crm.ticket.view",
+        "title_fa": "مشاهدهٔ تیکت‌ها (همه)",
+        "title_en": "View all tickets"
+      },
+      {
+        "key": "crm.ticket.create",
+        "title_fa": "ساخت تیکت",
+        "title_en": "Create tickets"
+      },
+      {
+        "key": "crm.ticket.assign",
+        "title_fa": "تخصیص تیکت",
+        "title_en": "Assign tickets"
+      },
+      {
+        "key": "crm.ticket.reply",
+        "title_fa": "پاسخ به تیکت",
+        "title_en": "Reply to tickets"
+      },
+      {
+        "key": "crm.ticket.resolve",
+        "title_fa": "حل/بستن تیکت",
+        "title_en": "Resolve/close tickets"
+      },
+      {
+        "key": "crm.campaign.view",
+        "title_fa": "مشاهدهٔ کمپین‌ها",
+        "title_en": "View campaigns"
+      },
+      {
+        "key": "crm.campaign.manage",
+        "title_fa": "ساخت/ویرایش کمپین",
+        "title_en": "Manage campaigns"
+      },
+      {
+        "key": "crm.campaign.send",
+        "title_fa": "ارسال کمپین",
+        "title_en": "Send campaigns"
+      },
+      {
+        "key": "crm.report.view",
+        "title_fa": "گزارش‌های CRM",
+        "title_en": "View CRM reports"
+      }
+    ]
+  },
+  "navigation": [
+    {
+      "title": "داشبورد CRM",
+      "title_fa": "داشبورد CRM",
+      "uri": "/admin/crm",
+      "icon": "🤝",
+      "permission": "crm.contact.view",
+      "order": 50
+    },
+    {
+      "title": "مخاطبان",
+      "title_fa": "مخاطبان",
+      "uri": "/admin/crm/contacts",
+      "icon": "👥",
+      "permission": "crm.contact.view",
+      "order": 51
+    },
+    {
+      "title": "سرنخ‌ها",
+      "title_fa": "سرنخ‌ها",
+      "uri": "/admin/crm/leads",
+      "icon": "🎯",
+      "permission": "crm.lead.view",
+      "order": 52
+    },
+    {
+      "title": "فرصت‌ها",
+      "title_fa": "فرصت‌ها",
+      "uri": "/admin/crm/opportunities",
+      "icon": "📈",
+      "permission": "crm.opportunity.view",
+      "order": 53
+    },
+    {
+      "title": "تیکت‌ها",
+      "title_fa": "تیکت‌ها",
+      "uri": "/admin/crm/tickets",
+      "icon": "🎫",
+      "permission": "crm.ticket.create",
+      "order": 54
+    },
+    {
+      "title": "کمپین‌ها",
+      "title_fa": "کمپین‌ها",
+      "uri": "/admin/crm/campaigns",
+      "icon": "📣",
+      "permission": "crm.campaign.view",
+      "order": 55
+    },
+    {
+      "title": "گزارش‌ها",
+      "title_fa": "گزارش‌ها",
+      "uri": "/admin/crm/reports",
+      "icon": "📊",
+      "permission": "crm.report.view",
+      "order": 56
+    }
+  ],
+  "database": {
+    "table_prefix": "crm_",
+    "tables": [
+      "crm_contacts",
+      "crm_leads",
+      "crm_opportunities",
+      "crm_activities",
+      "crm_tickets",
+      "crm_ticket_replies",
+      "crm_campaigns",
+      "crm_campaign_recipients"
+    ],
+    "seed_on_install": true
+  },
+  "docs": "modules/crm/README.md",
+  "notes": "کیت CRM (kits/crm) این ماژول را با theme/preset/roles/demo نصب می‌کند — DOC-096/TVN-0096. همگام‌سازی shop از راه رویداد shop.order.paid (بدون ارجاع کلاسی — مرز ماژول)."
+}

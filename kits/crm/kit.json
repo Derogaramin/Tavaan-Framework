@@ -1,0 +1,41 @@
+{
+  "id": "tavaan.kit.crm",
+  "title_fa": "کیت مدیریت ارتباط با مشتری (CRM)",
+  "title_en": "CRM Kit",
+  "version": "1.0.0",
+  "tavaan": "^1.0",
+  "architecture": "hexagonal",
+  "description": "CRM کامل: مخاطب با رمزنگاری کدملی، سرنخ با Lead Scoring خودکار، pipeline فرصت فروش با Workflow و forecast وزنی، فعالیت‌ها، تیکت پشتیبانی با SLA و escalation خودکار، پرتال عمومی پشتیبانی، کمپین ایمیل/پیامک، همگام‌سازی مشتری فروشگاه، گزارش‌های هفت‌گانه و API ورود سرنخ/تیکت (DOC-096).",
+
+  "modules": [
+    {"id": "tavaan.core-user", "required": true},
+    {"id": "tavaan.crm",       "required": true},
+    {"id": "tavaan.shop",      "required": false, "note": "همگام‌سازی مشتری فروشگاه (رویدادمحور — بدون shop هم کار می‌کند)"}
+  ],
+
+  "engines": {
+    "required": ["view", "i18n", "search", "cache", "notification", "database", "rbac", "security", "mail", "workflow", "crypt", "session"],
+    "recommended": ["queue", "report", "audit", "schedule", "observability"]
+  },
+
+  "theme": "themes/default",
+  "default_preset": "standard",
+
+  "roles": ["sales-agent", "sales-manager", "support-agent", "support-manager", "marketing", "crm-admin", "admin"],
+  "demo_data": "seed/demo",
+
+  "requirements": {
+    "php": ">=8.2",
+    "extensions": ["pdo", "mbstring", "openssl"],
+    "storage_mb": 200,
+    "memory_mb": 128
+  },
+
+  "install": {
+    "steps": ["env", "key:generate", "migrate", "rbac:sync", "seed:demo", "optimize"],
+    "wizard": false
+  },
+
+  "health_check": "/crm/support",
+  "docs": "kits/crm/README.md"
+}

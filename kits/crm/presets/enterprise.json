@@ -1,0 +1,16 @@
+{
+  "title_fa": "سازمانی",
+  "description": "SLA تهاجمی‌تر، auto-close سریع‌تر، جست‌وجو و همگام‌سازی فعال، صف بزرگ‌تر کمپین.",
+  "config": {
+    "crm": {
+      "per_page": 50,
+      "sla": {"urgent": 1, "high": 2, "normal": 4, "low": 12, "escalate_roles": ["support-manager", "crm-admin", "admin"]},
+      "tickets": {"portal_enabled": true, "auto_close_days": 3},
+      "campaigns": {"batch_size": 200},
+      "notifications": {"ticket_assigned": true, "ticket_replied": true, "sla_breached": true, "ticket_resolved": true, "lead_assigned": true, "opportunity_won": true},
+      "search": {"enabled": true, "index": "crm_contacts"},
+      "sync": {"shop_orders": true},
+      "encryption": {"national_id": true}
+    }
+  }
+}

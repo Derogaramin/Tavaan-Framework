@@ -1,0 +1,11 @@
+{
+  "id": "default",
+  "name": "پوستهٔ پیش‌فرض کیت CRM",
+  "rtl": true,
+  "font": "Vazirmatn",
+  "colors": {"primary": "#0284c7", "secondary": "#0c1a2b", "accent": "#f59e0b"},
+  "slots": ["header", "sidebar", "stats", "footer"],
+  "breakpoints": {"sm": 640, "md": 768, "lg": 1024, "xl": 1280},
+  "overrides": "views/",
+  "assets": "assets/"
+}

@@ -2,6 +2,16 @@
 
 فرمت: Keep a Changelog — نسخه‌گذاری: SemVer.
 
+## [0.14.0] - 2026-10-25 — فاز M9 (گام ۶): کیت مدیریت ارتباط با مشتری (CRM) 🤝
+
+### افزوده شد
+- **ماژول `tavaan.crm`** (DOC-096 کامل — hexagonal): مخاطب (soft delete + tags/custom_fields + **کدملی رمزنگاری‌شده در rest** با Crypt/AES-GCM + AAD و mask نمایش — fail-safe بدون کلید) • سرنخ با **Lead Scoring خودکار طبق الگوریتم مستند §3.2** (referral ۲۰/غیره ۵ + شرکت ۱۵ + ارزش>۱۰۰M ۲۵/۱۰ + engagement ۵×cap۱۵، cap ۱۰۰ — بازشماری در ساخت/ویرایش/فعالیت) • **Sales Pipeline با Workflow** (AC-CRM-07): فرایند `crm-sales-pipeline` (نمونه per opportunity در `tvn_process_instances` + workflow_instance_id) + ماتریس stage (پرش جلو/یک گام عقب/won-lost با دلیل الزامی) + احتمال از config + **forecast وزنی int** • فعالیت‌ها (call/meeting/email/note/task پلی‌مورف + task با due/overdue) • **تیکت پشتیبانی با SLA** (AC-CRM-08): number یکتا + SLA per priority (2/4/8/24h) + pending=توقف SLA + reopen/resolve/close + **escalation خودکار idempotent** (`crm:check-sla` روی schedule هر دقیقه + رویداد + اعلان به نقش‌های config) + internal notes + auto-close • **پرتال عمومی پشتیبانی** (`/crm/support` — ثبت/پیگیری/پاسخ با Throttle + sanitize) • کمپین ایمیل/پیامک (audience_query JSON → AudienceResolver → Mail::raw personalized → recipient uk = **idempotent در cron** + `crm:send-campaigns`) • **API یکپارچگی §7** (`POST /api/v1/crm/leads|tickets` + وضعیت تیکت — Throttle + 422) • **همگام‌سازی shop** از راه listener رویداد `shop.order.paid` (بدون ارجاع کلاسی — upsert مخاطب + custom_fields) • ۷ گزارش §6 (pipeline/win-loss/forecast/کارکرد کارشناس/resolution+SLA compliance/منبع سرنخ/درآمد ماهانه) + CSV (BOM + ضد injection) • جست‌وجوی مخاطب (ایندکس `crm_contacts`) • ۱۱ رویداد (۱۰ منتشرشده + ۱ مصرفی) • ۸ جدول `crm_*` • ۲۵ مجوز RBAC + ۴ Policy مالکیت (Lead/Opportunity/Ticket/Contact) • ۳ دستور CLI • seed دمو (تیم + pipeline کامل + تیکت SLA-گذشته)
+- **کیت `tavaan.kit.crm`**: kit.json + ۳ preset (minimal/standard DOC-096/enterprise با SLA تهاجمی) + theme RTL sky (vendor override) + roles.json (۷ نقش §4) + demo (انتصاب تیم) + راهنمای کاربر/ادمین
+- **۲۶ تست جدید** (۱۵۳۴ کل / ۱۰۱۴۵ assertion — suite کامل سبز): ۱۵ Unit (LeadScorer با بردارهای دقیق مستند + وزن‌های سفارشی، ماتریس Lead/Ticket/Campaign/Stage، SLA breach+pause+idempotency، ForecastCalculator int، SlaPolicy/TicketNumber با Clock fake، AudienceResolver، Reply guards، Contact invariants) + ۱۱ Feature شامل **E2E-01..06 DOC-096 §8** (pipeline کامل تا won با نمونهٔ Workflow، scoring خودکار با اعداد دقیق، SLA+escalation+اعلان نقش‌ها، کمپین audience+idempotency، گزارش weighted+CSV، sync رویدادی shop) + API intake/422 + matrix نقش‌ها (agent فقط مال خود/۴۰۳ها) + XSS + internal-note-مخفی + national_id رمزنگاری‌شده-at-rest و mask
+
+### مستندات
+- DOC-096 §10 (وضعیت + بلوک ماشین‌خوان + انحراف‌های مستند) • `docs/reports/M9-crm-implementation-report.md` • بک‌لاگ: TVN-0096 → done (M9: ۲ مانده/۶ انجام) • README ماژول/کیت • `.gitignore` (overlayهای crm)
+
 ## [0.13.0] - 2026-10-25 — فاز M9 (گام ۵): کیت آموزش آنلاین (LMS) 🎓
 
 ### افزوده شد

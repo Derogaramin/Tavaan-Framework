@@ -1,0 +1,16 @@
+{
+  "title_fa": "مینیمال",
+  "description": "کمترین منابع: کش خاموش، اعلان‌های حداقلی، SLA سخت‌گیرانه‌تر خاموش — مناسب توسعه/دمو.",
+  "config": {
+    "crm": {
+      "per_page": 20,
+      "scoring": {"cap": 100},
+      "sla": {"urgent": 2, "high": 4, "normal": 8, "low": 24},
+      "tickets": {"portal_enabled": true, "auto_close_days": 0},
+      "campaigns": {"batch_size": 20},
+      "notifications": {"ticket_assigned": true, "ticket_replied": false, "sla_breached": true, "ticket_resolved": false, "lead_assigned": false, "opportunity_won": false},
+      "search": {"enabled": false},
+      "sync": {"shop_orders": false}
+    }
+  }
+}
