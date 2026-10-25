@@ -1,0 +1,118 @@
+{
+  "$schema": "https://docs.tavaan.dev/schemas/module.v1.json",
+  "id": "tavaan.erp",
+  "type": "module",
+  "name": "Erp",
+  "title_fa": "برنامه‌ریزی منابع سازمانی",
+  "title_en": "Enterprise Resource Planning",
+  "version": "0.1.0",
+  "description": "ERP یکپارچه با دفتر کل مرکزی: حسابداری دوطرفه (chart of accounts/سند/تراز/دورهٔ مالی)، انبار (رسید/حواله/انتقال/اصلاح با بهای میانگین موزون)، تدارکات (PO با تأیید سلسله‌مراتبی Workflow بر اساس مبلغ)، فروش (سفارش/حواله/فاکتور/دریافت)، تولید (BOM/work order/بهای تمام‌شده)، حقوق و دستمزد (کارکرد/فیش/سند)، گزارش‌های مالی (تراز آزمایشی/سود و زیان/ترازنامه/گردش کالا/حساب اشخاص) و Audit با hash chain — یکپارچگی بین‌بافته‌ها فقط با Outbox (ADR-0009) (DOC-097).",
+  "namespace": "Modules\\Erp\\",
+  "autoload": {"psr-4": {"Modules\\Erp\\": "src/"}},
+  "providers": ["Modules\\Erp\\Providers\\ErpServiceProvider"],
+  "requires": {
+    "tavaan": "^1.0",
+    "php": ">=8.2",
+    "engines": ["view", "i18n", "jalali", "cache", "database", "rbac", "security", "workflow", "audit", "event", "crypt"],
+    "modules": ["tavaan.core-user"]
+  },
+  "tables": [
+    "erp_accounts", "erp_fiscal_periods", "erp_vouchers", "erp_voucher_lines",
+    "erp_warehouses", "erp_inventory_items", "erp_stock", "erp_stock_movements",
+    "erp_suppliers", "erp_customers", "erp_purchase_orders", "erp_purchase_order_items",
+    "erp_goods_receipts", "erp_supplier_invoices", "erp_payments",
+    "erp_sales_orders", "erp_sales_order_items", "erp_sales_invoices",
+    "erp_bom", "erp_work_orders",
+    "erp_employees", "erp_attendance", "erp_payroll_runs", "erp_payslips"
+  ],
+  "commands": [],
+  "routes": {
+    "admin": "routes/admin.php"
+  },
+  "views": {"namespace": "erp", "path": "views"},
+  "lang": {"path": "lang"},
+  "migrations": {"path": "migrations"},
+  "seeds": {"demo": "seeds/demo.php"},
+  "events": {
+    "published": [
+      {"name": "erp.voucher.posted", "class": "Modules\\Erp\\Domain\\Events\\VoucherWasPosted", "version": 1},
+      {"name": "inventory.stock.received", "class": "Modules\\Erp\\Domain\\Events\\StockWasReceived", "version": 1},
+      {"name": "inventory.stock.issued", "class": "Modules\\Erp\\Domain\\Events\\StockWasIssued", "version": 1},
+      {"name": "procurement.po.approved", "class": "Modules\\Erp\\Domain\\Events\\PurchaseOrderWasApproved", "version": 1},
+      {"name": "procurement.receipt.registered", "class": "Modules\\Erp\\Domain\\Events\\GoodsReceiptWasRegistered", "version": 1},
+      {"name": "sales.invoice.issued", "class": "Modules\\Erp\\Domain\\Events\\SalesInvoiceWasIssued", "version": 1},
+      {"name": "sales.payment.received", "class": "Modules\\Erp\\Domain\\Events\\PaymentWasReceived", "version": 1},
+      {"name": "production.order.completed", "class": "Modules\\Erp\\Domain\\Events\\WorkOrderWasCompleted", "version": 1},
+      {"name": "hr.payroll.processed", "class": "Modules\\Erp\\Domain\\Events\\PayrollWasProcessed", "version": 1},
+      {"name": "accounting.period.closed", "class": "Modules\\Erp\\Domain\\Events\\PeriodWasClosed", "version": 1}
+    ],
+    "consumed": [
+      {"name": "inventory.stock.received", "purpose": "accounting — سند موجودی/حساب پرداختنی"},
+      {"name": "inventory.stock.issued", "purpose": "accounting — سند بهای فروش (COGS)"},
+      {"name": "sales.invoice.issued", "purpose": "accounting — سند درآمد"},
+      {"name": "sales.payment.received", "purpose": "accounting — سند دریافت"},
+      {"name": "production.order.completed", "purpose": "accounting — سند بهای تمام‌شده"},
+      {"name": "hr.payroll.processed", "purpose": "accounting — سند هزینهٔ حقوق"},
+      {"name": "procurement.po.approved", "purpose": "گزارش/تعهد بودجه"}
+    ]
+  },
+  "permissions": {
+    "group": {"id": "erp", "title_fa": "برنامه‌ریزی منابع سازمانی"},
+    "items": [
+      {"key": "erp.account.view", "title_fa": "مشاهدهٔ سرفصل حساب‌ها", "title_en": "View chart of accounts"},
+      {"key": "erp.account.manage", "title_fa": "مدیریت سرفصل حساب‌ها", "title_en": "Manage accounts"},
+      {"key": "erp.voucher.view", "title_fa": "مشاهدهٔ اسناد", "title_en": "View vouchers"},
+      {"key": "erp.voucher.create", "title_fa": "ثبت سند (پیش‌نویس)", "title_en": "Create vouchers"},
+      {"key": "erp.voucher.approve", "title_fa": "تأیید سند", "title_en": "Approve vouchers"},
+      {"key": "erp.voucher.post", "title_fa": "ثبت قطعی سند", "title_en": "Post vouchers"},
+      {"key": "erp.voucher.void", "title_fa": "ابطال سند (با سند معکوس)", "title_en": "Void vouchers"},
+      {"key": "erp.period.manage", "title_fa": "مدیریت دورهٔ مالی/بستن حساب", "title_en": "Manage fiscal periods"},
+      {"key": "erp.report.view", "title_fa": "گزارش‌های مالی", "title_en": "View financial reports"},
+      {"key": "erp.warehouse.manage", "title_fa": "مدیریت انبار/کالا", "title_en": "Manage warehouses/items"},
+      {"key": "erp.stock.receive", "title_fa": "رسید انبار", "title_en": "Stock receipt"},
+      {"key": "erp.stock.issue", "title_fa": "حواله انبار", "title_en": "Stock issue"},
+      {"key": "erp.stock.adjust", "title_fa": "اصلاح/انتقال موجودی", "title_en": "Stock adjust/transfer"},
+      {"key": "erp.supplier.manage", "title_fa": "مدیریت تأمین‌کنندگان", "title_en": "Manage suppliers"},
+      {"key": "erp.customer.manage", "title_fa": "مدیریت مشتریان", "title_en": "Manage customers"},
+      {"key": "erp.purchase.create", "title_fa": "ساخت درخواست/سفارش خرید", "title_en": "Create purchase orders"},
+      {"key": "erp.purchase.approve-finance", "title_fa": "تأیید مالی خرید", "title_en": "Finance approval (PO)"},
+      {"key": "erp.purchase.approve-ceo", "title_fa": "تأیید مدیرعامل (خرید کلان)", "title_en": "CEO approval (PO)"},
+      {"key": "erp.purchase.receive", "title_fa": "ثبت رسید خرید", "title_en": "Register goods receipts"},
+      {"key": "erp.purchase.invoice", "title_fa": "ثبت فاکتور تأمین‌کننده", "title_en": "Supplier invoices"},
+      {"key": "erp.payment.create", "title_fa": "ثبت پرداخت/دریافت", "title_en": "Record payments"},
+      {"key": "erp.sales.create", "title_fa": "ساخت سفارش فروش", "title_en": "Create sales orders"},
+      {"key": "erp.sales.deliver", "title_fa": "حوالهٔ فروش", "title_en": "Deliver sales orders"},
+      {"key": "erp.sales.invoice", "title_fa": "صدور فاکتور فروش", "title_en": "Issue sales invoices"},
+      {"key": "erp.production.manage", "title_fa": "مدیریت BOM/سفارش تولید", "title_en": "Manage production"},
+      {"key": "erp.hr.manage", "title_fa": "مدیریت پرسنل/کارکرد", "title_en": "Manage HR"},
+      {"key": "erp.payroll.process", "title_fa": "پردازش حقوق و دستمزد", "title_en": "Process payroll"},
+      {"key": "erp.audit.view", "title_fa": "مشاهدهٔ ردپای audit", "title_en": "View audit trail"}
+    ]
+  },
+  "navigation": [
+    {"title": "داشبورد ERP", "title_fa": "داشبورد ERP", "uri": "/admin/erp", "icon": "🏭", "permission": "erp.voucher.view", "order": 60},
+    {"title": "اسناد حسابداری", "title_fa": "اسناد حسابداری", "uri": "/admin/erp/vouchers", "icon": "🧾", "permission": "erp.voucher.view", "order": 61},
+    {"title": "انبار", "title_fa": "انبار", "uri": "/admin/erp/inventory", "icon": "📦", "permission": "erp.stock.receive", "order": 62},
+    {"title": "خرید", "title_fa": "خرید", "uri": "/admin/erp/purchases", "icon": "🛒", "permission": "erp.purchase.create", "order": 63},
+    {"title": "فروش", "title_fa": "فروش", "uri": "/admin/erp/sales", "icon": "💼", "permission": "erp.sales.create", "order": 64},
+    {"title": "تولید", "title_fa": "تولید", "uri": "/admin/erp/production", "icon": "🏗", "permission": "erp.production.manage", "order": 65},
+    {"title": "حقوق و دستمزد", "title_fa": "حقوق و دستمزد", "uri": "/admin/erp/hr", "icon": "👷", "permission": "erp.hr.manage", "order": 66},
+    {"title": "گزارش‌های مالی", "title_fa": "گزارش‌های مالی", "uri": "/admin/erp/reports", "icon": "📊", "permission": "erp.report.view", "order": 67},
+    {"title": "ردپای Audit", "title_fa": "ردپای Audit", "uri": "/admin/erp/audit", "icon": "🔐", "permission": "erp.audit.view", "order": 68}
+  ],
+  "database": {
+    "table_prefix": "erp_",
+    "tables": [
+      "erp_accounts", "erp_fiscal_periods", "erp_vouchers", "erp_voucher_lines",
+      "erp_warehouses", "erp_inventory_items", "erp_stock", "erp_stock_movements",
+      "erp_suppliers", "erp_customers", "erp_purchase_orders", "erp_purchase_order_items",
+      "erp_goods_receipts", "erp_supplier_invoices", "erp_payments",
+      "erp_sales_orders", "erp_sales_order_items", "erp_sales_invoices",
+      "erp_bom", "erp_work_orders",
+      "erp_employees", "erp_attendance", "erp_payroll_runs", "erp_payslips"
+    ],
+    "seed_on_install": true
+  },
+  "docs": "modules/erp/README.md",
+  "notes": "کیت ERP (kits/erp) این ماژول را با theme/preset/roles/demo نصب می‌کند — DOC-097/TVN-0097. یکپارچگی بین‌بافته‌ها فقط با رویدادهای Outbox (ADR-0009/AC-ERP-11) — آمادهٔ تجزیه به سرویس (AC-ERP-12)."
+}

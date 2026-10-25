@@ -1,0 +1,13 @@
+{
+  "title_fa": "مینیمال",
+  "description": "کمینه: فقط حسابداری و انبار فعال — بدون اعلان؛ مناسب استقرار تدریجی.",
+  "config": {
+    "erp": {
+      "per_page": 20,
+      "accounting": {"auto_post_system_vouchers": true},
+      "procurement": {"finance_threshold": 100000000, "ceo_threshold": 500000000},
+      "inventory": {"low_stock_alert": false},
+      "notifications": {"po_needs_approval": false, "low_stock": false}
+    }
+  }
+}

@@ -33,6 +33,7 @@ final class AuthServiceProvider extends ServiceProvider
                 $c->bound(DispatcherInterface::class) ? $c->make(DispatcherInterface::class) : null,
                 $c->bound('cache') ? $c->make('cache') : null,
                 $c->bound(RequestStack::class) ? $c->make(RequestStack::class) : null,
+                $c,
             );
         });
         $this->app->alias(AuthManager::class, 'auth');

@@ -1,0 +1,16 @@
+/*
+ * کیت ERP — پوستهٔ پیش‌فرض (DOC-097).
+ * تم صنعتی: سنگی/کهربایی. این فایل با kit:install در
+ * public/assets/kits/erp منتشر می‌شود؛ layout ماژول CSS درون‌خطی دارد
+ * و این فایل برای overrideهای سازمانی (brand) است.
+ */
+:root {
+  --erp-primary: #b45309;
+  --erp-primary-dark: #78350f;
+  --erp-sidebar-bg: #1c1917;
+  --erp-accent: #f59e0b;
+}
+
+aside.side .logo { color: var(--erp-accent); }
+.btn { background: var(--erp-primary); }
+.stat .num { color: var(--erp-primary-dark); }

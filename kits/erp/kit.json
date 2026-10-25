@@ -1,0 +1,40 @@
+{
+  "id": "tavaan.kit.erp",
+  "title_fa": "کیت برنامه‌ریزی منابع سازمانی (ERP)",
+  "title_en": "ERP Kit",
+  "version": "1.0.0",
+  "tavaan": "^1.0",
+  "architecture": "hexagonal",
+  "description": "ERP یکپارچه با دفتر کل مرکزی: حسابداری دوطرفه (chart of accounts/سند تراز/دورهٔ مالی/بستن حساب)، انبار با بهای میانگین موزون، تدارکات با تأیید سلسله‌مراتبی Workflow بر اساس مبلغ، فروش (سفارش/حواله/فاکتور/دریافت)، تولید (BOM/work order/بهای تمام‌شده)، حقوق و دستمزد، گزارش‌های مالی هفت‌گانه + CSV و Audit با hash chain — یکپارچگی بین‌بافته‌ها فقط با Outbox (ADR-0009) (DOC-097).",
+
+  "modules": [
+    {"id": "tavaan.core-user", "required": true},
+    {"id": "tavaan.erp",       "required": true}
+  ],
+
+  "engines": {
+    "required": ["view", "i18n", "jalali", "cache", "database", "rbac", "security", "workflow", "audit", "event", "crypt"],
+    "recommended": ["report", "queue", "schedule", "observability", "tenancy"]
+  },
+
+  "theme": "themes/default",
+  "default_preset": "standard",
+
+  "roles": ["accountant", "finance-manager", "warehouse-keeper", "procurement-officer", "sales-officer", "hr-officer", "production-planner", "auditor", "erp-admin", "admin"],
+  "demo_data": "seed/demo",
+
+  "requirements": {
+    "php": ">=8.2",
+    "extensions": ["pdo", "mbstring", "openssl"],
+    "storage_mb": 250,
+    "memory_mb": 128
+  },
+
+  "install": {
+    "steps": ["env", "key:generate", "migrate", "rbac:sync", "seed:demo", "optimize"],
+    "wizard": false
+  },
+
+  "health_check": "/admin/erp",
+  "docs": "kits/erp/README.md"
+}

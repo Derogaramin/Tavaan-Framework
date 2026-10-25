@@ -254,6 +254,21 @@ class Request implements RequestInterface
             ...$server,
         ];
 
+        // 🔒 هم‌راستا با fromGlobals: اگر $cookies صریح داده نشد، هدر
+        // HTTP_COOKIE پارس می‌شود — کوکی نشست در مسیر تست/زیردرخواست گم نمی‌شود (M9).
+        if ($cookies === [] && isset($serverBag['HTTP_COOKIE']) && \is_string($serverBag['HTTP_COOKIE'])) {
+            foreach (\explode(';', $serverBag['HTTP_COOKIE']) as $pair) {
+                if (!\str_contains($pair, '=')) {
+                    continue;
+                }
+                [$cookieName, $cookieValue] = \explode('=', $pair, 2);
+                $cookieName = \trim($cookieName);
+                if ($cookieName !== '') {
+                    $cookies[$cookieName] = \rawurldecode(\trim($cookieValue));
+                }
+            }
+        }
+
         if ($body === null && $post !== []) {
             $isJson = isset($headers['Content-Type']) && \str_contains((string) $headers['Content-Type'], 'json');
             $body = $isJson

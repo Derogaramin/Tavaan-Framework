@@ -1,0 +1,11 @@
+{
+  "id": "default",
+  "name": "پوستهٔ پیش‌فرض کیت ERP",
+  "rtl": true,
+  "font": "Vazirmatn",
+  "colors": {"primary": "#b45309", "secondary": "#1c1917", "accent": "#f59e0b"},
+  "slots": ["sidebar", "stats", "cards", "tables"],
+  "breakpoints": {"sm": 640, "md": 768, "lg": 1024, "xl": 1280},
+  "overrides": "views/",
+  "assets": "assets/"
+}

@@ -1,0 +1,16 @@
+{
+  "title_fa": "سازمانی",
+  "description": "سخت‌گیرانه: اسناد سیستمی draft (تأیید دستی حسابدار)، آستانه‌های پایین‌تر تأیید، مالیات حقوق فعال، relay زمان‌بندی‌شده (event:outbox-relay).",
+  "config": {
+    "erp": {
+      "per_page": 50,
+      "accounting": {"auto_post_system_vouchers": false, "voucher_prefix": "SV"},
+      "procurement": {"workflow": "erp-purchase-approval", "finance_threshold": 50000000, "ceo_threshold": 200000000},
+      "inventory": {"valuation_method": "weighted_avg", "low_stock_alert": true},
+      "payroll": {"overtime_rate": 1.4, "monthly_hours": 220, "tax_rate": 0.1, "tax_threshold": 100000000},
+      "integration": {"inline_relay": false},
+      "audit": {"enabled": true},
+      "notifications": {"po_needs_approval": true, "low_stock": true}
+    }
+  }
+}

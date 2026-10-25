@@ -208,3 +208,68 @@ ERP سازمانی اغلب چند‌شرکتی است → موتور `tenancy` 
 | ERPNext (Frappe) | DocType، workflow | — |
 | SAP | فرایندهای مالی، دوره | مفاهیم حسابداری |
 | استاندارد حسابداری ایران | chart of accounts، صورت‌ها | — |
+
+---
+
+## ۱۳. وضعیت پیاده‌سازی (M9 — TVN-0097) ✅
+
+> **تکمیل‌شده در نگارش 0.15.0** — ماژول `tavaan.erp` + کیت `tavaan.kit.erp`
+> (نصب: `php bin/tvn kit:install erp --with-demo`). جزئیات:
+> `docs/reports/M9-erp-implementation-report.md`.
+
+| بخش | وضعیت |
+|---|---|
+| معماری | **یک ماژول hexagonal با ۶ بافتهٔ مرزی** (accounting/inventory/procurement/sales/production/hr) — هر بافته پورت Repository و سرویس Application مستقل؛ ارتباط بین بافته‌ها **فقط رویداد Outbox** (آمادهٔ تجزیه به microservice — AC-ERP-12) |
+| دفتر کل (§1.2/§2.1) | chart of accounts درختی ۵-نوعی با normal_balance • سند دوطرفه با **قانون طلایی** `SUM(debit)===SUM(credit)` int minor-unit (AC-ERP-09) • draft→approved→**posted=immutable**→voided **فقط با سند معکوس** • دورهٔ مالی + **قفل سند در دورهٔ بسته** |
+| بستن حساب (§4) | `PeriodCloseService`: درآمد/هزینه → خلاصهٔ سود و زیان (۳۲۰۱) → سود انباشته (۳۳۰۱) در یک سند بستنِ تراز/posted + رویداد `accounting.period.closed` |
+| انبار (§2.2) | movements **append-only** • رسید/حواله/انتقال/اصلاح • بهایابی **میانگین موزون** • کنترل کمبود • reorder point |
+| خرید (§2.3/§3) | PO → **تأیید سلسله‌مراتبی مبلغ‌محور** (ApprovalRouter + workflow `erp-purchase-approval` با permissionهای مالی/CEO) → رسید (بها از PO + گارد over-receipt) → فاکتور → پرداخت؛ آستانه‌ها ۱۰۰M/۵۰۰M ریال config |
+| فروش/تولید/حقوق | سفارش→حواله(COGS snapshot)→فاکتور(درآمد)→دریافت • BOM نسخه‌دار→work order→مصرف(WIP)→محصول(بهای تمام‌شده) • کارکرد→فیش(overtime 1.4×220h + مالیات آستانه‌دار)→سند→پرداخت |
+| یکپارچگی/Outbox (§9 🔒) | رویداد **درون تراکنش کسب‌وکار** در `tvn_outbox` (claim اتمیک + attempts→failed) + رلهٔ درون‌خطی پس از commit (سازمانی: `event:outbox-relay` cron) — ۶ listener سند خودکار؛ **بدون نشت** (AC-ERP-11) |
+| Audit (§7) | ۲۲ رویداد مالی در **hash chain موتور audit** (`Tavaan\Engine\Audit\AuditEvent` با allow صریح SDK در config/architecture.php) • fail-open • `tvn audit:verify` + صفحهٔ audit پنل (AC-ERP-10 با tamper-detection تست‌شده) |
+| گزارش‌ها (§5) | تراز آزمایشی / سود و زیان / ترازنامه (A=L+E+NI با flag) / گردش حساب / گردش کالا / بهای تمام‌شده / حساب اشخاص / حقوق + ۵ خروجی CSV — همه از اسناد posted |
+| نقش‌ها (§6) | هر ۹ نقش مستند + admin — ۲۸ مجوز `erp.*` (`kits/erp/seed/roles.json`) |
+| Multi-Tenancy (§8) | در سطح استقرار با موتور tenancy (استراتژی DB-per-Tenant/Shared) — ماژول v1 تک‌شرکتی per نصب |
+| تست | `modules/erp/tests/` — **۴۹ تست** (۳۳ Unit + ۱۶ Feature) |
+
+انطباق: E2E-01 (PO→تأیید خودکار→رسید→سند موجودی/پرداختنی→فاکتور→پرداخت→سند
+بانک + صفرشدن مانده) ✅ • E2E-02 (سفارش→حواله با COGS 6M→فاکتور درآمد 9M→
+دریافت→۴ سند posted تراز) ✅ • E2E-03 (BOM ۲برد+۱قاب→WO ۵ دستگاه→مصرف
+۱۲.۵M→سند WIP→تکمیل→رسید محصول @2.5M→سند محصول/WIP→گزارش بها) ✅ •
+E2E-04 (کارکرد+اضافه‌کاری→۲ فیش→سند هزینه ۳۴۴M→پرداخت→سند پرداختنی/بانک +
+national_id رمزنگاری‌شده) ✅ • E2E-05 (بستن دوره→سند بستن posted→ماندهٔ
+موقت‌ها صفر→**ترازنامه متوازن** ۹M=۰+۹M→سند جدید در دورهٔ بسته رد) ✅ •
+E2E-06 (۲۵۰M→صف مالی→تأیید→approved • ۹۰۰M→مالی→صف CEO→تأیید •
+۴۰۳های مجوز • رد با دلیل • نمونهٔ واقعی workflow در `tvn_process_instances`) ✅ •
+E2E-07 (voucher.created/posted/voided در tvn_audit_logs→verify intact→
+tamper→intact=false) ✅ • E2E-08 (**جاروی قانون طلایی**: همهٔ اسناد جریان
+مختلط ۶ بافته debit===credit + جمع ردیف‌ها + تراز آزمایشی + رد سند ناتراز
+سرویسی و HTTP) ✅ • AC-ERP-11 (رویداد در tvn_outbox ثبت→done؛ pending صفر) ✅
+
+> انحراف‌های مستند: پول int minor-unit (ADR-0013 — به‌جای DECIMAL(18,4)) و
+> مقدارها decimal(18,3) • **یک ماژول با ۶ بافتهٔ داخلی** به‌جای ۶ ماژول
+> (مرزها با پورت/رویداد حفظ — الگوی shop/lms/crm؛ تجزیه‌پذیری با Outbox) •
+> Budgeting/Asset (§1.1) و گزارش بودجه-عملکرد در بک‌لاگ 1.0 (خارج از
+> E2E-01..08) • FIFO/LIFO در بک‌لاگ (weighted_avg پیاده شده) • فاکتور
+> تأمین‌کننده سند جدا صادر نمی‌کند (بدهی در رسید شناسایی می‌شود) •
+> `erp:audit-verify` لازم نشد — `tvn audit:verify` موتور همان AC-ERP-10 است.
+
+```yaml
+# machine-readable: tavaan.kit.erp.v1 (وضعیت M9)
+kit:
+  id: tavaan.kit.erp
+  status: implemented
+  ticket: TVN-0097
+  modules: [tavaan.core-user, tavaan.erp]
+  routes_admin: [/admin/erp, /admin/erp/accounts, /admin/erp/vouchers, /admin/erp/periods, /admin/erp/inventory, /admin/erp/inventory/movements, /admin/erp/purchases, /admin/erp/sales, /admin/erp/production, /admin/erp/hr, /admin/erp/reports, /admin/erp/audit]
+  routes_csv: [/admin/erp/reports/trial-balance.csv, /admin/erp/reports/profit-loss.csv, /admin/erp/reports/balance-sheet.csv, /admin/erp/reports/turnover.csv, /admin/erp/reports/payroll.csv]
+  events: [erp.voucher.posted, inventory.stock.received, inventory.stock.issued, procurement.po.approved, procurement.receipt.registered, sales.invoice.issued, sales.payment.received, production.order.completed, hr.payroll.processed, accounting.period.closed]
+  consumed_events: [inventory.stock.received, inventory.stock.issued, sales.invoice.issued, sales.payment.received, production.order.completed, hr.payroll.processed]
+  workflow: erp-purchase-approval
+  outbox: {table: tvn_outbox, inline_relay: config('erp.integration.inline_relay'), relay_command: event:outbox-relay}
+  audit_events: 22
+  tables: 24
+  permissions: 28
+  roles: [accountant, finance-manager, warehouse-keeper, procurement-officer, sales-officer, hr-officer, production-planner, auditor, erp-admin, admin]
+  tests: {unit: modules/erp/tests/Unit, feature: modules/erp/tests/Feature}
+```

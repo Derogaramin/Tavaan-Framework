@@ -2,6 +2,33 @@
 
 فرمت: Keep a Changelog — نسخه‌گذاری: SemVer.
 
+## [0.15.0] - 2026-10-25 — فاز M9 (گام ۷): کیت برنامه‌ریزی منابع سازمانی (ERP) 🏭
+
+### افزوده شد
+- **ماژول `tavaan.erp`** (DOC-097 — پیچیده‌ترین کیت M9؛ hexagonal با **۶ بافتهٔ مرزی** در یک ماژول — ارتباط بین بافته‌ها فقط با رویدادهای **Outbox** طبق ADR-0009/AC-ERP-11 و آمادهٔ تجزیه به سرویس مستقل AC-ERP-12):
+  - **Accounting — دفتر کل مرکزی** (§1.2/§2.1): chart of accounts درختی (۵ نوع + normal_balance + فقط leafها ردیف می‌گیرند) • سند دوطرفه با **قانون طلایی `SUM(debit)===SUM(credit)` int minor-unit** (AC-ERP-09 — رد پیش از ذخیره/تأیید/post) • چرخه draft→approved→**posted (immutable)**→voided فقط با **سند معکوس** (reverse_of — debit↔credit) • شماره‌گذاری SV-<دوره>-<seq> • **دورهٔ مالی** با قفل سند در بازهٔ بسته • **بستن حساب** (§4): درآمد/هزینه → خلاصهٔ سود و زیان → سود انباشته در یک سند بستنِ تراز و posted (E2E-05: ترازنامه متوازن A=L+E+NI)
+  - **Inventory** (§2.2): انبار/کالا (merchandise/raw_material/finished) • حرکات **append-only** (رسید/حواله/انتقال/اصلاح) • بهایابی **میانگین موزون** (رسید avg را به‌روز می‌کند؛ حواله با avg جاری) • کنترل کمبود موجودی پیش از حواله • نقطهٔ سفارش → فهرست low-stock
+  - **Procurement** (§2.3/§3): PO با اقلام → **تأیید سلسله‌مراتبی بر اساس مبلغ** با ApprovalRouter (دامنهٔ خالص) + workflow `erp-purchase-approval` (submitted→finance_review→ceo_review→approved/rejected با permissionهای `erp.purchase.approve-finance|ceo` — نمونه در `tvn_process_instances`) • آستانه‌های مستند ۱۰۰M/۵۰۰M ریال (config) • رسید کالا (بها از PO، کنترل over-receipt، markReceived) • فاکتور تأمین‌کننده • پرداخت → سند پرداختنی/بانک
+  - **Sales**: سفارش → قطعی → **حواله** (کاهش موجودی + snapshot بهای COGS + سند بهای فروش) → **فاکتور** (سند درآمد/دریافتنی) → **دریافت** (سند بانک) • ماندهٔ حساب مشتری
+  - **Production** (§2.4): **BOM نسخه‌دار** (غیرفعال‌سازی خودکار نسخهٔ قبل + رد چرخهٔ بدیهی) • work order: start = مصرف مواد (حواله + کنترل کمبود + سند WIP/مواد) → complete = رسید محصول با **بهای تمام‌شده** (material_cost/produced_qty → به‌روزرسانی avg محصول + سند محصول/WIP) (E2E-03)
+  - **HR** (§2.5): پرسنل (**national_id رمزنگاری‌شده در rest** — الگوی CRM، fail-safe) • کارکرد ماهانه (upsert) • **PayrollRun**: فیش per پرسنل (base + overtime با ضریب 1.4×ساعت 220 + کسورات + مالیات آستانه‌دار — PayrollCalculator خالص) → سند هزینهٔ حقوق → پرداخت (سند پرداختنی/بانک) (E2E-04)
+  - **یکپارچگی Outbox** (AC-ERP-11): `OutboxPublisher` رویداد را **درون همان تراکنش کسب‌وکار** در `tvn_outbox` می‌نویسد (claim اتمیک با owner-token همسان با موتور event + attempts→failed پس از ۵ بار) + رلهٔ درون‌خطی پس از commit (preset سازمانی: `event:outbox-relay` زمان‌بندی‌شده) — ۶ listener حسابداری (رسید خرید→موجودی/پرداختنی، حواله فروش→COGS، مصرف تولید→WIP، فاکتور فروش→درآمد، دریافت→بانک، تکمیل تولید→محصول/WIP، حقوق→هزینه/پرداختنی) **بدون نشت** (ردیف pending باقی‌مانده = قابل رله)
+  - **Audit** (§7/AC-ERP-10): `ErpAuditRecorder` → hash chain موتور audit (۲۲ رویداد مالی: سند/تأیید/ثبت/ابطال/PO/رسید/فاکتور/پرداخت/حقوق/بستن دوره) + allowlist موتور در provider ادغام می‌شود • fail-open (جریان مالی با خطای audit نمی‌شکند) • راستی‌آزمایی `tvn audit:verify` + صفحهٔ `/admin/erp/audit` • E2E-07: tamper → زنجیره آسیب‌دیده
+  - **گزارش‌ها** (§5): تراز آزمایشی • سود و زیان • ترازنامه (flag توازن) • گردش حساب (ledger با ماندهٔ روان) • گردش کالا • بهای تمام‌شده • حساب مشتری/تأمین‌کننده • حقوق — همه از اسناد **posted** + **CSV** (۵ گزارش) • `TrialBalanceCalculator` خالص (مانده با علامت ماهیت + معادلهٔ اساسی)
+  - پنل `/admin/erp/*` (۱۲ بخش، ۲۶ ویو RTL تم صنعتی) • ۲۴ جدول `erp_*` • ۲۸ مجوز RBAC • ۱۰ رویداد منتشرشده/۷ مصرفی • seed دمو (chart کامل استاندارد + دوره + انبار/کالا/طرف تجاری/BOM/پرسنل+کارکرد)
+- **کیت `tavaan.kit.erp`**: kit.json + ۳ preset (minimal/standard DOC-097/enterprise با اسناد draft-ماندن + آستانه‌های سخت‌گیرانه + مالیات حقوق + relay زمان‌بندی‌شده) + theme RTL سنگی/کهربایی (vendor override) + roles.json (**۹ نقش مستند §6** + admin) + demo (انتصاب تیم به کاربران دمو) + راهنمای کاربر/ادمین
+- **۴۹ تست جدید** (۱۵۸۳ کل / ۱۰۴۲۴ assertion — suite کامل سبز): ۳۳ Unit (قانون طلایی + immutability + سند معکوس + رویداد posted، ماتریس‌های VoucherStatus/PO/SO/WO، FiscalPeriod، **ApprovalRouter سلسله‌مراتبی**، PayrollCalculator+مالیات، **میانگین موزون**، BOM explode/رد چرخه/costing+shortage، StockMovement علامت‌دار، TrialBalance+معادلهٔ اساسی، Payslip/Attendance guards) + ۱۶ Feature شامل **E2E-01..08 DOC-097 §10** (چرخهٔ خرید با اسناد، فروش با COGS+درآمد+دریافت، تولید با بهای تمام‌شده، حقوق با سند، **بستن دوره → ترازنامه متوازن + قفل دوره**، تأیید سلسله‌مراتبی با workflow واقعی + 403های مجوز، audit با tamper-detection، **جاروی قانون طلایی روی همهٔ اسناد**) + Outbox persisted/done + صفحات پنل/گزارش‌ها + CSV + گاردهای auth/403 + national_id رمزنگاری‌شده-at-rest + رد سند ناتراز از HTTP + رگرسیون احراز هویت نشست واقعی روی kernel
+
+### اصلاح شد
+- **`SessionGuard` موتور auth (باگ نهفتهٔ HTTP)**: `StartSessionMiddleware` نشست را به **clone** درخواست (via `withAttribute`) می‌بندد و همان clone را در pipeline جلو می‌فرستد، ولی `RequestStack` درخواست اصلی را نگه می‌دارد → `SessionGuard::session()` همیشه null و **احراز هویت نشست‌محور روی HTTP واقعی هرگز کار نمی‌کرد** (تست‌ها با `actingAs/setUser` درون‌حافظه‌ای این مسیر را رد نمی‌کردند؛ smoke کیت‌های پیشین هم فقط صفحات عمومی/302 را می‌دیدند) — fallback به instance نشستِ scope-شدهٔ container (`'session'`) در `AuthManager::sessionResolver` + تست رگرسیون واقعی روی kernel (`testSessionCookieAuthenticatesThroughRealKernel`)
+- **`Request::create` موتور http**: هدر `HTTP_COOKIE` پارس نمی‌شد (فقط پارامتر صریح `$cookies`) → کوکی نشست در درخواست‌های ساختهٔ تست/زیردرخواست گم می‌شد — اکنون هم‌راستا با `fromGlobals` وقتی `$cookies` خالی است از هدر پارس می‌شود
+
+### تغییر یافت
+- `config/architecture.php`: افزودن `Tavaan\Engine\Audit\AuditEvent` به allow صریح SDK ماژول‌ها (VO readonly ورودی Audit facade — الزام DOC-097 §7 برای ردپای مالی با hash chain موتور؛ الگوی همسان `Console\Command`)
+
+### مستندات
+- DOC-097 §13 (وضعیت + بلوک ماشین‌خوان + انحراف‌های مستند) • `docs/reports/M9-erp-implementation-report.md` • بک‌لاگ: TVN-0097 → done (M9: ۱ مانده/۷ انجام) • README ماژول/کیت • `.gitignore` (overlayهای erp)
+
 ## [0.14.0] - 2026-10-25 — فاز M9 (گام ۶): کیت مدیریت ارتباط با مشتری (CRM) 🤝
 
 ### افزوده شد

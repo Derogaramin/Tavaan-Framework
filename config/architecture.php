@@ -28,8 +28,10 @@ return [
         // allow = نقطه‌های تمدید SDK (صریح و مستند — ممیزی M9):
         //   Console\Command: پایهٔ دستورات CLI ماژول‌ها (کشف خودکار
         //   modules/*&#47;src/Console/Commands بدون آن ممکن نیست — DOC-076/DOC-080).
+        //   Audit\AuditEvent: VO readonly ورودیِ Audit facade — ماژول ERP برای
+        //   ثبت ردپای مالی با hash chain موتور audit به آن نیاز دارد (DOC-097 §7/AC-ERP-10).
         ['from' => 'Modules\\', 'deny' => ['Tavaan\\Engine\\'],
-         'allow' => ['Tavaan\\Engine\\Console\\Command']],
+         'allow' => ['Tavaan\\Engine\\Console\\Command', 'Tavaan\\Engine\\Audit\\AuditEvent']],
     ],
     'forbidden_functions' => [
         'eval', 'create_function', 'putenv', 'shell_exec', 'exec', 'system', 'passthru',

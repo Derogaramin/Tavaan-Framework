@@ -1,0 +1,16 @@
+{
+  "title_fa": "استاندارد",
+  "description": "پیش‌فرض DOC-097: تأیید سلسله‌مراتبی ۱۰۰M/۵۰۰M ریال، بهایابی میانگین موزون، auto-post اسناد سیستمی، Outbox inline-relay، audit کامل.",
+  "config": {
+    "erp": {
+      "per_page": 20,
+      "accounting": {"auto_post_system_vouchers": true, "voucher_prefix": "SV"},
+      "procurement": {"workflow": "erp-purchase-approval", "finance_threshold": 100000000, "ceo_threshold": 500000000},
+      "inventory": {"valuation_method": "weighted_avg", "low_stock_alert": true},
+      "payroll": {"overtime_rate": 1.4, "monthly_hours": 220, "tax_rate": 0.0, "tax_threshold": 0},
+      "integration": {"inline_relay": true},
+      "audit": {"enabled": true},
+      "notifications": {"po_needs_approval": true, "low_stock": true}
+    }
+  }
+}

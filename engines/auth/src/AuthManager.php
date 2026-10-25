@@ -11,6 +11,7 @@ use Tavaan\Core\Contracts\Auth\StatefulGuard;
 use Tavaan\Core\Contracts\Auth\UserProviderInterface;
 use Tavaan\Core\Contracts\Cache\RepositoryInterface as CacheRepository;
 use Tavaan\Core\Contracts\Config\RepositoryInterface;
+use Tavaan\Core\Contracts\Container\ContainerInterface;
 use Tavaan\Core\Contracts\Database\ConnectionInterface;
 use Tavaan\Core\Contracts\Encryption\EncrypterInterface;
 use Tavaan\Core\Contracts\Encryption\HasherInterface;
@@ -68,6 +69,7 @@ final class AuthManager
         private readonly ?DispatcherInterface $events = null,
         private readonly ?CacheRepository $cache = null,
         private readonly ?RequestStack $requestStack = null,
+        private readonly ?ContainerInterface $container = null,
     ) {
     }
 
@@ -150,8 +152,21 @@ final class AuthManager
     {
         return function (): ?Session {
             $session = $this->currentRequest()?->session();
+            if ($session instanceof Session) {
+                return $session;
+            }
 
-            return $session instanceof Session ? $session : null;
+            // 🔒 fallback: StartSessionMiddleware نشست را به یک clone از
+            // request با attribute می‌بندد و همان clone را در pipeline جلو
+            // می‌فرستد، ولی RequestStack درخواست اصلی (بدون attribute) را
+            // نگه می‌دارد → نشستِ scope-شدهٔ container تنها منبع قابل‌اتکا است.
+            if ($this->container !== null && $this->container->bound('session')) {
+                $scoped = $this->container->make('session');
+
+                return $scoped instanceof Session ? $scoped : null;
+            }
+
+            return null;
         };
     }
 
