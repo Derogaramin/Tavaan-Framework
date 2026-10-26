@@ -1,0 +1,40 @@
+{
+  "id": "tavaan.kit.bpms",
+  "title_fa": "کیت مدیریت فرایندهای کسب‌وکار (BPMS)",
+  "title_en": "BPMS Kit",
+  "version": "1.0.0",
+  "tavaan": "^1.0",
+  "architecture": "hexagonal",
+  "description": "سامانهٔ طراحی، اجرا و پایش فرایندهای کسب‌وکار: فرایندساز با خروجی JSON معتبر (AC-BPMS-11)، فرم‌ساز پویا (schema → validation + رندر)، موتور اجرا (userTask/serviceTask/exclusive+parallel gateway/timer) روی جداول bpms_*، Expression Evaluator امن بدون eval (AC-BPMS-12)، تایمر/escalation زمان‌بندی‌شده (AC-BPMS-13)، داشبورد پایش (KPI/گلوگاه/SLA/بار کاری + CSV + SSE) و mirror تاریخچه/visualization روی موتور workflow (DOC-098).",
+
+  "modules": [
+    {"id": "tavaan.core-user", "required": true},
+    {"id": "tavaan.bpms",      "required": true}
+  ],
+
+  "engines": {
+    "required": ["view", "i18n", "jalali", "cache", "database", "validation", "rbac", "security", "workflow", "audit", "event", "notification"],
+    "recommended": ["realtime", "schedule", "report", "queue", "observability"]
+  },
+
+  "theme": "themes/default",
+  "default_preset": "standard",
+
+  "roles": ["process-designer", "process-admin", "task-assignee", "monitor", "auditor", "manager", "admin"],
+  "demo_data": "seed/demo",
+
+  "requirements": {
+    "php": ">=8.2",
+    "extensions": ["pdo", "mbstring", "openssl"],
+    "storage_mb": 150,
+    "memory_mb": 128
+  },
+
+  "install": {
+    "steps": ["env", "key:generate", "migrate", "rbac:sync", "seed:demo", "optimize"],
+    "wizard": false
+  },
+
+  "health_check": "/admin/bpms",
+  "docs": "kits/bpms/README.md"
+}

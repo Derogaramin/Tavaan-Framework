@@ -265,3 +265,74 @@ task با due=P2D → اگر در ۲ روز انجام نشد:
 | Camunda/Flowable | موتور اجرا | خودنوشته، سبک، بدون Java |
 | Activiti | user task/gateway | — |
 | ProcessMaker | form builder + designer | فرم‌ساز JSON بومی |
+
+---
+
+## ۱۴. وضعیت پیاده‌سازی (M9 — TVN-0098) ✅
+
+> **تکمیل‌شده در نگارش 0.16.0** — ماژول `tavaan.bpms` + کیت `tavaan.kit.bpms`
+> (نصب: `php bin/tvn kit:install bpms --with-demo`). جزئیات:
+> `docs/reports/M9-bpms-implementation-report.md`.
+
+| بخش | وضعیت |
+|---|---|
+| معماری | hexagonal — موتور اجرای BPMS درون ماژول روی جداول `bpms_*` (مرجع صحت)؛ موتور workflow = لایهٔ تاریخچه/visualization با **mirror** best-effort (الگوی LMS/CRM/ERP) |
+| فرایندساز (§1.1/§3) | `DesignerService`: draft → **publish با validate کامل** → activate/retire + نسخه‌بندی (uk_key_version) + نمودار SVG/Mermaid سرور-ساید (`DiagramGenerator` خالص) — AC-BPMS-11 |
+| فرم‌ساز پویا (§4) | `FormSchema`/`FormField` → `toValidationRules()` (required/numeric/min/max/in/boolean/jalali_date/date/email/iran_mobile) + `normalize()` (حذف کلیدهای خارج از schema 🔒) + رندرر `partials/dynamic-form` |
+| موتور اجرا (§5) | `ProcessEngine`: start/advance عنصر-محور (userTask/serviceTask/exclusive+parallel gateway با **توکن**/endEvent) • completeTask با authorize+validate+merge • claim اتمیک • delegate • suspend/resume/terminate • سقف advance_limit و max_active_instances (🔒 DoS) |
+| Expression Evaluator (§5.1) | 🔒 lexer + recursive-descent parser + eval روی AST — **بدون eval()**؛ ممنوعیت تابع/`$`/backtick/`;`/`,` + سقف طول/عمق — **دو لایه**: رد در publish (ModelValidator.parses) و runtime — AC-BPMS-12 |
+| Service Tasks (§6) | `ActionRegistry` — اکشن‌ها **از پیش ثبت‌شده** (noop/log/mark_done/notify_initiator داخلی؛ اکشن دامنه‌ای توسط اپ) • `ProcessContext` (نمونه/متغیر/بازیگر/container) |
+| نقش‌ها (§7) | هر ۵ نقش مستند + manager/admin — ۱۶ مجوز `bpms.*` (`kits/bpms/seed/roles.json`) + `TaskPolicy` اعلامی |
+| پایش (§8) | `MonitoringService`+`MonitoringCalculator` خالص: KPI/میانگین چرخه/**bottleneck**/SLA compliance/بار کاری + CSV (BOM+ضد injection) + **SSE** (`TaskBroadcaster` — کانال `bpms` و `bpms.instance.{ULID}`؛ بدون نشت متغیرها) |
+| Timer/Escalation (§9) | `bpms:check-timers` (schedule هر دقیقه) — due روی task از `DurationParser` خالص (ISO-8601 P2D/PT30M + انسانی) • escalate داخلی (reassign به نقش config) یا اکشن ثبت‌شده • **idempotent** با escalated_at — AC-BPMS-13 |
+| رویدادها (§10) | هر ۵ رویداد مستند + `bpms.process.terminated` (افزودنی) — `BpmsNotifier` (mail+database از binding `notification.message`) + broadcaster |
+| تاریخچه/Audit | `bpms_history` append-only (actor/trigger/duration_ms) + عملیات مدیریتی در **hash chain موتور audit** (fail-open — allowlist در provider ادغام می‌شود؛ `tvn audit:verify` + صفحهٔ `/admin/bpms/audit`) |
+| تست | `modules/bpms/tests/` — **۸۷ تست** (۶۷ Unit + ۲۰ Feature) شامل E2E-01..10 §11 |
+
+انطباق: E2E-01 (submit→auto-approve با days≤2 → completed + اکشن approveLeave) ✅ •
+E2E-02 (submit→manager: claim نقش + complete با فرم → notify → completed) ✅ •
+E2E-03 (reject با approved=false → sendRejection) ✅ • E2E-04 (مرز gateway:
+days=2 خودکار / days=3 مدیر) ✅ • E2E-05 (fork دو شاخهٔ مالی/انبار → join →
+gateway `finance_ok && warehouse_ok` → completed؛ join زودهنگام رخ نمی‌دهد) ✅ •
+E2E-06 (Clock fake → سررسید P2D → escalate به نقش config + رویداد + اعلان +
+idempotent؛ اکشن سفارشی تایمر با مهر و بدون reassign) ✅ • E2E-07 (days=99 /
+required جاافتاده / تاریخ جلالی نامعتبر / select خارج از گزینه‌ها → رد بدون
+اثر جانبی؛ کلید خارج از schema هرگز merge نمی‌شود) ✅ • E2E-08 (اکشن ثبت‌شده
+با ProcessContext اجرا می‌شود + ctx->set پایدار؛ اکشن ناشناخته → unknown_action
+و rollback) ✅ • E2E-09 (history کامل با actor/trigger/duration + audit chain) ✅ •
+E2E-10 (تزریق `system(...)`/`$var`/backtick/`;`/`,` در publish و runtime رد —
+بدون eval در سورس) ✅ • AC-BPMS-11 (چرخهٔ HTTP: POST JSON → publish → start →
+task → complete؛ JSON خراب/گراف ناقص رد) ✅ • AC-BPMS-13 (schedule + CLI) ✅
+
+> انحراف‌های مستند: **موتور اجرا درون ماژول** (جداول `bpms_*` مرجع صحت) و
+> موتور workflow لایهٔ mirror تاریخچه/visualization — «روی شانهٔ workflow»
+> با WorkflowBridge/WorkflowDefinitionCompiler محقق شده (gatewayها در mirror
+> `normal` کامپایل می‌شوند چون guardهای expr قابل ترجمه به `can:` نیستند —
+> مسیر واقعی با fire صریح حرکت می‌کند) • شناسه‌ها ULID char(26) (استاندارد
+> فریمورک؛ history همچنان BIGINT) • افزودنی‌های schema (status/created_by/
+> workflow_instance_id/form_id/claimed_by/completed_by/escalated_at/trigger/
+> comment) در header migration مستند • اکشن‌های دمو از داخلی‌های ثبت‌شده
+> (approveLeave نمونهٔ §6 توسط اپ/تست ثبت می‌شود) • Sub-process و designer
+> drag-drop در بک‌لاگ 1.0.
+
+```yaml
+# machine-readable: tavaan.kit.bpms.v1 (وضعیت M9)
+kit:
+  id: tavaan.kit.bpms
+  status: implemented
+  ticket: TVN-0098
+  modules: [tavaan.core-user, tavaan.bpms]
+  routes_admin: [/admin/bpms, /admin/bpms/definitions, /admin/bpms/instances, /admin/bpms/tasks, /admin/bpms/audit]
+  routes_web: [/bpms/tasks, /bpms/processes, /bpms/instances]
+  routes_csv: [/admin/bpms/reports/kpis.csv]
+  events: [bpms.process.started, bpms.task.created, bpms.task.completed, bpms.process.completed, bpms.task.escalated, bpms.process.terminated]
+  consumed_events: []
+  workflow_mirror: {table: tvn_process_instances, definition_prefix: bpms-, mode: best-effort}
+  realtime_channels: [bpms, "bpms.instance.{ULID}"]
+  cli: [bpms:check-timers]
+  tables: 4
+  permissions: 16
+  roles: [process-designer, process-admin, task-assignee, monitor, auditor, manager, admin]
+  expression_language: {eval_free: true, layers: [publish-validate, runtime]}
+  tests: {unit: modules/bpms/tests/Unit, feature: modules/bpms/tests/Feature}
+```

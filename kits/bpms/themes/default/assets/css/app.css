@@ -1,0 +1,38 @@
+/*
+ * کیت BPMS — پوستهٔ پیش‌فرض (assets اضافی).
+ * بخش اصلی استایل‌ها inline در layoutها است (الگوی کیت‌های M9 — بدون
+ * وابستگی به شبکه در پیش‌نمایش). این فایل برای سفارشی‌سازی استقرار در
+ * public/assets/kits/bpms/app.css کپی می‌شود.
+ */
+
+.bpms-diagram {
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px;
+  direction: ltr;
+}
+
+.bpms-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.bpms-task-card {
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #0e7490;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  background: #fff;
+}
+
+.bpms-task-card.overdue {
+  border-left-color: #dc2626;
+}
+
+.bpms-task-card.escalated {
+  border-left-color: #f59e0b;
+}

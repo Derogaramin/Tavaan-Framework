@@ -1,0 +1,21 @@
+{
+  "title_fa": "استاندارد",
+  "description": "پیش‌فرض DOC-098: mirror روی موتور workflow (تاریخچه/visualization یکپارچه)، realtime/SSE برای کارهای جدید، اعلان‌های کامل، تایمر/escalation هر دقیقه، audit مدیریتی با hash chain.",
+  "config": {
+    "bpms": {
+      "per_page": 20,
+      "max_active_instances": 500,
+      "workflow_mirror": {"enabled": true, "prefix": "bpms-"},
+      "timers": {"enabled": true, "batch_size": 100, "escalate_role": "process-admin", "max_escalations": 3},
+      "notifications": {
+        "process_started": true, "task_created": true, "task_completed": false,
+        "process_completed": true, "task_escalated": true,
+        "escalate_notify_roles": ["process-admin", "admin"]
+      },
+      "realtime": {"enabled": true, "channel": "bpms", "instance_channel_prefix": "bpms.instance."},
+      "monitoring": {"bottleneck_top": 5, "recent_activity": 12},
+      "masked_variables": ["password", "secret", "token", "national_id", "card"],
+      "audit": {"enabled": true}
+    }
+  }
+}

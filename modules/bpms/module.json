@@ -1,0 +1,78 @@
+{
+  "$schema": "https://docs.tavaan.dev/schemas/module.v1.json",
+  "id": "tavaan.bpms",
+  "type": "module",
+  "name": "Bpms",
+  "title_fa": "مدیریت فرایندهای کسب‌وکار",
+  "title_en": "Business Process Management",
+  "version": "0.1.0",
+  "description": "سامانهٔ طراحی، اجرا و پایش فرایندهای کسب‌وکار: فرایندساز (Designer با خروجی JSON)، فرم‌ساز پویا (schema → validation + رندر)، موتور اجرا روی جداول bpms_* (userTask/serviceTask/exclusive+parallel gateway/timer)، Expression Evaluator امن بدون eval، Service-task ActionRegistry، تایمر/escalation زمان‌بندی‌شده، داشبورد پایش (KPI/bottleneck/SLA/workload + CSV + SSE) و mirror تاریخچه/visualization روی موتور workflow (DOC-098).",
+  "namespace": "Modules\\Bpms\\",
+  "autoload": {"psr-4": {"Modules\\Bpms\\": "src/"}},
+  "providers": ["Modules\\Bpms\\Providers\\BpmsServiceProvider"],
+  "requires": {
+    "tavaan": "^1.0",
+    "php": ">=8.2",
+    "engines": ["view", "i18n", "jalali", "cache", "database", "validation", "rbac", "security", "workflow", "audit", "event", "notification"],
+    "modules": ["tavaan.core-user"]
+  },
+  "tables": [
+    "bpms_process_definitions", "bpms_process_instances", "bpms_tasks", "bpms_history"
+  ],
+  "commands": ["bpms:check-timers"],
+  "routes": {
+    "web": "routes/web.php",
+    "admin": "routes/admin.php"
+  },
+  "views": {"namespace": "bpms", "path": "views"},
+  "lang": {"path": "lang"},
+  "migrations": {"path": "migrations"},
+  "seeds": {"demo": "seeds/demo.php"},
+  "events": {
+    "published": [
+      {"name": "bpms.process.started", "class": "Modules\\Bpms\\Domain\\Events\\ProcessWasStarted", "version": 1},
+      {"name": "bpms.task.created", "class": "Modules\\Bpms\\Domain\\Events\\TaskWasCreated", "version": 1},
+      {"name": "bpms.task.completed", "class": "Modules\\Bpms\\Domain\\Events\\TaskWasCompleted", "version": 1},
+      {"name": "bpms.process.completed", "class": "Modules\\Bpms\\Domain\\Events\\ProcessWasCompleted", "version": 1},
+      {"name": "bpms.task.escalated", "class": "Modules\\Bpms\\Domain\\Events\\TaskWasEscalated", "version": 1},
+      {"name": "bpms.process.terminated", "class": "Modules\\Bpms\\Domain\\Events\\ProcessWasTerminated", "version": 1}
+    ],
+    "consumed": []
+  },
+  "permissions": {
+    "group": {"id": "bpms", "title_fa": "مدیریت فرایندها (BPMS)"},
+    "items": [
+      {"key": "bpms.definition.view", "title_fa": "مشاهدهٔ تعریف فرایندها", "title_en": "View process definitions"},
+      {"key": "bpms.definition.manage", "title_fa": "طراحی/ویرایش پیش‌نویس فرایند و فرم", "title_en": "Manage draft definitions/forms"},
+      {"key": "bpms.definition.publish", "title_fa": "انتشار/فعال‌سازی/بازنشستگی نسخه", "title_en": "Publish/activate definitions"},
+      {"key": "bpms.instance.view", "title_fa": "مشاهدهٔ نمونه‌های فرایند", "title_en": "View process instances"},
+      {"key": "bpms.instance.view-all", "title_fa": "مشاهدهٔ همهٔ نمونه‌ها (فارغ از آغازگر)", "title_en": "View all instances"},
+      {"key": "bpms.instance.start", "title_fa": "آغاز فرایند", "title_en": "Start processes"},
+      {"key": "bpms.instance.manage", "title_fa": "تعلیق/ادامهٔ نمونه", "title_en": "Suspend/resume instances"},
+      {"key": "bpms.instance.terminate", "title_fa": "پایان اجباری نمونه", "title_en": "Terminate instances"},
+      {"key": "bpms.task.view", "title_fa": "مشاهدهٔ کارهای محوله (inbox)", "title_en": "View assigned tasks"},
+      {"key": "bpms.task.view-all", "title_fa": "مشاهدهٔ همهٔ کارها", "title_en": "View all tasks"},
+      {"key": "bpms.task.claim", "title_fa": "تصاحب کار", "title_en": "Claim tasks"},
+      {"key": "bpms.task.complete", "title_fa": "انجام/تکمیل کار", "title_en": "Complete tasks"},
+      {"key": "bpms.task.delegate", "title_fa": "واگذاری کار به دیگری", "title_en": "Delegate tasks"},
+      {"key": "bpms.task.assign", "title_fa": "انتصاب اجباری کار (مدیر)", "title_en": "Force-assign tasks"},
+      {"key": "bpms.monitor.view", "title_fa": "داشبورد پایش فرایندها", "title_en": "View monitoring dashboard"},
+      {"key": "bpms.audit.view", "title_fa": "مشاهدهٔ ردپای audit فرایندها", "title_en": "View BPMS audit trail"}
+    ]
+  },
+  "navigation": [
+    {"title": "پایش فرایندها", "title_fa": "پایش فرایندها", "uri": "/admin/bpms", "icon": "🔄", "permission": "bpms.monitor.view", "order": 70},
+    {"title": "فرایندساز", "title_fa": "فرایندساز", "uri": "/admin/bpms/definitions", "icon": "🧩", "permission": "bpms.definition.view", "order": 71},
+    {"title": "نمونه‌های فرایند", "title_fa": "نمونه‌های فرایند", "uri": "/admin/bpms/instances", "icon": "🚦", "permission": "bpms.instance.view", "order": 72},
+    {"title": "کارهای من", "title_fa": "کارهای من", "uri": "/bpms/tasks", "icon": "☑️", "permission": "bpms.task.view", "order": 73}
+  ],
+  "database": {
+    "table_prefix": "bpms_",
+    "tables": [
+      "bpms_process_definitions", "bpms_process_instances", "bpms_tasks", "bpms_history"
+    ],
+    "seed_on_install": true
+  },
+  "docs": "modules/bpms/README.md",
+  "notes": "کیت BPMS (kits/bpms) این ماژول را با theme/preset/roles/demo نصب می‌کند — DOC-098/TVN-0098. مرجع صحت اجرا جداول bpms_* است؛ موتور workflow لایهٔ تاریخچه/visualization (mirror best-effort — الگوی LMS/CRM/ERP). Expression evaluator بدون eval (AC-BPMS-12)."
+}

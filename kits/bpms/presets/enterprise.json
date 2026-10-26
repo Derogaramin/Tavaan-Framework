@@ -1,0 +1,22 @@
+{
+  "title_fa": "سازمانی",
+  "description": "سخت‌گیرانه: سقف نمونه کمتر، escalation تهاجمی‌تر (نقش‌های بیشتر)، mask گسترده‌تر متغیرها، realtime و mirror فعال، batch بزرگ‌تر تایمرها برای صف‌های شلوغ.",
+  "config": {
+    "bpms": {
+      "per_page": 25,
+      "max_active_instances": 200,
+      "advance_limit": 500,
+      "workflow_mirror": {"enabled": true, "prefix": "bpms-"},
+      "timers": {"enabled": true, "batch_size": 250, "escalate_role": "process-admin", "max_escalations": 2},
+      "notifications": {
+        "process_started": true, "task_created": true, "task_completed": true,
+        "process_completed": true, "task_escalated": true,
+        "escalate_notify_roles": ["process-admin", "monitor", "admin"]
+      },
+      "realtime": {"enabled": true, "channel": "bpms", "instance_channel_prefix": "bpms.instance."},
+      "monitoring": {"bottleneck_top": 8, "recent_activity": 20},
+      "masked_variables": ["password", "secret", "token", "national_id", "card", "sheba", "salary", "mobile", "email"],
+      "audit": {"enabled": true}
+    }
+  }
+}

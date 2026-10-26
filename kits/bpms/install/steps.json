@@ -1,0 +1,14 @@
+{
+  "$comment": "گام‌های نصب — توسط tvn kit:install bpms اجرا می‌شود (DOC-090 §8).",
+  "steps": [
+    {"id": "requirements", "title_fa": "بررسی پیش‌نیازها", "runner": "kit.requirements"},
+    {"id": "modules", "title_fa": "فعال‌سازی ماژول‌ها", "runner": "kit.modules"},
+    {"id": "preset", "title_fa": "اعمال preset", "runner": "kit.preset"},
+    {"id": "migrate", "title_fa": "مهاجرت دیتابیس", "runner": "tvn migrate"},
+    {"id": "theme", "title_fa": "نصب پوسته", "runner": "kit.theme (vendor override + assets)"},
+    {"id": "rbac", "title_fa": "مجوزها و نقش‌ها", "runner": "tvn rbac:sync + seed/roles.json"},
+    {"id": "seed", "title_fa": "دادهٔ نمونه (--with-demo)", "runner": "kit.seed"},
+    {"id": "optimize", "title_fa": "بهینه‌سازی", "runner": "tvn optimize (دستی)"}
+  ],
+  "wizard": false
+}

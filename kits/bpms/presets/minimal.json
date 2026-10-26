@@ -1,0 +1,21 @@
+{
+  "title_fa": "مینیمال",
+  "description": "کمینه: بدون mirror موتور workflow، بدون realtime، اعلان‌های ضروری، تایمرها فعال (هستهٔ §9 بدون افزونه).",
+  "config": {
+    "bpms": {
+      "per_page": 20,
+      "max_active_instances": 100,
+      "workflow_mirror": {"enabled": false, "prefix": "bpms-"},
+      "timers": {"enabled": true, "batch_size": 50, "escalate_role": "process-admin", "max_escalations": 1},
+      "notifications": {
+        "process_started": false, "task_created": true, "task_completed": false,
+        "process_completed": true, "task_escalated": true,
+        "escalate_notify_roles": ["process-admin"]
+      },
+      "realtime": {"enabled": false, "channel": "bpms", "instance_channel_prefix": "bpms.instance."},
+      "monitoring": {"bottleneck_top": 3, "recent_activity": 8},
+      "masked_variables": ["password", "secret", "token", "national_id", "card"],
+      "audit": {"enabled": true}
+    }
+  }
+}
