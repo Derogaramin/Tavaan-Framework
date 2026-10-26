@@ -67,6 +67,7 @@
 | DOC-121 | بک‌لاگ ایجنت | `docs/08-roadmap/agent-backlog.md` | برنامه 🧠 | DOC-120 |
 | DOC-130 | مراجع و بنچمارک‌ها | `docs/09-references/benchmarks.md` | پژوهشی | DOC-020 |
 | DOC-131 | واژه‌نامه | `docs/09-references/glossary.md` | مرجع | — |
+| DOC-132 | راهنمای مهاجرت | `docs/09-references/migration-guide.md` | مرجع 🧭 | DOC-081E, DOC-004 |
 | DOC-140 | شاخص تصمیم‌های معماری (ADR) | `docs/adr/README.md` | تصمیم 🔒 | DOC-020 |
 | DOC-150 | قالب مستند موتور | `docs/templates/engine-spec-template.md` | قالب | DOC-015 |
 | DOC-151 | قالب ماژول | `docs/templates/module-template.md` | قالب | DOC-022 |

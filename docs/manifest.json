@@ -3,7 +3,7 @@
   "framework": {
     "name": "Tavaan",
     "name_fa": "تَوان",
-    "version": "0.8.0",
+    "version": "0.16.0",
     "php_min": "8.2.0",
     "dependency_policy": "zero-external",
     "architectures": [
@@ -16,7 +16,7 @@
   },
   "generated_note": "فهرست ماشین‌خوان همهٔ مستندات — برای پیمایش خودکار ایجنت‌ها",
   "totals": {
-    "documents": 121,
+    "documents": 122,
     "engines": 53,
     "schemas": 4,
     "adrs": 16
@@ -1404,6 +1404,15 @@
       "path": "docs/09-references/glossary.md",
       "machine_readable": false,
       "sha256": "e768c3ef668f65df"
+    },
+    {
+      "section": "09-references",
+      "section_label": "مراجیع و واژه‌نامه",
+      "doc_id": "DOC-132",
+      "title": "راهنمای مهاجرت (Migration Guide) 🧭",
+      "path": "docs/09-references/migration-guide.md",
+      "machine_readable": false,
+      "sha256": "c60e9df42a085300"
     },
     {
       "section": "adr",
