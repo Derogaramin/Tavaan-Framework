@@ -71,6 +71,7 @@
 | DOC-132 | راهنمای مهاجرت | `docs/09-references/migration-guide.md` | مرجع 🧭 | DOC-081E, DOC-004 |
 | DOC-133 | راهنمای استقرار و Hardening | `docs/09-references/deployment-hardening.md` | عملیاتی 🛡️ | DOC-112, ADR-0017 |
 | DOC-134 | راهنمای هاست اشتراکی و پیکربندی سه‌سطحی | `docs/09-references/shared-hosting.md` | عملیاتی 🏠 | DOC-133, DOC-112, ADR-0017 |
+| DOC-135 | یکپارچه‌سازی محیط توسعه و Git — دفتر کل تاریخچه | `docs/09-references/git-integration.md` | زیرساخت/DevEx 🔧 | DOC-113, DOC-015, DOC-134 |
 | DOC-140 | شاخص تصمیم‌های معماری (ADR) | `docs/adr/README.md` | تصمیم 🔒 | DOC-020 |
 | DOC-150 | قالب مستند موتور | `docs/templates/engine-spec-template.md` | قالب | DOC-015 |
 | DOC-151 | قالب ماژول | `docs/templates/module-template.md` | قالب | DOC-022 |

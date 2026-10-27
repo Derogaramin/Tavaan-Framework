@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# تَوان | Tavaan — hook پیش‌کامیت (DOC-135 §3.6)
+# دروازه‌های «سریع» کیفیت پیش از هر کامیت:
+#   ۱) php -l فقط روی فایل‌های PHP مرحله‌شده (staged)
+#   ۲) gate موارد ممنوعه (check-forbidden.php — DOC-010)
+#   ۳) قواعد معماری (tvn arch:check — config/architecture.php)
+# حالت کامل (lint سراسری + مجموعه تست ~۲ دقیقه):  TVN_HOOK_FULL=1 git commit …
+# نصب: bash tools/scripts/git-setup.sh   (یا: git config core.hooksPath tools/git-hooks)
+set -u
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
+cd "$ROOT" || exit 0
+
+FAIL=0
+step() { printf '%s\n' "▶ $*"; }
+fail() { printf '%s\n' "❌ pre-commit: $*" >&2; FAIL=1; }
+
+# ۱) lint فقط فایل‌های stage‌شده (سریع — به‌جای ۲۲۰۰+ فایل کل مخزن)
+STAGED_PHP="$(git diff --cached --name-only --diff-filter=ACMR \
+  | grep -E '(\.php$|(^|/)tvn$)' || true)"
+if [ -n "$STAGED_PHP" ]; then
+  step "php -l روی فایل‌های stage‌شده…"
+  while IFS= read -r f; do
+    [ -f "$f" ] || continue
+    if ! OUT="$(php -l "$f" 2>&1)"; then
+      printf '%s\n' "$OUT" >&2
+      fail "خطای نحوی در $f"
+    fi
+  done <<< "$STAGED_PHP"
+fi
+
+# ۲) gate موارد ممنوعه (eval/putenv/… — DOC-010)
+step "gate موارد ممنوعه (check-forbidden)…"
+if ! php tools/scripts/check-forbidden.php >/dev/null 2>&1; then
+  php tools/scripts/check-forbidden.php 2>&1 | tail -20 >&2
+  fail "check-forbidden.php — موارد ممنوعه یافت شد"
+fi
+
+# ۳) قواعد معماری (مرزهای namespace — ARCH-003 و…)
+step "tvn arch:check…"
+if ! php bin/tvn arch:check >/dev/null 2>&1; then
+  php bin/tvn arch:check 2>&1 | tail -20 >&2
+  fail "arch:check — نقض قواعد معماری"
+fi
+
+# حالت کامل (اختیاری): lint سراسری + مجموعه تست
+if [ "${TVN_HOOK_FULL:-0}" = "1" ]; then
+  step "حالت FULL — lint سراسری…"
+  bash tools/scripts/lint.sh || fail "lint.sh"
+  step "حالت FULL — مجموعه تست (~۲ دقیقه)…"
+  php bin/tvn test || fail "tvn test"
+fi
+
+if [ "$FAIL" -ne 0 ]; then
+  printf '%s\n' "❌ کامیت رد شد — خطاها را رفع کنید (یا موقتاً: git commit --no-verify)" >&2
+  exit 1
+fi
+printf '%s\n' "✅ pre-commit سبز"
+exit 0

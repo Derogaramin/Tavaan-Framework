@@ -2,6 +2,26 @@
 
 فرمت: Keep a Changelog — نسخه‌گذاری: SemVer.
 
+## [0.19.0] - 2026-10-27 — یکپارچه‌سازی محیط توسعه و Git + دفتر کل تاریخچهٔ نسخه‌ها 🔧
+
+### افزوده شد
+- **DOC-135 — یکپارچه‌سازی محیط توسعه و Git** (`docs/09-references/git-integration.md`): راهنمای کامل DevEx/Git (راه‌اندازی محیط، سیاست `.gitignore`، مدل شاخه، **قرارداد پیام کامیت فارسی ساختاریافته**، نسخه‌گذاری چهار‌گانه، hookها، چک‌لیست انتشار) + **دفتر کل جمع‌آوری‌شدهٔ تاریخچهٔ هر ۲۱ نگارش** (۰٫۱٫۰ → ۰٫۱۹٫۰) با توضیحات و معیارهای سنجش هر نسخه + زمان‌های **اندازه‌گیری‌شدهٔ** ۹ گیت کیفیت
+- **مخزن Git**: ‏`git init -b main` + کامیت خط پایهٔ `0d13b6a` (وضعیت کامل v0.18.0 — ۲٬۸۶۳ فایل track‌شده؛ `.env`/`tavaan`/`storage` بیرون) + تگ‌های annotated ‏`v0.18.0`/`v0.19.0` — تاریخچهٔ مصنوعی بازسازی **نشد** (دلیل صادقانه: DOC-135 §1.3 — درخت یکسان، diff غیرواقعی)
+- **`tools/git-hooks/pre-commit`**: دروازهٔ سریع (~۶–۷s اندازه‌گیری‌شده) — `php -l` **فقط فایل‌های stage‌شده** + `check-forbidden` سراسری + `tvn arch:check` سراسری؛ با `TVN_HOOK_FULL=1` → + lint سراسری + کل مجموعهٔ تست
+- **`tools/git-hooks/commit-msg`**: راستی‌آزمایی **نرم** قرارداد پیام (رد سخت فقط برای پیام خالی؛ هشدار برای موضوع >۱۰۰ نویسه یا نبود بخش‌های ساختاریافته؛ Merge/Revert/fixup! معاف)
+- **`tools/scripts/git-setup.sh`**: راه‌اندازی **idempotent** یکپارچه‌سازی (init + هویت محلی + `core.hooksPath` + راستی‌آزمایی نشت `.env`/`tavaan` + گزارش وضعیت) — پاسخ به محدودیت sandbox (عدم پایداری `.git/config` بین نشست‌ها — DOC-135 §3.8)
+
+### تغییر یافت
+- `docs/manifest.json`: ثبت DOC-135 → **۱۲۷ سند** • `docs/README.md`: سطر شاخص DOC-135 • `CONTRIBUTING.md`: ارجاع گردش‌کار Git به DOC-135
+- نگارش `0.18.0` → `0.19.0` (bootstrap.php / tavaan.json / README / manifest)
+
+### رفع شد
+- کهنگی `framework.version` در `docs/manifest.json` — روی `0.17.0` مانده بود (با وجود bump نگارش ۰٫۱۸٫۰ در سه محل دیگر) → هم‌تراز شد
+- 🧹 نویز غیرفارسی: تایپوی سیریلیک در بخش ۰٫۲٫۰ همین فایل — «Hijri табular» → «Hijri tabular» (اسکن CJK/Cyrillic صفر شد؛ الگوی پاک‌سازی ۰٫۸٫۰)
+
+### نتایج
+- هر ۹ گیت کیفیت سبز با زمان واقعی (DOC-135 §2.4): ‏lint:php ۲٬۲۲۴ فایل/۰ خطا (~۳۵s) • check-forbidden ۱٬۱۵۲ فایل (~۰٫۴s) • arch:check ۱٬۵۷۳ فایل/۰ نقض (~۵٫۷s) • security:scan ۰ high (~۰٫۹s) • engine:validate ۵۲ موتور • module:validate ۶۴ manifest • env:check drift=۰ • **test: ۱٬۷۰۴ تست / ۱۱٬۱۱۵ assertion / ۱۱ skip مستند** (~۱۱۱s)
+
 ## [0.18.0] - 2026-10-27 — آماده‌سازی هاست اشتراکی + پیکربندی سه‌سطحی php.ini 🏠
 
 ### افزوده شد
@@ -478,7 +498,7 @@
 - **TVN-0023 Cookie**: `Cookie` VO (پیش‌فرض‌های امن)، `CookieJar` (make/forever/queue/forget)، `EncryptCookiesMiddleware` (decrypt ورودی/encrypt خروجی؛ tamper → null بی‌صدا)
 - **TVN-0024 View**: موتور `.tv.php` — `TemplateCompiler` شش‌pass با **پارسر دستی directive** (بدون regex بازگشتی → بدون JIT-stack exhaustion؛ ایمیل/`@@`/`@{{}}` امن)، auto-escape همهٔ `{{ }}` (ENT_QUOTES|ENT_HTML5 + fast-path ۰٫۲µs)، `{!! !!}` raw، `Escaper` (html/attr/js JSON_HEX/url/css) + `SafeString`، layout (@extends/@section/@yield تودرتو)، @push/@stack، @include/If/When/First، **Component** (`<x-alert :prop="$x">` + `<x-slot>` + `@props` + `ComponentAttributeBag`)، @csrf/@method/@json/@trans/@choice/@can/@verbatim/@php، directive سفارشی، `ViewFinder` با override سلسله‌مراتبی و namespace ماژول‌ها، کش کامپایل با hash(path|mtime|version)، محافظ Path Traversal و max-depth، `view:cache` با verify
 - **TVN-0025 I18n**: `Translator` (dot-key با namespace `shop::`، placeholder، fallback chain fa_IR→fa→en، missing-key log)، `choice()` با فرم‌های `{0}|{1}|[2,*]` و index-based، `PluralRules` (fa/en/ar/ru)، Accept-Language negotiation، `PersianFormatter` (ارقام/جداکنندهٔ فارسی، minor-units پول)، helpers: `trans()/__()/trans_number()/jalali()/is_rtl()`، lang files هسته در fa+en (۱۹ دامنه پیام)
-- **TVN-0026 Jalali**: پورت **breaks-based jalaali-js** (دقیق‌تر از فرمول ۲۸۲۰‌سالهٔ مستند — اصلاحیه در DOC-070 ثبت شد)، Julian Day bridge، `JalaliDate` (immutable: parse با ارقام فارسی، format مثل date() با ارقام فارسی/لاتین، add/sub/diff/start-endOfMonth/dayOfYear/weekOfYear)، نام ماه‌ها (ایرانی/افغان) و روزها، Hijri табular؛ **۱۰۰٪ تطبیق با intl (۸۰۰۰ نمونه) + ۱۰۰۰۰ roundtrip + همهٔ vectors**
+- **TVN-0026 Jalali**: پورت **breaks-based jalaali-js** (دقیق‌تر از فرمول ۲۸۲۰‌سالهٔ مستند — اصلاحیه در DOC-070 ثبت شد)، Julian Day bridge، `JalaliDate` (immutable: parse با ارقام فارسی، format مثل date() با ارقام فارسی/لاتین، add/sub/diff/start-endOfMonth/dayOfYear/weekOfYear)، نام ماه‌ها (ایرانی/افغان) و روزها، Hijri tabular؛ **۱۰۰٪ تطبیق با intl (۸۰۰۰ نمونه) + ۱۰۰۰۰ roundtrip + همهٔ vectors**
 - **TVN-0027 CORS**: preflight OPTIONS→204، reflect origin، `Vary: Origin`، wildcard `*.example.com`، خطای پیکربندی برای `*`+credentials
 - **TVN-0054 Crypt (زودهنگام — پیش‌نیاز cookie/session)**: AES-256-GCM با قالب `v{n}:iv:ct:tag`، `KeyRing` با versioning/rotation، HKDF (با fallback RFC 5869)، HMAC + verify ثابت‌زمان، AAD binding، `key:generate`
 - **Console**: `serve` (php -S با router script خارج از public)، `route:list/cache/clear/match`، `view:cache/clear`، discovery خودکار دستورات موتورها

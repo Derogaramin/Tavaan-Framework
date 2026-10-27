@@ -3,7 +3,7 @@
   "framework": {
     "name": "Tavaan",
     "name_fa": "تَوان",
-    "version": "0.17.0",
+    "version": "0.19.0",
     "php_min": "8.2.0",
     "dependency_policy": "zero-external",
     "architectures": [
@@ -16,7 +16,7 @@
   },
   "generated_note": "فهرست ماشین‌خوان همهٔ مستندات — برای پیمایش خودکار ایجنت‌ها",
   "totals": {
-    "documents": 126,
+    "documents": 127,
     "engines": 53,
     "schemas": 4,
     "adrs": 17
@@ -503,7 +503,7 @@
       "title": "شاخص مستندات تَوان (Tavaan Docs Index)",
       "path": "docs/README.md",
       "machine_readable": false,
-      "sha256": "57e647e48c7c68a6"
+      "sha256": "aac97f272ad60603"
     },
     {
       "section": "00-overview",
@@ -1385,7 +1385,7 @@
       "title": "رجیستری بدهی فنی و خطاهای رفع‌شده 🩺",
       "path": "docs/08-roadmap/tech-debt-registry.md",
       "machine_readable": false,
-      "sha256": "9cb29e870ce3f777"
+      "sha256": "c4f50bcc13b4ba51"
     },
     {
       "section": "08-roadmap",
@@ -1430,7 +1430,7 @@
       "title": "راهنمای استقرار و Hardening تولید 🛡️",
       "path": "docs/09-references/deployment-hardening.md",
       "machine_readable": false,
-      "sha256": "7b2a289c218312b5"
+      "sha256": "2ef188cadbfd8be0"
     },
     {
       "section": "09-references",
@@ -1440,6 +1440,15 @@
       "path": "docs/09-references/shared-hosting.md",
       "machine_readable": false,
       "sha256": "5eb979204eaf3738"
+    },
+    {
+      "section": "09-references",
+      "section_label": "مراجیع و واژه‌نامه",
+      "doc_id": "DOC-135",
+      "title": "یکپارچه‌سازی محیط توسعه و Git — دفتر کل تاریخچه 🔧",
+      "path": "docs/09-references/git-integration.md",
+      "machine_readable": false,
+      "sha256": "2e3c09773aad6160"
     },
     {
       "section": "adr",

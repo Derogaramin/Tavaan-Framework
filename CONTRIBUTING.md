@@ -14,3 +14,5 @@
 7. بنچمارک موتور خود را در `engines/<x>/benchmarks/` نگه دارید.
 
 قواعد کامل: `docs/01-standards/` و `docs/07-quality/definition-of-done.md`.
+گردش‌کار Git (شاخه‌ها، قرارداد پیام کامیت، hookها، فرایند انتشار): **DOC-135** —
+`docs/09-references/git-integration.md` (راه‌اندازی: `bash tools/scripts/git-setup.sh`).
