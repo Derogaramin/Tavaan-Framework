@@ -30,6 +30,7 @@
 | [ADR-0014](ADR-0014-no-vendor-runtime.md) | صفر vendor در زمان اجرا | ✅ Accepted | Global | `ADR-0014-no-vendor-runtime.md` |
 | [ADR-0015](ADR-0015-api-versioning.md) | نسخه‌گذاری API با /api/v1 + Header | ✅ Accepted | Engine (api) | `ADR-0015-api-versioning.md` |
 | [ADR-0016](ADR-0016-lazy-proxy-no-eval.md) | Lazy Proxy بدون eval | ✅ Accepted | Kernel (container) | `ADR-0016-lazy-proxy-no-eval.md` |
+| [ADR-0017](ADR-0017-process-per-request-no-resident-runtime.md) | مدل اجرا: process-per-request (بدون runtime مقیم اجباری) | ✅ Accepted | Global (Deployment/Perf) | `ADR-0017-process-per-request-no-resident-runtime.md` |
 
 ---
 

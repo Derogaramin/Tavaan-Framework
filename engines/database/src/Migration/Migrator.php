@@ -165,7 +165,14 @@ final class Migrator
         }
     }
 
-    public function rollback(int $steps = 1): MigrateResult
+    /**
+     * بازگرداندن آخرین batch.
+     *
+     * @param list<string> $paths مسیرهای جست‌وجوی فایل migration (پیش‌فرض: defaultPaths —
+     *                            برای migrationهای اجراشده با `--path` سفارشی، همان مسیر
+     *                            باید اینجا هم داده شود وگرنه فایل یافت نمی‌شود)
+     */
+    public function rollback(int $steps = 1, array $paths = []): MigrateResult
     {
         $this->acquireLock();
         try {
@@ -178,7 +185,7 @@ final class Migrator
                 return MigrateResult::nothing();
             }
 
-            $files = $this->getMigrationFiles($this->defaultPaths());
+            $files = $this->getMigrationFiles($paths === [] ? $this->defaultPaths() : $paths);
             $rolledBack = [];
 
             foreach ($lastBatch as $name) {   // 🔒 ترتیب معکوس (getLastBatch با order desc)

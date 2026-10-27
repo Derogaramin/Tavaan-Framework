@@ -3,7 +3,7 @@
 فریمورک PHP 8.2+ **صفر‌وابستگی**، فارسی‌اول و ماژولار — بدون یک پکیج خارجی در زمان اجرا.
 
 > پیاده‌سازی بر اساس مستندات رسمی: [Tavaan-Doc](https://github.com/Derogaramin/Tavaan-Doc)
-> وضعیت فعلی: **M1–M9 تکمیل و سبز — هر ۸ کیت اپلیکیشن ✅** — نگارش `0.16.0` • ۶۴ manifest فعال (۵۲ موتور + ۱۲ ماژول) • ۱۶۷۰ تست / ۱۰۹۵۶ assertion • سازگار با Linux/macOS/**Windows**
+> وضعیت فعلی: **M1–M9 تکمیل و سبز — هر ۸ کیت اپلیکیشن ✅** — نگارش `0.17.0` • ۶۴ manifest فعال (۵۲ موتور + ۱۲ ماژول) • ۱۷۰۴ تست / ۱۱۱۱۵ assertion • سازگار با Linux/macOS/**Windows**
 > آخرین فاز: **M9 (کیت‌های اپلیکیشن)** — blog ✍️ / news 📰 / shop 🛒 / forum 💬 / lms 🎓 / crm 🤝 / erp 🏭 / **bpms 🔄** — نصب با `tvn kit:install <kit> --with-demo`
 
 ---
@@ -13,7 +13,7 @@
 - 🚫 **صفر وابستگی** (ADR-0004): بدون `vendor/`، بدون Composer در runtime — Autoloader خودنوشته (ADR-0005)
 - 🇮🇷 **فارسی‌اول**: تقویم جلالی، ارقام فارسی، پیام‌های دوزبانه، Masking دادهٔ ایرانی (کارت/موبایل/کدملی)
 - 💉 **Container کامل**: Auto-Wiring با ReflectionCache، Contextual Binding، Scoped/Factory، Union/DNF قطعی، تشخیص چرخه با مسیر کامل
-- ⚙️ **معماری موتور‌محور**: ۴۸ موتور پیاده‌شده (از ۵۳ موتور طراحی‌شده) در `engines/` با manifest و مرزهای سخت
+- ⚙️ **معماری موتور‌محور**: ۵۲ موتور پیاده‌شده در `engines/` با manifest و مرزهای سخت (از ۵۳ موتور طراحی‌شده — `pagination` در `database` ادغام شده است؛ DOC-030 ردیف ۲۳)
 - 🔒 **امن در برابر Deprecated**: قواعد سخت‌گیرانهٔ PHP 8.2 (DOC-010) + gate خودکار
 - 📐 **Contract-First**: همهٔ Interfaceها در `core/Contracts/`
 - 🧪 **Test Framework بومی**: بدون PHPUnit — `tvn test`

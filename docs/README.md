@@ -65,9 +65,11 @@
 | DOC-113 | تعریف انجام‌شده | `docs/07-quality/definition-of-done.md` | استاندارد 🔒 | DOC-110 |
 | DOC-120 | نقشهٔ راه | `docs/08-roadmap/milestones.md` | برنامه | DOC-030 |
 | DOC-121 | بک‌لاگ ایجنت | `docs/08-roadmap/agent-backlog.md` | برنامه 🧠 | DOC-120 |
+| DOC-122 | رجیستری بدهی فنی و خطاها | `docs/08-roadmap/tech-debt-registry.md` | برنامه 🩺 | DOC-113, DOC-120 |
 | DOC-130 | مراجع و بنچمارک‌ها | `docs/09-references/benchmarks.md` | پژوهشی | DOC-020 |
 | DOC-131 | واژه‌نامه | `docs/09-references/glossary.md` | مرجع | — |
 | DOC-132 | راهنمای مهاجرت | `docs/09-references/migration-guide.md` | مرجع 🧭 | DOC-081E, DOC-004 |
+| DOC-133 | راهنمای استقرار و Hardening | `docs/09-references/deployment-hardening.md` | عملیاتی 🛡️ | DOC-112, ADR-0017 |
 | DOC-140 | شاخص تصمیم‌های معماری (ADR) | `docs/adr/README.md` | تصمیم 🔒 | DOC-020 |
 | DOC-150 | قالب مستند موتور | `docs/templates/engine-spec-template.md` | قالب | DOC-015 |
 | DOC-151 | قالب ماژول | `docs/templates/module-template.md` | قالب | DOC-022 |

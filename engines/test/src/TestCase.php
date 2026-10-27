@@ -132,6 +132,17 @@ abstract class TestCase
         $this->expectedCode = $code;
     }
 
+    /**
+     * Skip مستند — فقط برای محدودیت‌های محیطی قطعی (نبود حافظه برای fork،
+     * نبود افزونهٔ اختیاری). دلیل در گزارش چاپ و شمرده می‌شود.
+     *
+     * 🔒 skip برای پنهان‌کردن شکست مجاز نیست (DOC-113 §7).
+     */
+    protected function skip(string $reason): never
+    {
+        throw TestSkipped::because($reason);
+    }
+
     // ─── Assertionها ──────────────────────────────────────────────────────
 
     public static function assertTrue(mixed $condition, string $message = ''): void

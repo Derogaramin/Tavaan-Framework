@@ -22,6 +22,8 @@ final class TestResult
 
     private int $errored = 0;
 
+    private int $skipped = 0;
+
     private int $assertions = 0;
 
     private float $durationMs = 0.0;
@@ -62,11 +64,25 @@ final class TestResult
         );
     }
 
+    /** skip مستند (محدودیت محیطی — با دلیل). */
+    public function recordSkipped(string $test, string $reason, float $durationMs = 0.0): void
+    {
+        $this->skipped++;
+        $this->durationMs += $durationMs;
+        $this->failures[] = new TestFailure(
+            test: $test,
+            message: $reason,
+            location: '',
+            kind: 'skip',
+        );
+    }
+
     public function merge(self $other): void
     {
         $this->passed += $other->passed;
         $this->failed += $other->failed;
         $this->errored += $other->errored;
+        $this->skipped += $other->skipped;
         $this->assertions += $other->assertions;
         $this->durationMs += $other->durationMs;
         foreach ($other->failures as $failure) {
@@ -89,6 +105,11 @@ final class TestResult
         return $this->errored;
     }
 
+    public function skipped(): int
+    {
+        return $this->skipped;
+    }
+
     public function assertions(): int
     {
         return $this->assertions;
@@ -101,7 +122,7 @@ final class TestResult
 
     public function total(): int
     {
-        return $this->passed + $this->failed + $this->errored;
+        return $this->passed + $this->failed + $this->errored + $this->skipped;
     }
 
     /** @return list<TestFailure> */
@@ -122,6 +143,7 @@ final class TestResult
             'passed' => $this->passed,
             'failed' => $this->failed,
             'errored' => $this->errored,
+            'skipped' => $this->skipped,
             'assertions' => $this->assertions,
             'duration_ms' => $this->durationMs,
             'failures' => \array_map(static fn (TestFailure $f): array => $f->toArray(), $this->failures),
@@ -135,6 +157,7 @@ final class TestResult
         $result->passed = (int) ($data['passed'] ?? 0);
         $result->failed = (int) ($data['failed'] ?? 0);
         $result->errored = (int) ($data['errored'] ?? 0);
+        $result->skipped = (int) ($data['skipped'] ?? 0);
         $result->assertions = (int) ($data['assertions'] ?? 0);
         $result->durationMs = (float) ($data['duration_ms'] ?? 0.0);
         foreach ((array) ($data['failures'] ?? []) as $failure) {

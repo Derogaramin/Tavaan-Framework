@@ -273,6 +273,21 @@ final class TestRunner
 Tests: 152, Passed: 151, Failed: 1, Errors: 0, Time: 342ms
 ```
 
+### ۷٫۱ Skip مستند (محدودیت محیطی)
+```php
+protected function setUp(): void
+{
+    if (!\extension_loaded('pcov') && !\extension_loaded('xdebug')) {
+        $this->skip('coverage driver نصب نیست — محدودیت محیطی');
+    }
+}
+```
+- `TestSkipped` → کاراکتر `S` در خروجی + شمارش `Skipped: N` در خلاصه + فهرست دلیل‌ها
+- skip **شکست نیست** (exit code را قرمز نمی‌کند) ولی **باید دلیل داشته باشد** —
+  «تست skip بدون دلیل» مطابق DOC-113 §7 رد فوری است
+- کاربرد مجاز: فشار حافظهٔ sandbox برای fork (QaToolsTest)، نبود افزونهٔ
+  اختیاری، نبود سرویس خارجی در CI — نه برای پنهان‌کردن شکست
+
 ## ۸. TestResponse Assertions
 ```php
 $response->assertOk();                    // 200
@@ -352,7 +367,7 @@ engine:
   facade: null
   public_api:
     - class: TestCase
-      methods: [runBare, assertTrue, assertFalse, assertSame, assertNotSame, assertEquals, assertNull, assertNotNull, assertCount, assertContains, assertArrayHasKey, assertInstanceOf, assertStringContainsString, assertMatchesRegex, assertGreaterThan, assertLessThan, assertEqualsWithDelta, assertEmpty, assertNotEmpty, assertThat, expectException, expectExceptionMessageId, expectExceptionCode, fail]
+      methods: [runBare, assertTrue, assertFalse, assertSame, assertNotSame, assertEquals, assertNull, assertNotNull, assertCount, assertContains, assertArrayHasKey, assertInstanceOf, assertStringContainsString, assertMatchesRegex, assertGreaterThan, assertLessThan, assertEqualsWithDelta, assertEmpty, assertNotEmpty, assertThat, expectException, expectExceptionMessageId, expectExceptionCode, skip, fail]
     - class: TestRunner
       methods: [run, runSuite, render]
     - class: TestSuite

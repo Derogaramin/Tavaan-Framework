@@ -16,7 +16,7 @@ use Tavaan\Engine\Database\Migration\Migrator;
  */
 final class MigrateRollbackCommand extends Command
 {
-    protected string $signature = 'migrate:rollback {--step=1 : تعداد batch} {--force : بدون تأیید}';
+    protected string $signature = 'migrate:rollback {--step=1 : تعداد batch} {--force : بدون تأیید} {--path= : مسیر سفارشی فایل‌های migration (مطابق migrate --path)}';
 
     protected string $description = 'بازگرداندن آخرین batch از migrationها';
 
@@ -33,7 +33,9 @@ final class MigrateRollbackCommand extends Command
         }
 
         $step = (int) ($this->option('step') ?? 1);
-        $result = $migrator->rollback(\max(1, $step));
+        $path = $this->option('path');
+        $paths = \is_string($path) && $path !== '' ? [$path] : [];
+        $result = $migrator->rollback(\max(1, $step), $paths);
 
         $this->info(\sprintf('%d migration بازگردانده شد.', $result->count()));
 

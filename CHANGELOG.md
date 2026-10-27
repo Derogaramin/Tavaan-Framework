@@ -2,6 +2,30 @@
 
 فرمت: Keep a Changelog — نسخه‌گذاری: SemVer.
 
+## [0.17.0] - 2026-10-26 — رفع نقدهای 1.0 + مستندسازی تیکت‌محور + آماده‌سازی انتشار 🩺
+
+### افزوده شد
+- **پریزیمیتیو «skip مستند» در موتور test**: `TestSkipped` + `TestCase::skip(string $reason): never` — کاراکتر `S` در خروجی، شمارش `Skipped: N` در خلاصه و فهرست دلیل‌ها (DOC-084E §7.1)؛ برای **محدودیت‌های محیطی قطعی** (فشار حافظه/fork، نبود افزونهٔ اختیاری) — skip بدون دلیل همچنان مطابق DOC-113 §7 مردود است
+- **`migrate:rollback --path=`** + `Migrator::rollback(int $steps, array $paths)` — رفع TECH-TOOLING-01/BUG-TOOL-01 (migrationهای اجراشده با `migrate --path` سفارشی حالا برگشت‌پذیرند) + تست رگرسیون در `MigrationCommandsTest`
+- **`QueueCommandsTest`** (۱۳ تست in-process روی SQLite in-memory): پوشش `queue:work` (--once/--stop-when-empty/--max-jobs) و `queue:failed`/`queue:retry`/`queue:flush`/`queue:prune-failed`/`queue:restart`/`queue:monitor` — فرمان‌های صف از ۲–۴٪ به ۷۰–۱۰۰٪ و موتور queue به **۷۹٫۱٪** رسید + fixture `PlainFailJob` (شکست بدون override سطح job) + نمونهٔ واقعی skip مستند (`queue:listen`)
+- **`tools/scripts/generate-ticket-docs.php`** — تولیدکنندهٔ مستند تیکت در ساختار هر جزء (پارس ۶۲ تیکت بک‌لاگ + مانیفست‌ها + آمار واقعی فایل/LOC/تست):
+  - **README.md برای هر ۵۲ موتور** (الزام DoD §2 که تاکنون مغفول بود — شناسه/namespace/Facade/وابستگی‌ها/جداول/فرمان‌ها/شروع سریع)
+  - **TICKET.md برای ۷۳ ساختار**: همهٔ موتورها (۵۲ — شامل database با دو تیکت TVN-0030+TVN-0034)، ۱۲ ماژول، ۸ کیت و `core/Autoloading` — با معیارهای پذیرش، وابستگی‌ها، راهنمای پیاده‌سازی و شواهد (فرمان تست/اعتبارسنجی/گزارش)
+- **DOC-122 — رجیستری بدهی فنی و خطاهای رفع‌شده** (`docs/08-roadmap/tech-debt-registry.md`): جمع‌بندی متمرکز ۱۵ خطای رفع‌شده (از SessionGuard تا BUG-BPMS-01..04) + ۱۷ بدهی باز (TECH-COV/PERF/SEC/QUEUE/ERP/BPMS/…) + محدودیت‌های محیطی مستند
+- **DOC-133 — راهنمای استقرار و Hardening تولید** (`docs/09-references/deployment-hardening.md`): توپولوژی مرجع، nginx کامل (TLS/timeouts ضد Slowloris/rate-limit لبه/deny مسیرهای حساس)، php-fpm (فرمول worker/pm.max_requests)، OPcache+preload، `.env` تولید، جدول defense-in-depth، استقرار چند‌نودی و چک‌لیست deploy
+- **ADR-0017 — مدل اجرا: process-per-request** (بدون runtime مقیم اجباری): بهینه‌سازی بوت + scale افقی + adapter اختیاری 1.x؛ هدف «RPS≥۳۰۰۰» از معیارهای 1.0 به 1.x موکول شد (پاسخ مستقیم به نقد ساختاری §1.3)
+
+### تغییر یافت
+- داشبورد `agent-backlog.md`: جمع ۶۳ → **۶۲** و M5: ۹ → ۸ — تیکت شبح `TVN-0043` تنها در `depends_on` ارجاع شده و هرگز تعریف نشده بود (BUG-DOC-01) + یادداشت مستند
+- README ریشه: «۴۸ موتور پیاده‌شده» → **۵۲ موتور** (۵۳ طراحی‌شده با pagination ادغام‌شده در database — BUG-DOC-02)
+- DOC-049 (موتور migration): امضای `rollback` و جدول فرمان‌ها با `--path`
+- DOC-084E (موتور test): بخش §7.1 skip مستند + `skip` در بلوک ماشین‌خوان
+- `docs/manifest.json`: ثبت DOC-122/DOC-133/ADR-0017 → ۱۲۵ سند، ۱۷ ADR
+
+### رفع شد
+- خطای کاذب `QaToolsTest` در محیط‌های با فشار حافظه (`proc_open(): Fork failed`) — حالا **skip مستند** با دلیل به‌جای ۱۰ خطای قرمز (BUG-QA-01؛ نقد §3.3-4)
+- `migrate:rollback` با خطای `migration.file_missing` برای مسیرهای سفارشی (BUG-TOOL-01)
+
 ## [0.16.0] - 2026-10-26 — فاز M9 (گام ۸): کیت مدیریت فرایندهای کسب‌وکار (BPMS) 🔄 — **پایان M9: هر ۸ کیت سبز**
 
 ### افزوده شد

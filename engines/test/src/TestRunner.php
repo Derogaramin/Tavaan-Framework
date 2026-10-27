@@ -93,16 +93,27 @@ final class TestRunner
             $this->output->newLine();
         }
 
-        $summary = \sprintf(
-            '  Tests: %d, Passed: %d, Failed: %d, Errors: %d — Assertions: %d — Time: %.0f ms — Memory: %.1f MB',
-            $result->total(),
-            $result->passed(),
-            $result->failed(),
-            $result->errored(),
-            $result->assertions(),
-            $wallMs ?? $result->durationMs(),
-            \memory_get_peak_usage(true) / 1048576,
-        );
+        $skipped = $result->failures();
+        $skipped = \array_values(\array_filter($skipped, static fn (TestFailure $f): bool => $f->kind === 'skip'));
+        if ($skipped !== []) {
+            $this->output->writeln('  Skipped (با دلیل — محدودیت محیطی):', 'comment');
+            foreach ($skipped as $i => $skip) {
+                $this->output->writeln(\sprintf('  %d) %s — %s', $i + 1, $skip->test, $skip->message), 'dim');
+            }
+            $this->output->newLine();
+        }
+
+        $summaryArgs = [$result->total(), $result->passed(), $result->failed(), $result->errored()];
+        $summaryFormat = '  Tests: %d, Passed: %d, Failed: %d, Errors: %d';
+        if ($result->skipped() > 0) {
+            $summaryArgs[] = $result->skipped();
+            $summaryFormat .= ', Skipped: %d';
+        }
+        $summaryFormat .= ' — Assertions: %d — Time: %.0f ms — Memory: %.1f MB';
+        $summaryArgs[] = $result->assertions();
+        $summaryArgs[] = $wallMs ?? $result->durationMs();
+        $summaryArgs[] = \memory_get_peak_usage(true) / 1048576;
+        $summary = \vsprintf($summaryFormat, $summaryArgs);
         $this->output->writeln($summary, $result->ok() ? 'success' : 'error');
         $this->output->newLine();
     }
@@ -141,6 +152,11 @@ final class TestRunner
                 $result->recordPassed($assertions, (\microtime(true) - $start) * 1000);
                 if ($progress) {
                     $this->output->write('.', 'info');
+                }
+            } catch (TestSkipped $e) {
+                $result->recordSkipped($fullName, $e->getMessage(), (\microtime(true) - $start) * 1000);
+                if ($progress) {
+                    $this->output->write('S', 'comment');
                 }
             } catch (AssertionFailed $e) {
                 $result->recordFailure($fullName, $e, (\microtime(true) - $start) * 1000);

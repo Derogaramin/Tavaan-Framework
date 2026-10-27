@@ -26,7 +26,16 @@ final class QaToolsTest extends TestCase
     {
         $descriptors = [1 => ['pipe', 'w'], 2 => ['pipe', 'w']];
         $cmd = 'cd ' . \escapeshellarg($this->base) . ' && ' . \escapeshellarg(PHP_BINARY) . ' bin/tvn ' . $args . ' 2>&1';
-        $process = \proc_open($cmd, $descriptors, $pipes);
+        try {
+            $process = \proc_open($cmd, $descriptors, $pipes);
+        } catch (\Throwable $e) {
+            // 🔒 skip مستند: در محیط‌های با فشار حافظه (sandbox) fork ممکن است
+            // ناموفق باشد — محدودیت محیطی است نه شکست کد (نقد 1.0 §3.3-4).
+            if (\str_contains($e->getMessage(), 'Cannot allocate memory') || \str_contains($e->getMessage(), 'Fork failed')) {
+                $this->skip('proc_open fork ناموفق — فشار حافظهٔ محیط (sandbox): ' . $e->getMessage());
+            }
+            throw $e;
+        }
         $this->assertIsResource($process);
         /** @var resource $process */
         $out = (string) \stream_get_contents($pipes[1]);

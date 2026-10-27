@@ -3,7 +3,7 @@
   "framework": {
     "name": "Tavaan",
     "name_fa": "تَوان",
-    "version": "0.16.0",
+    "version": "0.17.0",
     "php_min": "8.2.0",
     "dependency_policy": "zero-external",
     "architectures": [
@@ -16,10 +16,10 @@
   },
   "generated_note": "فهرست ماشین‌خوان همهٔ مستندات — برای پیمایش خودکار ایجنت‌ها",
   "totals": {
-    "documents": 122,
+    "documents": 125,
     "engines": 53,
     "schemas": 4,
-    "adrs": 16
+    "adrs": 17
   },
   "entry_points": {
     "human_dashboard": "INDEX.html",
@@ -503,7 +503,7 @@
       "title": "شاخص مستندات تَوان (Tavaan Docs Index)",
       "path": "docs/README.md",
       "machine_readable": false,
-      "sha256": "b95e79cbdbae779d"
+      "sha256": "57e647e48c7c68a6"
     },
     {
       "section": "00-overview",
@@ -557,7 +557,7 @@
       "title": "کاتالوگ قراردادها (Contracts / Interfaces Catalog) 🔒",
       "path": "docs/01-standards/contracts-interfaces.md",
       "machine_readable": false,
-      "sha256": "3e969514f7cd7941"
+      "sha256": "a4a3e9ca2a7bd516"
     },
     {
       "section": "01-standards",
@@ -701,7 +701,7 @@
       "title": "موتور Admin | پیشخان و CRUD Generator",
       "path": "docs/03-engines/admin.md",
       "machine_readable": true,
-      "sha256": "c899d44f79902269"
+      "sha256": "6ca6cd4af3093dd6"
     },
     {
       "section": "03-engines",
@@ -773,7 +773,7 @@
       "title": "موتور Console | چارچوب CLI",
       "path": "docs/03-engines/console.md",
       "machine_readable": true,
-      "sha256": "51fb6781cd0f9075"
+      "sha256": "585f301221b7f7aa"
     },
     {
       "section": "03-engines",
@@ -899,7 +899,7 @@
       "title": "موتور Jalali | تقویم جلالی",
       "path": "docs/03-engines/jalali.md",
       "machine_readable": true,
-      "sha256": "e9485f786865daee"
+      "sha256": "64adbee333789c50"
     },
     {
       "section": "03-engines",
@@ -935,7 +935,7 @@
       "title": "موتور Migration | مهاجرت دیتابیس",
       "path": "docs/03-engines/migration.md",
       "machine_readable": true,
-      "sha256": "ae7d6c5e7e560f44"
+      "sha256": "b0d876cec26ccef4"
     },
     {
       "section": "03-engines",
@@ -944,7 +944,7 @@
       "title": "موتور Module | کشف و مدیریت ماژول",
       "path": "docs/03-engines/module.md",
       "machine_readable": true,
-      "sha256": "ef2bcc44dcac9516"
+      "sha256": "8fb27f9a4bc47eb7"
     },
     {
       "section": "03-engines",
@@ -953,7 +953,7 @@
       "title": "موتور Notification | آگاه‌سازی چندکاناله",
       "path": "docs/03-engines/notification.md",
       "machine_readable": true,
-      "sha256": "c6112c466d0f48b5"
+      "sha256": "2d26071e64b9eb8f"
     },
     {
       "section": "03-engines",
@@ -1016,7 +1016,7 @@
       "title": "موتور Plugin | افزونهٔ ثالث",
       "path": "docs/03-engines/plugin.md",
       "machine_readable": true,
-      "sha256": "7ae268ed6fd78efb"
+      "sha256": "4bcde2543d0510f8"
     },
     {
       "section": "03-engines",
@@ -1034,7 +1034,7 @@
       "title": "موتور RBAC | نقش و کنترل دسترسی",
       "path": "docs/03-engines/rbac.md",
       "machine_readable": true,
-      "sha256": "dce5353897aada19"
+      "sha256": "7b25d25dd480a3e2"
     },
     {
       "section": "03-engines",
@@ -1070,7 +1070,7 @@
       "title": "موتور Scaffold | تولید کد (make:*)",
       "path": "docs/03-engines/scaffold.md",
       "machine_readable": true,
-      "sha256": "a8dc881b3b9a2b29"
+      "sha256": "e190237079b8cef6"
     },
     {
       "section": "03-engines",
@@ -1133,7 +1133,7 @@
       "title": "موتور Test | چارچوب تست خودنوشته",
       "path": "docs/03-engines/test.md",
       "machine_readable": true,
-      "sha256": "22d6fda185173151"
+      "sha256": "1be4200444b9ecf4"
     },
     {
       "section": "03-engines",
@@ -1142,7 +1142,7 @@
       "title": "موتور Upgrade | ارتقای نسخه",
       "path": "docs/03-engines/upgrade.md",
       "machine_readable": true,
-      "sha256": "102bf3771cb60594"
+      "sha256": "16ea3670b1509dca"
     },
     {
       "section": "03-engines",
@@ -1160,7 +1160,7 @@
       "title": "موتور View | قالب‌ساز `.tv.php`",
       "path": "docs/03-engines/view.md",
       "machine_readable": true,
-      "sha256": "7881584721e52db0"
+      "sha256": "3db005f84771c87c"
     },
     {
       "section": "03-engines",
@@ -1178,7 +1178,7 @@
       "title": "مرجع کامل CLI (دستورات `tvn`) 🔒",
       "path": "docs/04-structure/cli-reference.md",
       "machine_readable": false,
-      "sha256": "583d2de4cb04f83d"
+      "sha256": "8f37bad28197c931"
     },
     {
       "section": "04-structure",
@@ -1241,7 +1241,7 @@
       "title": "کاربرد وبلاگ (Blog) ✍️",
       "path": "docs/05-applications/blog.md",
       "machine_readable": false,
-      "sha256": "4a8b2580d22df5c8"
+      "sha256": "25f791a09ebd166a"
     },
     {
       "section": "05-applications",
@@ -1250,7 +1250,7 @@
       "title": "کاربرد BPMS (مدیریت فرایندهای کسب‌وکار) 🔄",
       "path": "docs/05-applications/bpms.md",
       "machine_readable": false,
-      "sha256": "c6873afe1f71ff02"
+      "sha256": "a2200a02532a61dc"
     },
     {
       "section": "05-applications",
@@ -1259,7 +1259,7 @@
       "title": "کاربرد CRM (مدیریت ارتباط با مشتری) 🤝",
       "path": "docs/05-applications/crm.md",
       "machine_readable": false,
-      "sha256": "23bb16181086abf6"
+      "sha256": "13a9f08e1fb7c284"
     },
     {
       "section": "05-applications",
@@ -1268,7 +1268,7 @@
       "title": "کاربرد ERP (برنامه‌ریزی منابع سازمانی) 🏭",
       "path": "docs/05-applications/erp.md",
       "machine_readable": false,
-      "sha256": "4a3c2630dfe7de07"
+      "sha256": "ec68c92f62d0d077"
     },
     {
       "section": "05-applications",
@@ -1277,7 +1277,7 @@
       "title": "کاربرد فروم (Forum / انجمن) 💬",
       "path": "docs/05-applications/forum.md",
       "machine_readable": false,
-      "sha256": "e7dc1dd1208f0228"
+      "sha256": "706ab1cf5cd4b4ec"
     },
     {
       "section": "05-applications",
@@ -1286,7 +1286,7 @@
       "title": "کاربرد LMS (سامانهٔ مدیریت آموزش) 🎓",
       "path": "docs/05-applications/lms.md",
       "machine_readable": false,
-      "sha256": "15a09d8cbac04009"
+      "sha256": "4030bbca9469774a"
     },
     {
       "section": "05-applications",
@@ -1295,7 +1295,7 @@
       "title": "کاربرد پرتال خبری (News Portal) 📰",
       "path": "docs/05-applications/news-portal.md",
       "machine_readable": false,
-      "sha256": "34dee7b7b38ac57f"
+      "sha256": "de6b6b9a757bfdd0"
     },
     {
       "section": "05-applications",
@@ -1304,7 +1304,7 @@
       "title": "کاربرد فروشگاه (E-Commerce / Shop) 🛒",
       "path": "docs/05-applications/shop.md",
       "machine_readable": false,
-      "sha256": "8f67fdd7b5f75af5"
+      "sha256": "c4a2aca7961cd7e7"
     },
     {
       "section": "06-roles-access",
@@ -1367,7 +1367,7 @@
       "title": "استراتژی تست (Testing Strategy) 🔒",
       "path": "docs/07-quality/testing-strategy.md",
       "machine_readable": false,
-      "sha256": "5b05422596a1b6ed"
+      "sha256": "1abc16c630ccae5f"
     },
     {
       "section": "08-roadmap",
@@ -1376,7 +1376,16 @@
       "title": "بک‌لاگ ایجنت (Agent Backlog) 🧠",
       "path": "docs/08-roadmap/agent-backlog.md",
       "machine_readable": false,
-      "sha256": "d785310c9e0a83ea"
+      "sha256": "6893fb9ad972e94c"
+    },
+    {
+      "section": "08-roadmap",
+      "section_label": "نقشهٔ راه",
+      "doc_id": "DOC-122",
+      "title": "رجیستری بدهی فنی و خطاهای رفع‌شده 🩺",
+      "path": "docs/08-roadmap/tech-debt-registry.md",
+      "machine_readable": false,
+      "sha256": "9cb29e870ce3f777"
     },
     {
       "section": "08-roadmap",
@@ -1385,7 +1394,7 @@
       "title": "نقشهٔ راه و فازها (Roadmap & Milestones)",
       "path": "docs/08-roadmap/milestones.md",
       "machine_readable": false,
-      "sha256": "ff34ded46327600e"
+      "sha256": "311d5bcac8a5bdab"
     },
     {
       "section": "09-references",
@@ -1413,6 +1422,15 @@
       "path": "docs/09-references/migration-guide.md",
       "machine_readable": false,
       "sha256": "c60e9df42a085300"
+    },
+    {
+      "section": "09-references",
+      "section_label": "مراجیع و واژه‌نامه",
+      "doc_id": "DOC-133",
+      "title": "راهنمای استقرار و Hardening تولید 🛡️",
+      "path": "docs/09-references/deployment-hardening.md",
+      "machine_readable": false,
+      "sha256": "7b2a289c218312b5"
     },
     {
       "section": "adr",
@@ -1561,11 +1579,20 @@
     {
       "section": "adr",
       "section_label": "تصمیم‌های معماری",
+      "doc_id": null,
+      "title": "ADR-0017 — مدل اجرا: Process-per-request (بدون runtime مقیم اجباری)",
+      "path": "docs/adr/ADR-0017-process-per-request-no-resident-runtime.md",
+      "machine_readable": false,
+      "sha256": "9953717504eda3a9"
+    },
+    {
+      "section": "adr",
+      "section_label": "تصمیم‌های معماری",
       "doc_id": "DOC-140",
       "title": "شاخص تصمیم‌های معماری (ADR Index)",
       "path": "docs/adr/README.md",
       "machine_readable": false,
-      "sha256": "2de73b3d854d10c8"
+      "sha256": "070246ba3be55c47"
     },
     {
       "section": "templates",

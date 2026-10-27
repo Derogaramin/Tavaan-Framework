@@ -72,7 +72,7 @@ final class Migrator
         }
     }
 
-    public function rollback(int $steps = 1): void
+    public function rollback(int $steps = 1, array $paths = []): void
     {
         $this->acquireLock();
         try {
@@ -115,7 +115,7 @@ final class Migrator
 | `tvn migrate --dry-run` | نمایش بدون اجرا |
 | `tvn migrate:fresh` | drop همه + migrate (⚠️ خطرناک) |
 | `tvn migrate:refresh` | rollback همه + migrate |
-| `tvn migrate:rollback --step=1` | بازگشت |
+| `tvn migrate:rollback --step=1 [--path=]` | بازگشت (path برای migrationهای مسیر سفارشی) |
 | `tvn migrate:status` | وضعیت |
 | `tvn migrate:install` | ساخت جدول migrations |
 
