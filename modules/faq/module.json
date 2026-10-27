@@ -1,0 +1,55 @@
+{
+  "$schema": "https://docs.tavaan.dev/schemas/module.v1.json",
+  "id": "tavaan.faq",
+  "type": "module",
+  "name": "FAQ",
+  "title_fa": "پرسش‌های متداول",
+  "title_en": "FAQ",
+  "version": "0.1.0",
+  "description": "ماژول پرسش‌های متداول: دسته‌بندی با اسلاگ یکتا، پرسش با پاسخ markdown→HTML پاک‌سازی‌شده (چرخهٔ draft/published/archived از ContentStatus)، صفحهٔ عمومی آکاردئونی /faq با جست‌وجو و فیلتر دسته، رأی «مفید بود» (یک‌بار در هر نشست)، پنل /admin/faqs با RBAC، endpoint JSON و ویجت داشبورد.",
+  "namespace": "Modules\\Faq\\",
+  "autoload": {"psr-4": {"Modules\\Faq\\": "src/"}},
+  "providers": ["Modules\\Faq\\Providers\\FaqServiceProvider"],
+  "requires": {
+    "tavaan": "^1.0",
+    "php": ">=8.2",
+    "engines": ["view", "i18n", "database", "validation", "security", "rbac"],
+    "modules": ["tavaan.content"]
+  },
+  "tables": ["faq_categories", "faq_items"],
+  "commands": [],
+  "routes": {
+    "web": "routes/web.php",
+    "admin": "routes/admin.php",
+    "api": "routes/api.php"
+  },
+  "views": {"namespace": "faq", "path": "views"},
+  "lang": {"path": "lang"},
+  "migrations": {"path": "migrations"},
+  "events": {
+    "published": [
+      {"name": "faq.item.published", "class": "Modules\\Faq\\Domain\\Events\\FaqItemWasPublished", "version": 1},
+      {"name": "faq.item.updated", "class": "Modules\\Faq\\Domain\\Events\\FaqItemWasUpdated", "version": 1}
+    ]
+  },
+  "permissions": {
+    "group": {"id": "faq", "title_fa": "پرسش‌های متداول"},
+    "items": [
+      {"key": "faq.view", "title_fa": "مشاهدهٔ پرسش‌ها (مدیریت)", "title_en": "View FAQ items (admin)"},
+      {"key": "faq.create", "title_fa": "ساخت پرسش/دسته", "title_en": "Create FAQ items/categories"},
+      {"key": "faq.update", "title_fa": "ویرایش پرسش/دسته", "title_en": "Update FAQ items/categories"},
+      {"key": "faq.publish", "title_fa": "انتشار/بایگانی پرسش", "title_en": "Publish/archive FAQ items"},
+      {"key": "faq.delete", "title_fa": "حذف پرسش/دسته", "title_en": "Delete FAQ items/categories"}
+    ]
+  },
+  "navigation": [
+    {"title": "پرسش‌های متداول", "title_fa": "پرسش‌های متداول", "uri": "/admin/faqs", "icon": "❓", "permission": "faq.view", "order": 23}
+  ],
+  "database": {
+    "table_prefix": "faq_",
+    "tables": ["faq_categories", "faq_items"],
+    "seed_on_install": false
+  },
+  "docs": "modules/faq/README.md",
+  "notes": "پاسخ‌ها markdown→HTML با همان زنجیرهٔ پاک‌سازی ماژول content (escape-first + Security::sanitize). رأی «مفید بود» شمارندهٔ انباشته است (بدون جدول رأی) و در هر نشست یک‌بار ثبت می‌شود. دستهٔ حذف‌شده (soft) پرسش‌هایش را در نمای عمومی «بدون دسته» نشان می‌دهد. رویدادهای faq.item.deleted و faq.helpful.voted به‌صورت payload (بدون کلاس) منتشر می‌شوند."
+}

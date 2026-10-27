@@ -1,0 +1,96 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * تَوان | Tavaan — ماژول پرسش‌های متداول
+ * پیام‌های فارسی (faq::messages.*)
+ */
+
+return [
+    // عمومی
+    'index_title' => 'پرسش‌های متداول',
+    'faqs_title' => 'پرسش‌های متداول',
+    'nav_home' => 'فهرست پرسش‌ها',
+    'powered_by' => 'نیروگرفته از تَوان',
+    'search_label' => 'جست‌وجو در پرسش‌ها',
+    'search_placeholder' => 'عبارت جست‌وجو…',
+    'search_action' => 'جست‌وجو',
+    'filter_all' => 'همهٔ دسته‌ها',
+    'all_categories' => 'همهٔ دسته‌ها',
+    'uncategorized' => 'بدون دسته',
+    'no_faqs' => 'هنوز پرسشی ثبت نشده است.',
+    'no_results' => 'نتیجه‌ای برای این جست‌وجو پیدا نشد.',
+    'helpful_prompt' => 'آیا این پاسخ مفید بود؟',
+    'helpful_yes' => 'بله 👍',
+    'helpful_no' => 'خیر 👎',
+    'helpful_count' => ':yes رأی مفید، :no رأی نامفید',
+    'helpful_recorded' => 'رأی شما ثبت شد. سپاس!',
+    'helpful_already' => 'پیش‌تر در این نشست رأی داده‌اید.',
+    'helpful_invalid' => 'مقدار رأی نامعتبر است.',
+    'item_not_found' => 'پرسش پیدا نشد.',
+
+    // مدیریت — پرسش‌ها
+    'admin_title' => 'مدیریت پرسش‌های متداول',
+    'admin_faqs' => 'پرسش‌ها',
+    'admin_categories' => 'دسته‌ها',
+    'new_faq' => 'پرسش تازه',
+    'edit_faq' => 'ویرایش پرسش',
+    'view_site' => 'مشاهدهٔ صفحهٔ عمومی',
+    'question_col' => 'پرسش',
+    'category_col' => 'دسته',
+    'status_col' => 'وضعیت',
+    'helpful_col' => 'رأی مفید',
+    'date_col' => 'تاریخ',
+    'actions_col' => 'عملیات',
+    'all_statuses' => 'همهٔ وضعیت‌ها',
+    'live_tab' => 'پرسش‌های زنده',
+    'deleted_tab' => 'زباله‌دان',
+    'edit' => 'ویرایش',
+    'delete' => 'حذف',
+    'delete_forever' => 'حذف همیشگی',
+    'publish_action' => 'انتشار',
+    'archive_action' => 'بایگانی',
+    'draft_action' => 'بازگردانی به پیش‌نویس',
+    'confirm_delete' => 'این پرسش حذف (soft) شود؟',
+    'confirm_delete_forever' => 'این پرسش برای همیشه پاک شود؟ (بازگشت‌ناپذیر)',
+    'show_faq' => 'نمایش عمومی',
+    'field_question' => 'پرسش',
+    'field_answer' => 'پاسخ',
+    'field_category' => 'دسته',
+    'field_sort' => 'ترتیب نمایش',
+    'field_status' => 'وضعیت',
+    'answer_help' => 'پاسخ با markdown نوشته می‌شود و پیش از ذخیره پاک‌سازی می‌گردد.',
+    'sort_hint' => 'عدد کوچک‌تر زودتر نمایش داده می‌شود.',
+    'save' => 'ذخیره',
+    'create' => 'ایجاد',
+    'back_to_list' => 'بازگشت به فهرست',
+    'faq_created' => 'پرسش ساخته شد.',
+    'faq_updated' => 'پرسش به‌روزرسانی شد.',
+    'faq_published' => 'پرسش منتشر شد.',
+    'faq_archived' => 'پرسش بایگانی شد.',
+    'faq_back_to_draft' => 'پرسش به پیش‌نویس بازگشت.',
+    'faq_trashed' => 'پرسش به زباله‌دان منتقل شد.',
+    'faq_deleted_forever' => 'پرسش برای همیشه پاک شد.',
+    'status_invalid' => 'وضعیت نامعتبر است.',
+    'category_not_found' => 'دستهٔ انتخاب‌شده وجود ندارد.',
+
+    // مدیریت — دسته‌ها
+    'categories_title' => 'دسته‌های پرسش',
+    'new_category' => 'دستهٔ تازه',
+    'field_title' => 'عنوان',
+    'field_slug' => 'اسلاگ',
+    'slug_auto_hint' => 'خالی بگذارید تا از عنوان ساخته شود',
+    'category_count_col' => 'پرسش‌ها',
+    'sort_col' => 'ترتیب',
+    'category_created' => 'دسته ساخته شد.',
+    'category_updated' => 'دسته به‌روزرسانی شد.',
+    'category_deleted' => 'دسته حذف شد (پرسش‌هایش «بدون دسته» می‌شوند).',
+    'category_slug_taken' => 'این اسلاگ پیش‌تر برای دستهٔ دیگری ثبت شده است.',
+    'no_categories' => 'هنوز دسته‌ای ساخته نشده است.',
+
+    // ویجت داشبورد
+    'widget_title' => 'پرسش‌های متداول',
+    'widget_link' => 'مدیریت پرسش‌ها',
+    'widget_unavailable' => 'جدول پرسش‌ها آماده نیست (migrate انجام نشده).',
+];

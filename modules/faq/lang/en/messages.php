@@ -1,0 +1,96 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * تَوان | Tavaan — FAQ module
+ * English messages (faq::messages.*)
+ */
+
+return [
+    // Public
+    'index_title' => 'Frequently Asked Questions',
+    'faqs_title' => 'Frequently Asked Questions',
+    'nav_home' => 'All questions',
+    'powered_by' => 'Powered by Tavaan',
+    'search_label' => 'Search questions',
+    'search_placeholder' => 'Search term…',
+    'search_action' => 'Search',
+    'filter_all' => 'All categories',
+    'all_categories' => 'All categories',
+    'uncategorized' => 'Uncategorized',
+    'no_faqs' => 'No questions have been published yet.',
+    'no_results' => 'No results for this search.',
+    'helpful_prompt' => 'Was this answer helpful?',
+    'helpful_yes' => 'Yes 👍',
+    'helpful_no' => 'No 👎',
+    'helpful_count' => ':yes helpful votes, :no unhelpful votes',
+    'helpful_recorded' => 'Your vote was recorded. Thank you!',
+    'helpful_already' => 'You have already voted in this session.',
+    'helpful_invalid' => 'Invalid vote value.',
+    'item_not_found' => 'FAQ item not found.',
+
+    // Admin — items
+    'admin_title' => 'FAQ Management',
+    'admin_faqs' => 'Questions',
+    'admin_categories' => 'Categories',
+    'new_faq' => 'New question',
+    'edit_faq' => 'Edit question',
+    'view_site' => 'View public page',
+    'question_col' => 'Question',
+    'category_col' => 'Category',
+    'status_col' => 'Status',
+    'helpful_col' => 'Helpful votes',
+    'date_col' => 'Date',
+    'actions_col' => 'Actions',
+    'all_statuses' => 'All statuses',
+    'live_tab' => 'Live items',
+    'deleted_tab' => 'Trash',
+    'edit' => 'Edit',
+    'delete' => 'Delete',
+    'delete_forever' => 'Delete forever',
+    'publish_action' => 'Publish',
+    'archive_action' => 'Archive',
+    'draft_action' => 'Back to draft',
+    'confirm_delete' => 'Move this question to trash?',
+    'confirm_delete_forever' => 'Permanently delete this question? (irreversible)',
+    'show_faq' => 'Public view',
+    'field_question' => 'Question',
+    'field_answer' => 'Answer',
+    'field_category' => 'Category',
+    'field_sort' => 'Display order',
+    'field_status' => 'Status',
+    'answer_help' => 'The answer is written in markdown and sanitized before storage.',
+    'sort_hint' => 'Lower numbers are displayed first.',
+    'save' => 'Save',
+    'create' => 'Create',
+    'back_to_list' => 'Back to list',
+    'faq_created' => 'Question created.',
+    'faq_updated' => 'Question updated.',
+    'faq_published' => 'Question published.',
+    'faq_archived' => 'Question archived.',
+    'faq_back_to_draft' => 'Question moved back to draft.',
+    'faq_trashed' => 'Question moved to trash.',
+    'faq_deleted_forever' => 'Question permanently deleted.',
+    'status_invalid' => 'Invalid status.',
+    'category_not_found' => 'The selected category does not exist.',
+
+    // Admin — categories
+    'categories_title' => 'FAQ Categories',
+    'new_category' => 'New category',
+    'field_title' => 'Title',
+    'field_slug' => 'Slug',
+    'slug_auto_hint' => 'Leave empty to generate from title',
+    'category_count_col' => 'Questions',
+    'sort_col' => 'Order',
+    'category_created' => 'Category created.',
+    'category_updated' => 'Category updated.',
+    'category_deleted' => 'Category deleted (its questions become uncategorized).',
+    'category_slug_taken' => 'This slug is already used by another category.',
+    'no_categories' => 'No categories yet.',
+
+    // Dashboard widget
+    'widget_title' => 'FAQ',
+    'widget_link' => 'Manage questions',
+    'widget_unavailable' => 'FAQ tables are not ready (migration not run).',
+];

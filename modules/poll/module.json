@@ -1,0 +1,55 @@
+{
+  "$schema": "https://docs.tavaan.dev/schemas/module.v1.json",
+  "id": "tavaan.poll",
+  "type": "module",
+  "name": "Poll",
+  "title_fa": "نظرسنجی",
+  "title_en": "Poll",
+  "version": "0.1.0",
+  "description": "ماژول نظرسنجی: موجودیت Poll (چرخهٔ draft/open/closed + پنجرهٔ زمانی)، رأی یکتا به‌تفکیک کاربر/هش IP، گزینهٔ چندانتخابی، جمع‌بندی درصدی (VoteTally خالص)، UI عمومی /polls با فرم و نتایج، پنل /admin/polls با RBAC، endpointهای JSON و ویجت داشبورد.",
+  "namespace": "Modules\\Poll\\",
+  "autoload": {"psr-4": {"Modules\\Poll\\": "src/"}},
+  "providers": ["Modules\\Poll\\Providers\\PollServiceProvider"],
+  "requires": {
+    "tavaan": "^1.0",
+    "php": ">=8.2",
+    "engines": ["view", "i18n", "database", "validation", "security", "rbac"],
+    "modules": ["tavaan.content"]
+  },
+  "tables": ["poll_polls", "poll_votes"],
+  "commands": [],
+  "routes": {
+    "web": "routes/web.php",
+    "admin": "routes/admin.php",
+    "api": "routes/api.php"
+  },
+  "views": {"namespace": "poll", "path": "views"},
+  "lang": {"path": "lang"},
+  "migrations": {"path": "migrations"},
+  "events": {
+    "published": [
+      {"name": "poll.opened", "class": "Modules\\Poll\\Domain\\Events\\PollWasOpened", "version": 1},
+      {"name": "poll.closed", "class": "Modules\\Poll\\Domain\\Events\\PollWasClosed", "version": 1}
+    ]
+  },
+  "permissions": {
+    "group": {"id": "poll", "title_fa": "نظرسنجی"},
+    "items": [
+      {"key": "poll.view", "title_fa": "مشاهدهٔ نظرسنجی‌ها (مدیریت)", "title_en": "View polls (admin)"},
+      {"key": "poll.create", "title_fa": "ساخت نظرسنجی", "title_en": "Create polls"},
+      {"key": "poll.update", "title_fa": "ویرایش نظرسنجی", "title_en": "Update polls"},
+      {"key": "poll.open", "title_fa": "باز/بستن نظرسنجی", "title_en": "Open/close polls"},
+      {"key": "poll.delete", "title_fa": "حذف نظرسنجی", "title_en": "Delete polls"}
+    ]
+  },
+  "navigation": [
+    {"title": "نظرسنجی‌ها", "title_fa": "نظرسنجی‌ها", "uri": "/admin/polls", "icon": "📊", "permission": "poll.view", "order": 22}
+  ],
+  "database": {
+    "table_prefix": "poll_",
+    "tables": ["poll_polls", "poll_votes"],
+    "seed_on_install": false
+  },
+  "docs": "modules/poll/README.md",
+  "notes": "رأی یکتا: کاربر واردشده بر اساس user_id و مهمان بر اساس ip_hash (sha256 با نمک app.key — بدون ذخیرهٔ IP خام). گزینه‌ها پس از نخستین رأی قفل می‌شوند (صحت جمع‌بندی). رویداد poll.vote.cast به‌صورت payload (بدون کلاس) منتشر می‌شود. انقضای ends_at بدون cron: isVotable() زمان‌محور است."
+}
