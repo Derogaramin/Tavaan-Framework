@@ -66,6 +66,7 @@
 | DOC-120 | نقشهٔ راه | `docs/08-roadmap/milestones.md` | برنامه | DOC-030 |
 | DOC-121 | بک‌لاگ ایجنت | `docs/08-roadmap/agent-backlog.md` | برنامه 🧠 | DOC-120 |
 | DOC-122 | رجیستری بدهی فنی و خطاها | `docs/08-roadmap/tech-debt-registry.md` | برنامه 🩺 | DOC-113, DOC-120 |
+| DOC-123 | نقشهٔ راه توسعهٔ ماژول‌ها (M10–M13) | `docs/08-roadmap/module-roadmap.md` | برنامه 🧩 🧠 | DOC-120, DOC-121, DOC-022 |
 | DOC-130 | مراجع و بنچمارک‌ها | `docs/09-references/benchmarks.md` | پژوهشی | DOC-020 |
 | DOC-131 | واژه‌نامه | `docs/09-references/glossary.md` | مرجع | — |
 | DOC-132 | راهنمای مهاجرت | `docs/09-references/migration-guide.md` | مرجع 🧭 | DOC-081E, DOC-004 |
@@ -87,7 +88,7 @@
 
 | فایل | قالب | کاربرد |
 |---|---|---|
-| `docs/manifest.json` | JSON | فهرست کامل همهٔ ۱۲۱ سند + ۵۳ موتور با DOC-ID، مسیر، hash و مسیرهای مطالعه — نقطهٔ ورود برنامه‌ای ایجنت |
+| `docs/manifest.json` | JSON | فهرست کامل همهٔ ۱۲۲ سند + ۵۳ موتور با DOC-ID، مسیر، hash و مسیرهای مطالعه — نقطهٔ ورود برنامه‌ای ایجنت |
 | `docs/schemas/module.v1.json` | JSON Schema | اعتبارسنجی `module.json` هر ماژول |
 | `docs/schemas/project.v1.json` | JSON Schema | اعتبارسنجی `tavaan.json` ریشهٔ پروژه |
 | `docs/schemas/integration-event.v1.json` | JSON Schema | اعتبارسنجی قرارداد رویداد بین‌سرویسی |
