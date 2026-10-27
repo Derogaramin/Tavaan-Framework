@@ -197,3 +197,48 @@ install — بدون لمس DB واقعی).
 | coverage scoped (`--coverage engines`) | TOTAL ۷۲٫۱٪ • core ۶۵٫۲٪ • queue ۷۹٫۱٪ • console ۴۷٫۸٪ • migration ۵۵٫۴٪ |
 
 نتیجهٔ راستی‌آزمایی دوم: از ۹ معیار DOC-120 §6 → **۷ ✅، ۱ ⚠️ (میزبانی مستندات — بیرونی)، ۱ ⬜ (بنچ مقایسه‌ای — موکول صریح به 1.x)**. هیچ معیار ❌ باقی نمانده است.
+
+---
+
+## ۹. راستی‌آزمایی هاست اشتراکی (0.18.0، 2026-10-27) — DOC-134
+
+معیار ضمنی انتشار: **«تَوان باید روی هاست اشتراکی پاسخگویی مناسب داشته باشد.»**
+یک هاست اشتراکی شبیه‌سازی و منابع فریمورک در سه سطح `php.ini` (حداقل/ایده‌آل/سنگین)
++ یک پروفایل محدود (`disable_functions`) اندازه‌گیری شد.
+
+### ۹٫۱ روش
+`php -S` با worker پایدار (≈ php-fpm/LiteSpeed با OPcache گرم بین درخواست‌ها)،
+`php -c examples/hosting/php-<tier>.ini`، SQLite، روی ۲ vCPU اشتراکی / ~۱GB RAM.
+ابزارها: `tools/scripts/{shared-host-bench,worker-rss,memory-ceiling,boot-profile}.php`.
+> اعداد **کف بدبینانه**‌اند (تولیدکنندهٔ بار هم CPU مصرف می‌کند؛ LiteSpeed واقعی سریع‌تر است).
+
+### ۹٫۲ یافته‌های کلیدی
+
+| معیار | مقدار | قضاوت |
+|---|---|---|
+| حافظهٔ هر درخواست وب | **۴–۶MB** heap | ✅ ۲۰× حاشیه زیر ۱۲۸M |
+| RSS ورکر گرم | **۳۷–۴۶MB** | ✅ ۱۰–۱۲ ورکر در پلن ۱GB |
+| p50 پایدار (OPcache) | **۲٫۵–۳٫۵ms** سبک / **۶–۹ms** DB | ✅ پاسخ آنی |
+| p50 بدون OPcache | ۸–۱۶ms + ۲× حافظه | ⚠️ OPcache الزامی (۳× سرعت) |
+| footprint در OPcache | ۱۳–۳۹MB | ✅ حتی `memory_consumption=64` کافی |
+| throughput | ~۶۰–۸۳ RPS/ورکر، **۰ خطا/۰ 5xx** | ✅ پایدار تحت بار |
+| سقف گزارش (memory_limit) | ۵۰k→۱۲۶M / ۱۰۰k→۲۵۱M / ۱۵۰k→۲۸۵M | ✅ توجیه ۱۲۸/۲۵۶/۵۱۲M |
+| اجرای سقف (OOM) | **مدیریت‌شده** توسط `ErrorHandler` | ✅ کرش خام نه |
+| `disable_functions` (proc_open/putenv/…) | **۱۰۰٪ مسیر وب سالم** + `tvn doctor` سبز | ✅ سازگار با میزبان سخت‌گیر |
+| fallback افزونه‌ها | intl/redis/gd/mysql/apcu/opcache | ✅ بدون افزونهٔ اختیاری هم بالا می‌آید |
+| نیاز به Composer/daemon/resident-runtime | **ندارد** (ADR-0017) | ✅ آپلود و اجرا |
+
+### ۹٫۳ تحویل‌شدگان
+- **DOC-134** (`docs/09-references/shared-hosting.md`) — راهنمای کامل + جداول اندازه‌گیری + چک‌لیست استقرار + `.user.ini`/`.htaccess` + مقایسه با وردپرس/لاراول/سیمفونی
+- **۴ پروفایل ini** + **preload.php** در `examples/hosting/`
+- **۶ ابزار اندازه‌گیری** در `tools/scripts/`
+- خروجی خام: `storage/temp/shared-host-evidence.json` (gitignored)
+
+### ۹٫۴ نتیجه
+**✅ تَوان روی هاست اشتراکی پاسخگویی مناسب دارد** — با `memory_limit=128M` (حداقل)
+راحت کار می‌کند، `256M` (ایده‌آل) برای اکثر اپ‌ها کافی است، و حتی در بدترین حالت
+(میزبان با `disable_functions` سخت‌گیر + بدون OPcache) سالم می‌ماند. سطح توصیه‌شدهٔ
+رسمی: **ایده‌آل (۲۵۶M + OPcache با `validate_timestamps=0`)**.
+
+> همهٔ دروازه‌ها پس از این افزودنی‌ها دوباره سبز: lint ۲۲۲۴✓ / arch ۱۵۷۳✓ /
+> security high=0✓ / engine ۵۲✓ / module ۶۴✓ / test ۱۷۰۴✓ (۰ failure، ۱۱ skip مستند).

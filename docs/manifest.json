@@ -16,7 +16,7 @@
   },
   "generated_note": "فهرست ماشین‌خوان همهٔ مستندات — برای پیمایش خودکار ایجنت‌ها",
   "totals": {
-    "documents": 125,
+    "documents": 126,
     "engines": 53,
     "schemas": 4,
     "adrs": 17
@@ -1431,6 +1431,15 @@
       "path": "docs/09-references/deployment-hardening.md",
       "machine_readable": false,
       "sha256": "7b2a289c218312b5"
+    },
+    {
+      "section": "09-references",
+      "section_label": "مراجیع و واژه‌نامه",
+      "doc_id": "DOC-134",
+      "title": "راهنمای هاست اشتراکی و پیکربندی سه‌سطحی php.ini 🏠",
+      "path": "docs/09-references/shared-hosting.md",
+      "machine_readable": false,
+      "sha256": "5eb979204eaf3738"
     },
     {
       "section": "adr",

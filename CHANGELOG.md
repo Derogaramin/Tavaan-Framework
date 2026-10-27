@@ -2,6 +2,27 @@
 
 فرمت: Keep a Changelog — نسخه‌گذاری: SemVer.
 
+## [0.18.0] - 2026-10-27 — آماده‌سازی هاست اشتراکی + پیکربندی سه‌سطحی php.ini 🏠
+
+### افزوده شد
+- **DOC-134 — راهنمای هاست اشتراکی و پیکربندی سه‌سطحی** (`docs/09-references/shared-hosting.md`): پاسخ مستند به «هاست اشتراکی چیست/چه ویژگی‌هایی دارد» + **شبیه‌سازی و اندازه‌گیری واقعی منابع** تَوان روی PHP 8.2.35 و پیکربندی `php.ini` در سه سطح (هم‌تراز نمونه‌های وردپرس/لاراول/سیمفونی صورت‌مسئله)
+- **چهار پروفایل `php.ini`** در `examples/hosting/`: `php-minimum.ini` (۱۲۸M)، `php-ideal.ini` (۲۵۶M — توصیهٔ رسمی)، `php-heavy.ini` (۵۱۲M — BI/ایمپورت بزرگ)، `php-restricted.ini` (بدون `proc_open`/`putenv`/`pcntl_*` — بدترین حالت میزبان سخت‌گیر) — همه با کامنت‌های evidence-based ارجاع‌داده به §های DOC-134
+- **`examples/hosting/preload.php`** — اسکریپت OPcache Preload که کل classmap (~۱۵۸۰ فایل) را پیش‌کامپایل می‌کند (بوت سرد ~۸۰–۱۰۵ms → ~صفر)؛ با محافظ امنیت (فقط داخل درخت پروژه) + مهار خطا per-file؛ تست‌شده: `preloaded=1580 failed=0`
+- **۶ ابزار اندازه‌گیری** در `tools/scripts/`: `shared-host-bench.php` (ماتریس سرد/گرم ۵ پروفایل × ۳ سناریو)، `bench-server.php` (سرور پایدار ≈ php-fpm worker با OPcache گرم + ثبت معیار سمت‌سرور)، `shared-host-measure.php` (سنجهٔ درون‌فرآیندی یک درخواست)، `worker-rss.php` (RSS ورکر گرم از `/proc`)، `memory-ceiling.php` (منحنی رشد حافظهٔ report/json/serialize/validate/pipeline)، `boot-profile.php` (تجزیهٔ زمانی ۸ bootstrapper)
+
+### یافته‌های اندازه‌گیری‌شده (سند DOC-134)
+- **حافظهٔ هر درخواست وب: ۴–۶MB heap** (۲۰× حاشیه زیر `memory_limit=128M`)؛ **RSS ورکر گرم ~۳۷–۴۶MB** → ۱۰–۱۲ ورکر در پلن ۱GB
+- **p50 پایدار با OPcache: ۲٫۵–۳٫۵ms** (سبک) و **۶–۹ms** (DB) در برابر **۸–۱۶ms بدون OPcache** → OPcache ~۳× سرعت و نصف حافظه (یک‌بار ~۵۰ms بوت سرد)
+- **سقف حافظهٔ گزارش:** ۵۰k ردیف→۱۲۶MB، ۱۰۰k→۲۵۱MB، ۱۵۰k→۲۸۵MB → توجیه سه سطح ۱۲۸/۲۵۶/۵۱۲M؛ **اثبات اجرای سقف:** گزارش ۱۰۰k زیر ۱۲۸M → OOM **مدیریت‌شده** توسط `ErrorHandler->handleShutdown` (کرش خام نه)، زیر ۲۵۶M/۵۱۲M → موفق
+- **throughput: ~۶۰–۸۳ RPS/ورکر، ۰ خطا/۰ 5xx** در همهٔ سطوح همزمانی (محدود به ۲ vCPU sandbox — کف بدبینانه)
+- **سازگاری `disable_functions`: ۱۰۰٪ مسیر وب** — پروفایل restricted همهٔ سناریوها ۲۰۰ بدون افت + `tvn doctor` «محیط سالم» (fallback خودکار intl/redis/gd/mysql/opcache)
+- **`save_comments=1` حیاتی است** (DI تَوان docblock-محور — برخلاف سمفونی)؛ در همهٔ سطوح الزامی
+
+### تغییر یافت
+- `docs/manifest.json`: ثبت DOC-134 → **۱۲۶ سند**
+- `docs/README.md` + DOC-133 (deployment-hardening): ارجاع متقابل به DOC-134
+- نگارش `0.17.0` → `0.18.0` (bootstrap.php / tavaan.json / README)
+
 ## [0.17.0] - 2026-10-26 — رفع نقدهای 1.0 + مستندسازی تیکت‌محور + آماده‌سازی انتشار 🩺
 
 ### افزوده شد

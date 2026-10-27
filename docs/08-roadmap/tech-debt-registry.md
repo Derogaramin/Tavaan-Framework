@@ -55,5 +55,5 @@
 | مورد | شرح | راه‌حل |
 |---|---|---|
 | sandbox ~۱GB RAM | اجرای کامل سوئیت + xdebug → OOM؛ `proc_open` زیر فشار → fail | اجرای scoped؛ `skip` مستند؛ coverage خالی |
-| `php -S` تک‌رشته | اعداد RPS در sandbox کفِ بدبینانه‌اند | بنچ روی fpm+opcache (DOC-133) |
+| `php -S` تک‌رشته | اعداد RPS در sandbox کفِ بدبینانه‌اند | بنچ روی fpm+opcache (DOC-133)؛ اندازه‌گیری چند-worker هاست اشتراکی در DOC-134 §5.5 (~۶۰–۸۳ RPS/ورکر، ۰ خطا) |
 | somaxconn=128 | burst ۳۰۰ همزمان → ~۲٫۷٪ reset در لایهٔ TCP (نه اپ) | tuning کرنل/nginx در تولید |
