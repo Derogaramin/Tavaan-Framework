@@ -5,19 +5,50 @@
   "name": "Comment",
   "title_fa": "نظر",
   "title_en": "Comment",
-  "version": "0.1.0",
-  "description": "دامنهٔ نظر عمومی: موجودیت Comment، قرارداد Commentable، پورت ذخیره‌سازی، moderation (اسپم/تأیید) و رشتهٔ نظرات تو‌در‌تو (DOC-090 §6 / DOC-091 §1).",
+  "version": "0.2.0",
+  "description": "دامنهٔ نظر عمومی: موجودیت Comment، قرارداد Commentable، پورت ذخیره‌سازی، moderation (اسپم/تأیید) و رشتهٔ نظرات تو‌در‌تو (DOC-090 §6 / DOC-091 §1) + حالت standalone کامل: جدول پلی‌مورفیک comment_comments، endpointهای عمومی /comments/{type}/{id} (HTML+JSON)، رجیستری allowlist انواع نظرپذیر، صف moderation در پنل با آمار و ویجت داشبورد.",
   "namespace": "Modules\\Comment\\",
   "autoload": {"psr-4": {"Modules\\Comment\\": "src/"}},
   "providers": ["Modules\\Comment\\Providers\\CommentServiceProvider"],
-  "requires": {"tavaan": "^1.0", "php": ">=8.2", "engines": [], "modules": []},
-  "tables": [],
+  "requires": {
+    "tavaan": "^1.0",
+    "php": ">=8.2",
+    "engines": ["database", "view", "validation", "security"],
+    "modules": []
+  },
+  "tables": ["comment_comments"],
   "commands": [],
+  "routes": {
+    "web": "routes/web.php",
+    "admin": "routes/admin.php",
+    "api": "routes/api.php"
+  },
+  "views": {"namespace": "comment", "path": "views"},
+  "lang": {"path": "lang"},
+  "migrations": {"path": "migrations"},
   "events": {
     "published": [
-      {"name": "comment.status.changed", "class": "Modules\\Comment\\Domain\\Events\\CommentStatusChanged", "version": 1}
+      {"name": "comment.submitted", "class": "Modules\\Comment\\Domain\\Events\\CommentStatusChanged", "version": 1},
+      {"name": "comment.status.changed", "class": "Modules\\Comment\\Domain\\Events\\CommentStatusChanged", "version": 1},
+      {"name": "comment.deleted", "class": "Modules\\Comment\\Domain\\Events\\CommentStatusChanged", "version": 1}
     ]
   },
+  "permissions": {
+    "group": {"id": "comment", "title_fa": "نظرات"},
+    "items": [
+      {"key": "comment.view", "title_fa": "مشاهدهٔ صف نظرات", "title_en": "View comment queue"},
+      {"key": "comment.approve", "title_fa": "تأیید/اسپم نظر", "title_en": "Approve/mark spam comments"},
+      {"key": "comment.delete", "title_fa": "حذف نظر", "title_en": "Delete comments"}
+    ]
+  },
+  "navigation": [
+    {"title": "نظرات", "title_fa": "صف بررسی نظرات", "uri": "/admin/comments", "icon": "💬", "permission": "comment.view", "order": 88}
+  ],
+  "database": {
+    "table_prefix": "comment_",
+    "tables": ["comment_comments"],
+    "seed_on_install": false
+  },
   "docs": "modules/comment/README.md",
-  "notes": "بدون جدول اختصاصی — ذخیره‌سازی از طریق پورت CommentStoreInterface توسط ماژول مصرف‌کننده (blog_comments و …) پیاده‌سازی می‌شود."
+  "notes": "دو حالت: (۱) پورت CommentStoreInterface با store اختصاصی ماژول مصرف‌کننده (blog_comments و …)؛ (۲) standalone با جدول عمومی comment_comments + رجیستری allowlist انواع (config comment.types) و UI کامل. binding سراسری پورت فقط وقتی ثبت می‌شود که binding دیگری وجود نداشته باشد."
 }

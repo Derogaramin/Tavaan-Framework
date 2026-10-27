@@ -5,14 +5,29 @@
   "name": "CoreUser",
   "title_fa": "کاربران پایه",
   "title_en": "Core User",
-  "version": "0.1.0",
-  "description": "ماژول پایهٔ کاربران: جدول users، موجودیت User (Authenticatable/Notifiable)، پورت UserReaderInterface برای همهٔ ماژول‌ها و دستور user:create (DOC-090 §5-6).",
+  "version": "0.2.0",
+  "description": "ماژول پایهٔ کاربران: جدول users، موجودیت User (Authenticatable/Notifiable)، پورت UserReaderInterface برای همهٔ ماژول‌ها، UI احراز هویت (ورود/ثبت‌نام/پروفایل)، مدیریت کاربران در پنل (/admin/users) با RBAC و ویجت داشبورد (DOC-090 §5-6).",
   "namespace": "Modules\\CoreUser\\",
   "autoload": {"psr-4": {"Modules\\CoreUser\\": "src/"}},
   "providers": ["Modules\\CoreUser\\Providers\\CoreUserServiceProvider"],
-  "requires": {"tavaan": "^1.0", "php": ">=8.2", "engines": ["database", "auth", "hash", "rbac"], "modules": []},
+  "requires": {"tavaan": "^1.0", "php": ">=8.2", "engines": ["database", "auth", "hash", "rbac", "view", "session", "security"], "modules": []},
   "tables": ["users"],
   "commands": ["Modules\\CoreUser\\Console\\Commands\\UserCreateCommand"],
+  "routes": {
+    "web": "routes/web.php",
+    "admin": "routes/admin.php"
+  },
+  "views": {"namespace": "core-user", "path": "views"},
+  "lang": {"path": "lang"},
+  "migrations": {"path": "migrations"},
+  "seeds": {"demo": "seeds/demo.php"},
+  "events": {
+    "published": [
+      {"name": "user.registered", "class": "Modules\\CoreUser\\Domain\\Events\\UserWasRegistered", "version": 1},
+      {"name": "user.status.changed", "class": "Modules\\CoreUser\\Domain\\Events\\UserStatusWasChanged", "version": 1},
+      {"name": "user.deleted", "class": "Modules\\CoreUser\\Domain\\Events\\UserWasDeleted", "version": 1}
+    ]
+  },
   "permissions": {
     "group": {"id": "user", "title_fa": "کاربران"},
     "items": [
@@ -22,7 +37,10 @@
       {"key": "user.delete", "title_fa": "حذف کاربر", "title_en": "Delete users"}
     ]
   },
+  "navigation": [
+    {"title": "کاربران", "title_fa": "کاربران", "uri": "/admin/users", "icon": "👥", "permission": "user.view", "order": 90}
+  ],
   "database": {"tables": ["users"], "seed_on_install": true},
   "docs": "modules/core-user/README.md",
-  "notes": "UserReaderInterface قرارداد مشترک همهٔ کیت‌هاست (DOC-090 §6)."
+  "notes": "UserReaderInterface قرارداد مشترک همهٔ کیت‌هاست (DOC-090 §6). UI احراز هویت: /login /register /profile — روت name=login برای redirect middleware احراز هویت."
 }

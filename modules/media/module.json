@@ -5,14 +5,30 @@
   "name": "Media",
   "title_fa": "رسانه",
   "title_en": "Media",
-  "version": "0.1.0",
-  "description": "لایهٔ قرارداد رسانه برای ماژول‌های دامنه: MediaAttachableInterface + پورت MediaGateway روی موتور media (تصویر شاخص/variants — DOC-090 §6 / DOC-091 §6).",
+  "version": "0.2.0",
+  "description": "لایهٔ قرارداد رسانه برای ماژول‌های دامنه (MediaAttachableInterface + پورت MediaGateway روی موتور media) + کتابخانهٔ رسانهٔ پنل مدیریت: فهرست/جست‌وجو/آپلود/حذف با پیش‌نمایش تصویری (DOC-074/DOC-090 §6).",
   "namespace": "Modules\\Media\\",
   "autoload": {"psr-4": {"Modules\\Media\\": "src/"}},
   "providers": ["Modules\\Media\\Providers\\MediaServiceProvider"],
-  "requires": {"tavaan": "^1.0", "php": ">=8.2", "engines": ["media"], "modules": []},
+  "requires": {"tavaan": "^1.0", "php": ">=8.2", "engines": ["media", "view", "filesystem"], "modules": []},
   "tables": [],
   "commands": [],
+  "routes": {
+    "admin": "routes/admin.php"
+  },
+  "views": {"namespace": "media", "path": "views"},
+  "lang": {"path": "lang"},
+  "permissions": {
+    "group": {"id": "media", "title_fa": "رسانه"},
+    "items": [
+      {"key": "media.view", "title_fa": "مشاهدهٔ کتابخانهٔ رسانه", "title_en": "View media library"},
+      {"key": "media.upload", "title_fa": "آپلود رسانه", "title_en": "Upload media"},
+      {"key": "media.delete", "title_fa": "حذف رسانه", "title_en": "Delete media"}
+    ]
+  },
+  "navigation": [
+    {"title": "رسانه", "title_fa": "کتابخانهٔ رسانه", "uri": "/admin/media", "icon": "🖼️", "permission": "media.view", "order": 85}
+  ],
   "docs": "modules/media/README.md",
-  "notes": "جدول tvn_media متعلق به موتور media است؛ این ماژول فقط قرارداد/آداپتر است."
+  "notes": "جدول tvn_media متعلق به موتور media است؛ این ماژول قرارداد/آداپتر + UI کتابخانه (از راه Facade هسته) را فراهم می‌کند."
 }

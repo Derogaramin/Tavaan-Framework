@@ -5,14 +5,50 @@
   "name": "Content",
   "title_fa": "محتوا",
   "title_en": "Content",
-  "version": "0.1.0",
-  "description": "هستهٔ مشترک محتوا: چرخهٔ وضعیت انتشار، Slug یونیکد-امن، SEO/OpenGraph، Markdown امن (escape-first)، فید RSS/Atom، Sitemap، آرشیو جلالی و خلاصه‌ساز (DOC-090 §5 / DOC-091 §6).",
+  "version": "0.2.0",
+  "description": "هستهٔ مشترک محتوا: چرخهٔ وضعیت انتشار، Slug یونیکد-امن، SEO/OpenGraph، Markdown امن (escape-first)، فید RSS/Atom، Sitemap، آرشیو جلالی و خلاصه‌ساز (DOC-090 §5 / DOC-091 §6) + لایهٔ صفحات CMS: موجودیت Page (Commentable نوع page)، مخزن content_pages، مسیرهای نوشتن/خواندن، UI عمومی /pages و پنل /admin/pages با RBAC، sitemap اختصاصی و ویجت داشبورد.",
   "namespace": "Modules\\Content\\",
   "autoload": {"psr-4": {"Modules\\Content\\": "src/"}},
   "providers": ["Modules\\Content\\Providers\\ContentServiceProvider"],
-  "requires": {"tavaan": "^1.0", "php": ">=8.2", "engines": [], "modules": []},
-  "tables": [],
+  "requires": {
+    "tavaan": "^1.0",
+    "php": ">=8.2",
+    "engines": ["view", "i18n", "database", "rbac", "security"],
+    "modules": ["tavaan.comment"]
+  },
+  "tables": ["content_pages"],
   "commands": [],
+  "routes": {
+    "web": "routes/web.php",
+    "admin": "routes/admin.php"
+  },
+  "views": {"namespace": "content", "path": "views"},
+  "lang": {"path": "lang"},
+  "migrations": {"path": "migrations"},
+  "events": {
+    "published": [
+      {"name": "content.page.published", "class": "Modules\\Content\\Domain\\Events\\PageWasPublished", "version": 1},
+      {"name": "content.page.updated", "class": "Modules\\Content\\Domain\\Events\\PageWasUpdated", "version": 1}
+    ]
+  },
+  "permissions": {
+    "group": {"id": "content", "title_fa": "محتوا"},
+    "items": [
+      {"key": "content.page.view", "title_fa": "مشاهدهٔ صفحات (مدیریت)", "title_en": "View pages (admin)"},
+      {"key": "content.page.create", "title_fa": "ساخت صفحه", "title_en": "Create pages"},
+      {"key": "content.page.update", "title_fa": "ویرایش صفحه", "title_en": "Update pages"},
+      {"key": "content.page.publish", "title_fa": "انتشار/بایگانی صفحه", "title_en": "Publish/archive pages"},
+      {"key": "content.page.delete", "title_fa": "حذف صفحه", "title_en": "Delete pages"}
+    ]
+  },
+  "navigation": [
+    {"title": "صفحات", "title_fa": "صفحات محتوا", "uri": "/admin/pages", "icon": "📄", "permission": "content.page.view", "order": 19}
+  ],
+  "database": {
+    "table_prefix": "content_",
+    "tables": ["content_pages"],
+    "seed_on_install": false
+  },
   "docs": "modules/content/README.md",
-  "notes": "دامنهٔ خالص (بدون DB/HTTP) — مصرف‌کنندگان: blog, news-portal (M9)."
+  "notes": "دو لایه: (۱) دامنهٔ خالص مشترک (Markdown/Slug/SEO/Feed/Sitemap/Excerpt) — مصرف‌کنندگان: blog, news-portal؛ (۲) صفحات CMS (Page) با جدول content_pages، نظرات از راه ماژول comment (نوع page — شناسهٔ نظرپذیر = slug) و کنترل دسترسی content.page.*. رویداد content.page.deleted به‌صورت payload (بدون کلاس) منتشر می‌شود."
 }

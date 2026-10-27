@@ -83,6 +83,18 @@ final class RoleManager
         return $this->db->table($this->table('roles'))->where('key', $key)->first();
     }
 
+    /**
+     * فهرست همهٔ نقش‌ها (برای UI انتخاب نقش — پنل کاربران).
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function allRoles(): array
+    {
+        $rows = $this->db->table($this->table('roles'))->orderBy('key')->get();
+
+        return \array_map(static fn (array $row): array => $row, $rows);
+    }
+
     private function depthOf(int $roleId): int
     {
         $depth = 0;

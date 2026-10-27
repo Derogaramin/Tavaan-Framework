@@ -11,8 +11,10 @@ namespace Modules\CoreUser\Infrastructure\Persistence;
 
 use Modules\CoreUser\Contracts\UserReaderInterface;
 use Modules\CoreUser\Contracts\UserSnapshot;
+use Modules\CoreUser\Contracts\UserWriterInterface;
 use Modules\CoreUser\Domain\Entities\User;
 use Modules\CoreUser\Domain\Enums\UserStatus;
+use Modules\CoreUser\Domain\Repositories\UserRepositoryInterface;
 use Tavaan\Core\Exceptions\Validation\ValidationException;
 use Tavaan\Core\Facade\Facades\DB;
 use Tavaan\Core\Facade\Facades\Hash;
@@ -21,12 +23,12 @@ use Tavaan\Core\Facade\Facades\Hash;
  * DatabaseUserRepository — خواندن/نوشتن کاربران بدون ORM (پرس‌وجوی prepared).
  *
  * 🔒 ARCH-003: فقط Facadeهای هسته (DB/Hash). مرز عمومی ماژول =
- * UserReaderInterface؛ متدهای نوشتن برای Provider/Command/Seeder خود ماژول‌اند.
+ * UserReaderInterface؛ مرز داخلی = UserRepositoryInterface (UseCaseها).
  *
  * @api 1.0
  * @see modules/core-user/README.md
  */
-final class DatabaseUserRepository implements UserReaderInterface
+final class DatabaseUserRepository implements UserRepositoryInterface
 {
     public function findById(int|string $id): ?UserSnapshot
     {
@@ -130,5 +132,167 @@ final class DatabaseUserRepository implements UserReaderInterface
         DB::table('users')->where('id', $id)->update([
             'last_login_at' => (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s.v'),
         ]);
+    }
+
+    // ─── نوشتن (UserWriterInterface) ───────────────────────────────────────
+
+    public function updateProfile(int|string $id, array $fields): bool
+    {
+        $row = [];
+        foreach (['name', 'mobile', 'bio', 'avatar'] as $key) {
+            if (\array_key_exists($key, $fields)) {
+                $value = $fields[$key];
+                $row[$key] = $value === null ? null : (string) $value;
+            }
+        }
+
+        if ($row === []) {
+            return false;
+        }
+
+        $row['updated_at'] = $this->utcNow();
+
+        return DB::table('users')->where('id', $id)->update($row) > 0;
+    }
+
+    public function updateEmail(int|string $id, string $email): bool
+    {
+        $email = \mb_strtolower(\trim($email));
+
+        $duplicate = DB::table('users')->where('email', $email)->where('id', '!=', $id)->exists();
+        if ($duplicate) {
+            throw new ValidationException(
+                errors: ['email' => ['این ایمیل پیش‌تر ثبت شده است.']],
+                messageId: 'core-user::messages.email_taken',
+            );
+        }
+
+        return DB::table('users')->where('id', $id)->update([
+            'email' => $email,
+            'email_verified_at' => null,      // 🔒 ایمیل تغییر کرد → تأیید قبلی باطل
+            'updated_at' => $this->utcNow(),
+        ]) > 0;
+    }
+
+    public function setStatus(int|string $id, UserStatus $status): bool
+    {
+        return DB::table('users')->where('id', $id)->update([
+            'status' => $status->value,
+            'updated_at' => $this->utcNow(),
+        ]) > 0;
+    }
+
+    public function delete(int|string $id): bool
+    {
+        return DB::table('users')->where('id', $id)->delete() > 0;
+    }
+
+    // ─── خواندن مدیریتی (UserRepositoryInterface) ─────────────────────────
+
+    public function findUserByEmail(string $email): ?User
+    {
+        $row = DB::table('users')->where('email', \mb_strtolower($email))->first();
+
+        return $row === null ? null : User::fromRow($row);
+    }
+
+    public function paginate(string $search = '', ?UserStatus $status = null, int $page = 1, int $perPage = 20): array
+    {
+        $page = \max(1, $page);
+        $perPage = \max(1, \min(100, $perPage));
+
+        $count = DB::table('users');
+        $rows = DB::table('users');
+
+        $search = \trim($search);
+        if ($search !== '') {
+            $like = '%' . $search . '%';
+            $count->where(static function ($q) use ($like): void {
+                $q->where('name', 'like', $like)
+                    ->orWhere('email', 'like', $like)
+                    ->orWhere('mobile', 'like', $like);
+            });
+            $rows->where(static function ($q) use ($like): void {
+                $q->where('name', 'like', $like)
+                    ->orWhere('email', 'like', $like)
+                    ->orWhere('mobile', 'like', $like);
+            });
+        }
+
+        if ($status !== null) {
+            $count->where('status', $status->value);
+            $rows->where('status', $status->value);
+        }
+
+        $total = $count->count();
+        $records = $rows->orderByDesc('id')->limit($perPage)->offset(($page - 1) * $perPage)->get();
+
+        return [
+            'rows' => \array_map(static fn (array $row): User => User::fromRow($row), $records),
+            'total' => $total,
+        ];
+    }
+
+    public function countAll(): int
+    {
+        return DB::table('users')->count();
+    }
+
+    public function countByStatus(UserStatus $status): int
+    {
+        return DB::table('users')->where('status', $status->value)->count();
+    }
+
+    public function latest(int $limit = 5): array
+    {
+        $limit = \max(1, \min(50, $limit));
+        $rows = DB::table('users')->orderByDesc('id')->limit($limit)->get();
+
+        return \array_map(static fn (array $row): User => User::fromRow($row), $rows);
+    }
+
+    public function countActiveAdmins(): int
+    {
+        // 🔒 بدون Join بین‌نوعی (user_id در tvn_role_user رشته است) — دو گام:
+        // نقش‌های مدیر → شناسه‌های کاربر → شمارش فعال‌ها. اگر جداول RBAC
+        // مهاجرت نشده باشند (نصب حداقل)، محافظ try/catch صفر برمی‌گرداند.
+        try {
+            $roleRows = DB::table('tvn_roles')->whereIn('key', ['admin', 'super-admin'])->get();
+            $roleIds = [];
+            foreach ($roleRows as $row) {
+                $roleIds[] = (int) $row['id'];
+            }
+            if ($roleIds === []) {
+                return 0;
+            }
+
+            $linkRows = DB::table('tvn_role_user')
+                ->whereIn('role_id', $roleIds)
+                ->whereNull('tenant_id')
+                ->get();
+
+            $userIds = [];
+            foreach ($linkRows as $row) {
+                $id = (int) $row['user_id'];
+                if ($id > 0) {
+                    $userIds[$id] = true;
+                }
+            }
+            if ($userIds === []) {
+                return 0;
+            }
+
+            return DB::table('users')
+                ->whereIn('id', \array_keys($userIds))
+                ->where('status', UserStatus::Active->value)
+                ->count();
+        } catch (\Throwable) {
+            return 0;
+        }
+    }
+
+    private function utcNow(): string
+    {
+        return (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s.v');
     }
 }

@@ -14,6 +14,7 @@ use Tavaan\Core\Facade\Facade;
  * @method static array variants(\Tavaan\Engine\Media\Media $media, array $definitions)
  * @method static \Tavaan\Engine\Media\Media|null find(string $id)
  * @method static \Tavaan\Engine\Media\Media|null findByHash(string $hash)
+ * @method static array{rows: list<\Tavaan\Engine\Media\Media>, total: int} paginate(string $search = '', string $mimePrefix = '', int $page = 1, int $perPage = 24)
  * @method static \Tavaan\Engine\Media\Media attach(\Tavaan\Engine\Media\Media $media, string $type, int|string $id)
  * @method static bool delete(\Tavaan\Engine\Media\Media|string $media)
  * @mixin \Tavaan\Engine\Media\MediaManager

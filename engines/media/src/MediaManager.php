@@ -282,6 +282,53 @@ final class MediaManager
         return $row === null ? null : $this->makeMedia($row);
     }
 
+    /**
+     * صفحه‌بندی کتابخانهٔ رسانه (برای UI مدیر — ماژول media).
+     *
+     * @return array{rows: list<Media>, total: int}
+     */
+    public function paginate(string $search = '', string $mimePrefix = '', int $page = 1, int $perPage = 24): array
+    {
+        if ($this->db === null) {
+            return ['rows' => [], 'total' => 0];
+        }
+
+        $page = \max(1, $page);
+        $perPage = \max(1, \min(100, $perPage));
+
+        $count = $this->db->table($this->table);
+        $rows = $this->db->table($this->table);
+
+        $search = \trim($search);
+        if ($search !== '') {
+            $like = '%' . $search . '%';
+            $applySearch = static function ($query) use ($like): void {
+                $query->where(static function ($q) use ($like): void {
+                    $q->where('original_name', 'like', $like)
+                        ->orWhere('path', 'like', $like);
+                });
+            };
+            $applySearch($count);
+            $applySearch($rows);
+        }
+
+        if ($mimePrefix !== '') {
+            $count->where('mime_type', 'like', $mimePrefix . '%');
+            $rows->where('mime_type', 'like', $mimePrefix . '%');
+        }
+
+        $total = $count->count();
+        $records = $rows->orderByDesc('created_at')->orderByDesc('id')
+            ->limit($perPage)->offset(($page - 1) * $perPage)->get();
+
+        $media = [];
+        foreach ($records as $row) {
+            $media[] = $this->makeMedia($row);
+        }
+
+        return ['rows' => $media, 'total' => $total];
+    }
+
     /** اتصال به موجودیت دیگر (product/user/…). */
     public function attach(Media $media, string $type, int|string $id): Media
     {
