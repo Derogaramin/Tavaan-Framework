@@ -109,6 +109,12 @@ final class TokenGuard implements GuardInterface
         $this->user = $user;
     }
 
+    /** پاک‌کردن کاربر احراز‌شدهٔ کش‌شده — ابطال توکن/تست. */
+    public function forgetUser(): void
+    {
+        $this->user = null;
+    }
+
     public function name(): string
     {
         return $this->name;

@@ -8,8 +8,8 @@
 | مرتبط | DOC-120 (فازها)، DOC-121 (بک‌لاگ)، DOC-122 (بدهی فنی)، DOC-022 (ماژولار مونولیت)، DOC-030 (رجیستری موتورها)، DOC-090 (الگوی اپلیکیشن)، DOC-101 (کاتالوگ مجوزها)، DOC-113 (DoD) |
 | به‌روزرسانی | با شروع/اتمام هر ماژول؛ وضعیت تیکت‌های پیوست ماشین‌خوان (§۹) را تغییر دهید |
 
-> ⚠️ پس از افزودن این سند: `python3 tools/scripts/build-manifest.py` و
-> `python3 tools/scripts/verify-docs.py` اجرا شود (همگام‌سازی `docs/manifest.json`).
+> ✅ این سند در `docs/manifest.json` ثبت شده — `build-manifest.py` و `verify-docs.py`
+> پس از افزودن اجرا شدند (v0.20.0).
 
 ---
 
@@ -91,14 +91,14 @@ core-user→پروفایل امنیتی؛ §۶ و §۷).
 | 7 | `crm` | 0.1.0 | مخاطب/سرنخ/pipeline/تیکت SLA/کمپین | ✅ سبز | DOC-096 — **بدون وفاداری/امتیاز** |
 | 8 | `erp` | — | ERP (کیت M9) | ✅ سبز | DOC-097 |
 | 9 | `bpms` | — | فرآیند (کیت M9) | ✅ سبز | DOC-098 |
-| 10 | `content` | 0.2.0 | صفحات CMS + markdown/SEO/sitemap/feed | 🟠 کد کامل — **تست اجرا نشده** | اسپرینت جاری |
+| 10 | `content` | 0.2.0 | صفحات CMS + markdown/SEO/sitemap/feed | ✅ ۷۴ تست سبز | v0.20.0 تثبیت شد |
 | 11 | `comment` | 0.2.0 | نظر پلی‌مورفیک رشته‌ای | ✅ ۴۳/۴۳ تست سبز | اسپرینت جاری |
 | 12 | `media` | 0.2.0 | کتابخانهٔ رسانهٔ پنل + پورت MediaGateway | ✅ سبز | پایهٔ filemanager/gallery |
-| 13 | `poll` | 0.1.0 | نظرسنجی + رأی یکتا | 🟠 کد کامل — **تست اجرا نشده** | اسپرینت جاری |
-| 14 | `faq` | 0.1.0 | پرسش‌های متداول + رأی مفید | 🟠 کد کامل — **تست اجرا نشده** | اسپرینت جاری (TVN-FAQ-001..009) |
+| 13 | `poll` | 0.1.0 | نظرسنجی + رأی یکتا | ✅ ۶۲ تست سبز | v0.20.0 |
+| 14 | `faq` | 0.1.0 | پرسش‌های متداول + رأی مفید | ✅ ۵۱ تست سبز | v0.20.0 (TVN-FAQ-001..009) |
 
-> 🟠 سه ماژول content(pages)/poll/faq مجموعاً ≈۱۳۷ تست نوشته‌شده دارند که به‌دلیل
-> اختلال mount سندباکس اجرا نشده‌اند — **پیش‌نیاز P0 فاز M10** (§۵، تیکت TVN-STB-001).
+> ✅ اسپرینت تثبیت (TVN-STB-001) در v0.20.0 انجام شد: تست‌های هر سه ماژول
+> content(pages)/poll/faq اجرا و سبز شدند (۷۴ + ۶۲ + ۵۱ = ۱۸۷ تست) — نتایج در §۵٫۰.
 
 ---
 
@@ -137,6 +137,15 @@ ticket:
     - "README ریشه: شمار ماژول‌ها ۱۲ → ۱۴ و CHANGELOG به‌روز شود"
     - "docs/manifest.json بازتولید شود (build-manifest.py)"
 ```
+
+> ✅ **نتیجهٔ اجرا (v0.20.0 — done):** **۱۹۱۷ تست / ۱۱٬۹۵۸ assertion / ۱ skip مستند** سبز
+> (اجرای خردشده با `memory_limit=640M` — اجرای تک‌فرایندی کل سوئیت در سندباکس ۱GB
+> OOM-kill می‌شد)؛ `arch:check` ۱۶۳۷ فایل / ۰ نقض؛ `lint` ۱۳۳۴ فایل / ۰ خطا؛
+> DOC-101 §۱۲ افزوده شد؛ **DOC-086 تغییری نمی‌خواست** (طبق دیباچهٔ همان سند، جداول
+> ماژول‌های دامنه در README/بلوپرینت هر ماژول مستند می‌شوند نه در کاتالوگ هسته)؛
+> README ریشه + CHANGELOG + manifest همگام شدند. اصلاحات همراه: قاعدهٔ `required`
+> (رشتهٔ فقط-فاصله = تهی)، قید یونیکد `{id}` در روت‌های comment، `asGuest()`/`forgetUser()`
+> در هارنس تست.
 
 ### ۵٫۱ `wallet` — کیف پول کاربر 💰 (P0, ~2500 LOC, TVN-WAL)
 
@@ -315,9 +324,10 @@ ticket:
 ## ۹. پیوست ماشین‌خوان — تیکت‌های ماژول (قالب DOC-121 §1)
 
 ```yaml
+# machine-readable: tavaan.modules.roadmap.v1
 tickets:
   # ── M10 ──────────────────────────────────────────────
-  - {id: TVN-STB-001, title: "اسپرینت تثبیت (تست‌های content/poll/faq + اسناد)", phase: M10, type: fix, priority: P0, depends_on: [], docs: [DOC-123, DOC-113], status: todo}
+  - {id: TVN-STB-001, title: "اسپرینت تثبیت (تست‌های content/poll/faq + اسناد)", phase: M10, type: fix, priority: P0, depends_on: [], docs: [DOC-123, DOC-113], status: done}
   - {id: TVN-0100, title: "ماژول wallet (کیف پول)", phase: M10, type: module, priority: P0, depends_on: [TVN-STB-001], docs: [DOC-123, DOC-073], estimate_loc: 2500, status: todo}
   - {id: TVN-0101, title: "ماژول billing (صورتحساب/پرداخت یکپارچه)", phase: M10, type: module, priority: P0, depends_on: [TVN-STB-001], docs: [DOC-123, DOC-073], estimate_loc: 3000, status: todo}
   - {id: TVN-0102, title: "ماژول loyalty (باشگاه مشتریان)", phase: M10, type: module, priority: P0, depends_on: [TVN-0100, TVN-0101], docs: [DOC-123, DOC-096], estimate_loc: 2500, status: todo}
@@ -456,7 +466,7 @@ i18n-manager=116، analytics=117، chat=118.
 
 | فاز | ماژول‌ها | LOC برآوردی | خروجی |
 |---|---|---|---|
-| M10-0 | تثبیت | ~0 (رفع) | کل سوئیت ≈۱۸۴۰ تست سبز + اسناد همگام |
+| M10-0 | تثبیت | ~0 (رفع) | ✅ انجام شد (v0.20.0) — ۱۹۱۷ تست سبز + اسناد همگام |
 | M10 | wallet • billing • loyalty | ~8000 | چرخهٔ کامل مالی کاربر (شارژ→خرید→امتیاز→پاداش) |
 | M11 | filemanager • gallery • docs | ~6000 | فایل/رسانه/مستندات سرتاسری |
 | M12 | security-center • api-console • system-monitor • backup-manager • tenancy-admin • feature-flag-ui • i18n-manager | ~12700 | پنل عملیات/امنیت کامل (هر موتور CLI-دار یک GUI دارد) |

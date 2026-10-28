@@ -88,7 +88,7 @@
 
 | فایل | قالب | کاربرد |
 |---|---|---|
-| `docs/manifest.json` | JSON | فهرست کامل همهٔ ۱۲۲ سند + ۵۳ موتور با DOC-ID، مسیر، hash و مسیرهای مطالعه — نقطهٔ ورود برنامه‌ای ایجنت |
+| `docs/manifest.json` | JSON | فهرست کامل همهٔ ۱۲۸ سند + ۵۳ موتور با DOC-ID، مسیر، hash و مسیرهای مطالعه — نقطهٔ ورود برنامه‌ای ایجنت |
 | `docs/schemas/module.v1.json` | JSON Schema | اعتبارسنجی `module.json` هر ماژول |
 | `docs/schemas/project.v1.json` | JSON Schema | اعتبارسنجی `tavaan.json` ریشهٔ پروژه |
 | `docs/schemas/integration-event.v1.json` | JSON Schema | اعتبارسنجی قرارداد رویداد بین‌سرویسی |

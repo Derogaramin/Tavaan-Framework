@@ -47,12 +47,21 @@ final class FaqWriteServiceTest extends TestCase
     }
 
     /** @param array<string, mixed> $overrides */
-    private function input(array $overrides = []): array
+    private function input(mixed ...$overrides): array
     {
+        $merged = [];
+        foreach ($overrides as $key => $value) {
+            if (\is_int($key) && \is_array($value)) {
+                $merged = [...$merged, ...$value];
+            } else {
+                $merged[$key] = $value;
+            }
+        }
+
         return [
             'question' => 'چگونه حساب کاربری بسازم؟',
             'answer' => 'از طریق صفحهٔ **ثبت‌نام** اقدام کنید.',
-            ...$overrides,
+            ...$merged,
         ];
     }
 

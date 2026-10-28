@@ -270,6 +270,20 @@ final class SessionGuard implements StatefulGuard
         $this->user = $user;
     }
 
+    /**
+     * پاک‌کردن کاربر احراز‌شده (کش + کلیدهای نشست) — خروج دستی/تست.
+     */
+    public function forgetUser(): void
+    {
+        $this->user = null;
+
+        $session = $this->session();
+        if ($session !== null) {
+            $session->forget($this->sessionKey());
+            $session->forget($this->fingerprintKey());
+        }
+    }
+
     // ─── remember me ──────────────────────────────────────────────────────
 
     private function ensureRememberToken(Authenticatable $user): void

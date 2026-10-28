@@ -28,6 +28,10 @@ trait ValidatesAttributes
         if ($value === null || $value === '') {
             return false;
         }
+        // رشتهٔ فقط-فاصله تهی محسوب می‌شود (هم‌راستا با Laravel — مثال: عنوان «   »)
+        if (\is_string($value) && \trim($value) === '') {
+            return false;
+        }
         if (\is_array($value) && \count($value) === 0) {
             return false;
         }

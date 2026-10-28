@@ -2,6 +2,33 @@
 
 فرمت: Keep a Changelog — نسخه‌گذاری: SemVer.
 
+## [0.20.0] - 2026-10-27 — ماژول‌های نظرسنجی/FAQ + نقشهٔ راه ماژول‌ها DOC-123 + تثبیت 🧩
+
+### افزوده شد
+- **`modules/poll` v0.1.0 — نظرسنجی**: چرخهٔ عمر draft/open/closed/archived، پنجرهٔ زمانی، رأی یکتا (کاربر/هش IP)، تک و چندانتخابی، نتایج after_vote، وب + JSON API (`/api/polls/{slug}`) + پنل ادمین + ویجت داشبورد + **۶۲ تست**
+- **`modules/faq` v0.1.0 — پرسش‌های متداول**: دسته‌ها + پرسش‌ها با چرخهٔ انتشار، slug فارسی، رأی مفید/بی‌اثر با شمارندهٔ پایا، `/faq` عمومی + پنل ادمین + **۵۱ تست**
+- **DOC-123 — نقشهٔ راه توسعهٔ ماژول‌ها (M10–M13)** (`docs/08-roadmap/module-roadmap.md`): تحلیل شکاف «۵۲ موتور → ۱۴ ماژول»، مشخصات **۱۹ ماژول جدید** (wallet، billing، loyalty/باشگاه مشتریان، filemanager، gallery، docs، security-center، api-console، system-monitor، backup-manager، tenancy-admin، feature-flag-ui، i18n-manager، notification-center، marketing، search-ui، seo-suite، analytics، chat) + تیکت‌های ماشین‌خوان TVN-STB-001 و TVN-0100..0118 + گراف وابستگی + رجیستری order ناوبری (بازهٔ ۱۰۰–۱۶۰ رزرو) + DoD هر ماژول
+- **زیرساخت تست**: کمکی `asGuest()` در هارنس (MakesHttpRequests) + `forgetUser()` روی SessionGuard/TokenGuard — سناریوی «مهمان پس از ادمین» بدون نشت هویت
+
+### تغییر یافت
+- **روت‌های standalone ماژول comment**: قید `{id}` یونیکد-آگاه شد (`[\p{L}\p{N}_\-]{1,64}`) — **slug فارسی** محتوای نظرپذیر (فارسی-اول) اکنون از `/comments/{type}/{id}` عبور می‌کند؛ `{type}` همچنان ASCII
+- **DOC-101**: بخش ۱۲ تازه — مجوزهای ماژول‌های دامنه (content.page.* / comment.* / media.* / poll.* / faq.* / user.*) + به‌روزرسانی آمار کاتالوگ (~۲۷۵)
+- تست‌های ماژول content(pages) — ۷۴ تست نوشته‌شده در اسپرینت پیشین — برای نخستین بار اجرا و سبز شدند
+- `docs/manifest.json`: ثبت DOC-123 → **۱۲۸ سند** • `docs/README.md`: سطر شاخص + شمار اسناد
+- نگارش `0.19.0` → `0.20.0` (bootstrap.php / tavaan.json / README / manifest)
+
+### رفع شد
+- **موتور validation**: قاعدهٔ `required` رشتهٔ فقط-فاصله (`'   '`) را تهی می‌شمارد (هم‌راستا با Laravel) — `createCategory` ماژول faq با عنوان سفید به‌جای DomainException، ValidationException ساختارمند می‌اندازد
+- `modules/faq/tests`: ایمپورت نادرست `PHPUnit\Framework\TestCase` → `Tavaan\Testing\TestCase` (فریمورک صفر‌وابستگی — PHPUnit وجود ندارد)
+- `PollWriteServiceTest`/`FaqWriteServiceTest`: کمکی `input()` اکنون named-args را پشتیبانی می‌کند (`mixed ...$overrides`) — ۲۲ خطای «Unknown named parameter» رفع شد
+- `PollHttpTest::testApiShowReturnsJson`: assertion نادرست `?? 'x'` (عملگر `??` مقدار null را هم «ناموجود» می‌شمارد) → `assertArrayHasKey` + `assertNull`
+- نشت هویت ادمین به رأی/نظر «مهمان» در تست‌های HTTP (user_id=۱ به‌جای null) — با `asGuest()` رفع شد
+- **اجرای سوئیت در سندباکس ۱GB**: اجرای تک‌فرایندی کل سوئیت OOM-kill می‌شد (exit 137 @ ~۷۱۵MB RSS) → استراتژی **اجرای خردشده** (گروه‌های engines/app/modules با `memory_limit=640M`)
+
+### نتایج
+- **۱۹۱۷ تست / ۱۱٬۹۵۸ assertion / ۱ skip مستند — همه سبز** (خردشده: engines ۱۲۵۷ • app ۴۴ • blog/news/shop/forum ۱۵۱ • lms/crm/erp/bpms ۲۰۲ • core-user/media/comment/content/poll/faq ۲۶۳)
+- گیت‌های کیفیت: `arch:check` ۱۶۳۷ فایل / **۰ نقض** • `lint` ۱۳۳۴ فایل / **۰ خطا** • `verify-docs` سبز
+
 ## [0.19.0] - 2026-10-27 — یکپارچه‌سازی محیط توسعه و Git + دفتر کل تاریخچهٔ نسخه‌ها 🔧
 
 ### افزوده شد

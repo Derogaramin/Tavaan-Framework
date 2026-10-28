@@ -16,9 +16,9 @@ use Tavaan\Engine\Security\Middleware\ThrottleMiddleware;
 
 Route::get('/comments/{type}/{id}', [CommentController::class, 'show'])
     ->name('comments.show')
-    ->whereAll(['type' => '[a-z][a-z0-9_]{0,63}', 'id' => '[A-Za-z0-9_\-]{1,64}']);
+    ->whereAll(['type' => '[a-z][a-z0-9_]{0,63}', 'id' => '[\p{L}\p{N}_\-]{1,64}']);
 
 Route::post('/comments/{type}/{id}', [CommentController::class, 'store'])
     ->name('comments.store')
     ->middleware([ThrottleMiddleware::class . ':5,10'])
-    ->whereAll(['type' => '[a-z][a-z0-9_]{0,63}', 'id' => '[A-Za-z0-9_\-]{1,64}']);
+    ->whereAll(['type' => '[a-z][a-z0-9_]{0,63}', 'id' => '[\p{L}\p{N}_\-]{1,64}']);

@@ -3,7 +3,7 @@
   "framework": {
     "name": "Tavaan",
     "name_fa": "تَوان",
-    "version": "0.19.0",
+    "version": "0.20.0",
     "php_min": "8.2.0",
     "dependency_policy": "zero-external",
     "architectures": [
@@ -16,7 +16,7 @@
   },
   "generated_note": "فهرست ماشین‌خوان همهٔ مستندات — برای پیمایش خودکار ایجنت‌ها",
   "totals": {
-    "documents": 127,
+    "documents": 128,
     "engines": 53,
     "schemas": 4,
     "adrs": 17
@@ -503,7 +503,7 @@
       "title": "شاخص مستندات تَوان (Tavaan Docs Index)",
       "path": "docs/README.md",
       "machine_readable": false,
-      "sha256": "aac97f272ad60603"
+      "sha256": "eb9bfa2ee6cb7a60"
     },
     {
       "section": "00-overview",
@@ -1322,7 +1322,7 @@
       "title": "کاتالوگ مجوزها (Permission Catalog) 🔒🧠",
       "path": "docs/06-roles-access/permission-catalog.md",
       "machine_readable": true,
-      "sha256": "fa151b431a19b8c5"
+      "sha256": "1614ca56b9466c75"
     },
     {
       "section": "06-roles-access",
@@ -1395,6 +1395,15 @@
       "path": "docs/08-roadmap/milestones.md",
       "machine_readable": false,
       "sha256": "311d5bcac8a5bdab"
+    },
+    {
+      "section": "08-roadmap",
+      "section_label": "نقشهٔ راه",
+      "doc_id": "DOC-123",
+      "title": "نقشهٔ راه توسعهٔ ماژول‌ها (M10–M13) 🧩",
+      "path": "docs/08-roadmap/module-roadmap.md",
+      "machine_readable": true,
+      "sha256": "1603e09da973572b"
     },
     {
       "section": "09-references",

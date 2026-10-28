@@ -9,7 +9,7 @@ use Modules\Faq\Domain\Entities\FaqCategory;
 use Modules\Faq\Domain\Entities\FaqItem;
 use Modules\Faq\Domain\Events\FaqItemWasPublished;
 use Modules\Faq\Domain\Events\FaqItemWasUpdated;
-use PHPUnit\Framework\TestCase;
+use Tavaan\Testing\TestCase;
 
 /**
  * تست دامنهٔ پرسش‌های متداول — موجودیت‌های FaqCategory/FaqItem،

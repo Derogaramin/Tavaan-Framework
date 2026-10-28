@@ -162,6 +162,17 @@ trait MakesHttpRequests
         return $this;
     }
 
+    /** بازگرداندن گارد به وضعیت مهمان (پاک‌کردن کاربر — in-memory). */
+    protected function asGuest(string $guard = 'web'): static
+    {
+        $instance = $this->app()->make(AuthManager::class)->guard($guard);
+        if (\method_exists($instance, 'forgetUser')) {
+            $instance->forgetUser();
+        }
+
+        return $this;
+    }
+
     // ─── اپلیکیشن ─────────────────────────────────────────────────────────
 
     protected function app(): Application

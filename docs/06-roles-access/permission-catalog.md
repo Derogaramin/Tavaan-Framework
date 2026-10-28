@@ -204,7 +204,27 @@ report.designer               report.dataset.manage
 
 ---
 
-## ۱۲. ساختار ماشین‌خوان (برای Sync خودکار) 🧠
+## ۱۲. مجوزهای ماژول‌های دامنه — افزوده در 0.20 (content / comment / media / poll / faq / core-user)
+
+```
+content.page.view             content.page.create          content.page.update
+content.page.publish          content.page.delete
+comment.view                  comment.approve              comment.delete
+media.view                    media.upload                 media.delete
+poll.view                     poll.create                  poll.update
+poll.open                     poll.delete
+faq.view                      faq.create                   faq.update
+faq.publish                   faq.delete
+user.view                     user.create                  user.update
+user.delete
+```
+
+> 🔒 منبع معتبر هر مجموعه، `permissions.items` در `module.json` همان ماژول است
+> (عنوان‌های فا/en آنجا ثبت است) و sync خودکار در §۱۴ از همان manifest انجام می‌شود.
+
+---
+
+## ۱۳. ساختار ماشین‌خوان (برای Sync خودکار) 🧠
 
 ```yaml
 # machine-readable: tavaan.permissions.v1
@@ -235,7 +255,7 @@ permissions:
 
 ---
 
-## ۱۳. Sync خودکار از Manifest ماژول
+## ۱۴. Sync خودکار از Manifest ماژول
 
 🔒 هر ماژول مجوزهایش را در `module.json` → `permissions.items` اعلام می‌کند (DOC-022 §3).
 در `tvn module:install` و `tvn rbac:sync`:
@@ -257,7 +277,7 @@ final class PermissionSync
 
 ---
 
-## ۱۴. اعتبارسنجی مجوزها (`tvn rbac:check`)
+## ۱۵. اعتبارسنجی مجوزها (`tvn rbac:check`)
 
 | بررسی | خطا |
 |---|---|
@@ -269,7 +289,7 @@ final class PermissionSync
 
 ---
 
-## ۱۵. آمار کاتالوگ
+## ۱۶. آمار کاتالوگ
 | ماژول | تعداد مجوز |
 |---|---|
 | system | ~35 |
@@ -282,11 +302,17 @@ final class PermissionSync
 | erp | ~40 |
 | bpms | ~20 |
 | report | ~7 |
-| **جمع** | **~۲۵۰** |
+| content (صفحات CMS) | 5 |
+| comment | 3 |
+| media | 3 |
+| poll | 5 |
+| faq | 5 |
+| core-user | 4 |
+| **جمع** | **~275** |
 
 ---
 
-## ۱۶. معیار پذیرش 🧪
+## ۱۷. معیار پذیرش 🧪
 - AC-PERM-01: همهٔ مجوزهای این کاتالوگ در seed اولیه sync می‌شوند.
 - AC-PERM-02: هر ماژول مجوزهایش را در manifest دارد.
 - AC-PERM-03: `tvn rbac:check` بدون خطا.

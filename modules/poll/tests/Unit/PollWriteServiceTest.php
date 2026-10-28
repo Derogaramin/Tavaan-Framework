@@ -47,12 +47,21 @@ final class PollWriteServiceTest extends TestCase
     }
 
     /** @param array<string, mixed> $overrides */
-    private function input(array $overrides = []): array
+    private function input(mixed ...$overrides): array
     {
+        $merged = [];
+        foreach ($overrides as $key => $value) {
+            if (\is_int($key) && \is_array($value)) {
+                $merged = [...$merged, ...$value];
+            } else {
+                $merged[$key] = $value;
+            }
+        }
+
         return [
             'question' => 'پرسش پیش‌فرض آزمایشی؟',
             'options' => ['گزینهٔ یک', 'گزینهٔ دو'],
-            ...$overrides,
+            ...$merged,
         ];
     }
 

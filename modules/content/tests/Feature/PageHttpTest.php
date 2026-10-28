@@ -219,7 +219,7 @@ final class PageHttpTest extends TestCase
         $slug = (string) $row['slug'];
 
         // ثبت نظر مهمان از مسیر standalone ماژول comment
-        $this->post('/comments/page/' . $slug, [
+        $this->asGuest()->post('/comments/page/' . $slug, [
             'author_name' => 'خوانندهٔ صفحه',
             'author_email' => 'reader@example.com',
             'body' => 'نظر یکپارچه‌سازی زیر صفحهٔ CMS',

@@ -144,7 +144,7 @@ final class PollHttpTest extends TestCase
         $this->get('/polls/' . $slug)->assertOk()->assertSee('گزینهٔ یک');
 
         // ثبت رأی مهمان (تک‌انتخابی)
-        $this->post('/polls/' . $slug . '/vote', ['option' => '1'])->assertRedirect('/polls/' . $slug);
+        $this->asGuest()->post('/polls/' . $slug . '/vote', ['option' => '1'])->assertRedirect('/polls/' . $slug);
 
         $vote = DB::table('poll_votes')->where('poll_id', $row['id'])->first();
         self::assertNotNull($vote);
@@ -162,7 +162,7 @@ final class PollHttpTest extends TestCase
         $row = $this->createPollAsAdmin($admin, 'پرسش یکتایی؟', status: 'open');
         $slug = (string) $row['slug'];
 
-        $this->post('/polls/' . $slug . '/vote', ['option' => '0'])->assertRedirect();
+        $this->asGuest()->post('/polls/' . $slug . '/vote', ['option' => '0'])->assertRedirect();
         $this->post('/polls/' . $slug . '/vote', ['option' => '1'])->assertRedirect();
 
         self::assertSame(1, DB::table('poll_votes')->where('poll_id', $row['id'])->count());
@@ -191,7 +191,7 @@ final class PollHttpTest extends TestCase
         $row = $this->createPollAsAdmin($admin, 'پرسش بسته؟', status: 'open');
         $this->actingAs($admin)->post('/admin/polls/' . $row['id'] . '/close')->assertRedirect();
 
-        $this->post('/polls/' . $row['slug'] . '/vote', ['option' => '0'])->assertRedirect();
+        $this->asGuest()->post('/polls/' . $row['slug'] . '/vote', ['option' => '0'])->assertRedirect();
         self::assertSame(0, DB::table('poll_votes')->where('poll_id', $row['id'])->count());
 
         // نتایج نظرسنجی بسته بدون رأی‌دادن هم visible است
@@ -212,7 +212,8 @@ final class PollHttpTest extends TestCase
         self::assertSame('پرسش ای‌پی‌آی؟', $json['data']['question'] ?? '');
         self::assertSame('open', $json['data']['status'] ?? '');
         self::assertTrue($json['data']['votable'] ?? false);
-        self::assertNull($json['data']['results'] ?? 'x');   // هنوز رأی نداده → نتایج نیست
+        self::assertArrayHasKey('results', $json['data']);
+        self::assertNull($json['data']['results']);   // هنوز رأی نداده → نتایج نیست
     }
 
     public function testApiVoteReturnsJsonCreatedThen422OnDuplicate(): void
@@ -221,7 +222,7 @@ final class PollHttpTest extends TestCase
         $row = $this->createPollAsAdmin($admin, 'پرسش رأی جی‌سان؟', status: 'open');
         $url = '/api/polls/' . $row['slug'] . '/vote';
 
-        $first = $this->postJson($url, ['option' => 2]);
+        $first = $this->asGuest()->postJson($url, ['option' => 2]);
         $first->assertStatus(201);
         $json = \json_decode($first->content(), true);
         self::assertSame(1, $json['data']['votes'] ?? 0);
